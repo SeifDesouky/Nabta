@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { ApiServiceService } from './API/api-service.service';
-import { ILogin, ILoginResponse, IRegister, IVerify } from '../models/auth.model';
+import { ApiServiceService } from '../API/api-service.service';
+import { ILogin, ILoginResponse, IRegister, IVerify } from '../../models/auth.model';
 
 @Injectable({
   providedIn: 'root'

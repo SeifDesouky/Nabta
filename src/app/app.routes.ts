@@ -12,9 +12,11 @@ import { ForgotPasswordComponent } from './features/auth/pages/forgot-password/f
 export const routes: Routes = [
   {
     path: '', component: MainLayoutComponent, children: [
+      { path: '', component: HomeComponent },
       {
-        path:'',component:HomeComponent
+        path: 'marketplace', loadChildren: () => import('./features/marketplace/market.routes').then(m => m.marketplaceRoutes)
       }
+
     ]
   },
   {

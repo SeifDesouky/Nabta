@@ -9,7 +9,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { AuthService } from '../../../../core/services/auth.service';
+import { AuthService } from '../../../../core/services/auth/auth.service';
 
 // ── Custom validator: password match ─────────────────────────────────────────
 export const passwordMatchValidator: ValidatorFn = (

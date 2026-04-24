@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../../core/services/auth.service';
+import { AuthService } from '../../../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-verify',
@@ -36,7 +36,7 @@ export class VerifyComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Grab the email saved during registration (optional — set in AuthService.handleRegister)
     this.userEmail = localStorage.getItem('pendingEmail') || '';
-    this.authService.verifyAccount(this.userEmail)
+    // this.authService.verifyAccount(this.userEmail)
     this.startCountdown();
   }
 

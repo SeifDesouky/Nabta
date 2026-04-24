@@ -10,7 +10,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../../../../core/services/auth.service';
+import { AuthService } from '../../../../core/services/auth/auth.service';
 
 const passwordMatchValidator: ValidatorFn = (g: AbstractControl): ValidationErrors | null => {
   const pw = g.get('newPassword')?.value;
