@@ -1,0 +1,37 @@
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-gray-200 dark:border-b-gray-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-3 md:px-10">
+        <div class="flex items-center gap-4">
+            <div class="size-8 text-slate-900 dark:text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-3xl">agriculture</span>
+            </div>
+            <h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
+                Nabta</h2>
+        </div>
+        <div class="hidden md:flex items-center gap-9">
+            <div class="flex flex-col items-center gap-1">
+                <a class="text-primary text-sm font-bold leading-normal transition-all mt-1" routerLink="/">Home</a>
+                <div class="w-4 h-0.5 rounded-full bg-primary"></div>
+            </div>
+            <div class="relative group">
+                <a class="text-slate-900 dark:text-gray-200 text-sm font-medium leading-normal hover:text-primary drop-shadow-[0_0_8px_rgba(13,99,27,0.5)] transition-all cursor-pointer flex items-center gap-1"
+                    href="#">Community <span class="material-symbols-outlined text-lg">expand_more</span></a>
+                <div class="absolute top-full left-0 mt-2 w-48 bg-white/80 dark:bg-zinc-800 rounded-md shadow-lg border border-gray-100 dark:border-zinc-700 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                    <a class="block px-4 py-2 text-sm text-slate-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-primary rounded-lg mx-1"
+                        href="#">Community feed</a>
+                    <a class="block px-4 py-2 text-sm text-slate-700 dark:text-gray-200 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-primary rounded-lg mx-1"
+                        href="#">Tips & Tricks</a>
+                </div>
+            </div>
+            <a class="text-slate-900 dark:text-gray-200 text-sm font-medium leading-normal hover:text-primary drop-shadow-[0_0_8px_rgba(13,99,27,0.5)] transition-all"
+                href="#">Marketplace</a>
+        </div>
+        <div class="flex gap-2">
+            <button
+                class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:brightness-90 transition-all" routerLink="/auth/login">
+                <span class="truncate">Log In</span>
+            </button>
+            <button
+                class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-gray-100 dark:bg-white/10 text-slate-900 dark:text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-gray-200 dark:hover:bg-white/20 transition-all">
+                <span class="truncate" routerLink="/auth/register">Sign Up</span>
+            </button>
+        </div>
+    </header>

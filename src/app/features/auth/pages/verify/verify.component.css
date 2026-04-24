@@ -1,0 +1,43 @@
+/* ── OTP box pulse on load ─────────────────────────────────────────────────── */
+.otp-box {
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.otp-box:nth-child(1) { animation-delay: 0.05s; }
+.otp-box:nth-child(2) { animation-delay: 0.10s; }
+.otp-box:nth-child(3) { animation-delay: 0.15s; }
+.otp-box:nth-child(4) { animation-delay: 0.20s; }
+.otp-box:nth-child(5) { animation-delay: 0.25s; }
+.otp-box:nth-child(6) { animation-delay: 0.30s; }
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.8) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── Shake on wrong code ───────────────────────────────────────────────────── */
+.shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes shake {
+  10%, 90%  { transform: translateX(-2px); }
+  20%, 80%  { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-6px); }
+  40%, 60%  { transform: translateX(6px); }
+}
+
+/* ── Icon pulsing ring ─────────────────────────────────────────────────────── */
+.icon-pulse {
+  animation: iconPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s both;
+}
+
+@keyframes iconPop {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Card entrance ─────────────────────────────────────────────────────────── */
+:host {
+  display: contents;
+}

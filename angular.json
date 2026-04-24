@@ -33,6 +33,12 @@
           },
           "configurations": {
             "production": {
+    "fileReplacements": [
+      {
+        "replace": "src/environments/environment.ts",
+        "with": "src/environments/environment.prod.ts"
+      }
+    ],
               "budgets": [
                 {
                   "type": "initial",
@@ -92,5 +98,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "2c0dced7-4631-42eb-94b3-386cc0aea662"
   }
 }
