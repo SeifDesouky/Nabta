@@ -15,7 +15,7 @@ export interface IProduct {
   bulkAvailable: boolean;
   bulkQuantity?: number;
   bulkPrice?: number;
-
+  isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
 }

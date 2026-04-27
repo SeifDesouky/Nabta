@@ -8,6 +8,7 @@ import { RegisterComponent } from './features/auth/pages/register/register.compo
 import { VerifyComponent } from './features/auth/pages/verify/verify.component';
 import { ResetPasswordComponent } from './features/auth/pages/reset-password/reset-password.component';
 import { ForgotPasswordComponent } from './features/auth/pages/forgot-password/forgot-password.component';
+import { CommunityFeedComponent } from './features/community/pages/community/community.component';
 
 export const routes: Routes = [
   {
@@ -15,7 +16,12 @@ export const routes: Routes = [
       { path: '', component: HomeComponent },
       {
         path: 'marketplace', loadChildren: () => import('./features/marketplace/market.routes').then(m => m.marketplaceRoutes)
-      }
+      },
+      // {
+      //   path: 'community', loadChildren: () => import('./features/community/pages/community/community.component').then(m => m.CommunityFeedComponent)
+        
+      // }
+      {path:'community',component:CommunityFeedComponent}
 
     ]
   },
@@ -28,5 +34,10 @@ export const routes: Routes = [
       {path:'reset-password',component:ResetPasswordComponent},
     ]
   },
-  {path:'**',redirectTo:'auth/login'}
+  {
+  path: '**',
+  loadComponent: () =>
+    import('./features/not-found/not-found.component')
+      .then(m => m.NotFoundComponent)
+  }
 ];

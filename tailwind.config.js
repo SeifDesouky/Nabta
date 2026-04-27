@@ -1,5 +1,4 @@
 module.exports = {
-  darkMode: 'class',
   content: [
   "./src/app/**/*.{html,ts}",
   "./src/index.html"
@@ -57,6 +56,29 @@ module.exports = {
                         "on-surface-variant": "#40493d",
                         "background-light": "#f8f8f5",
                         "background-dark": "#23220f",
+                        "primary":               "#0d631b",
+                        "primary-container":     "#2e7d32",
+                        "primary-fixed":         "#a3f69c",
+                        "primary-fixed-dim":     "#88d982",
+                        "on-primary":            "#ffffff",
+                        "secondary":             "#7a5649",
+                        "on-secondary":          "#ffffff",
+                        "tertiary":              "#388e3c",
+                        "surface":               "#f9f9f9",
+                        "surface-container-low": "#f3f3f3",
+                        "surface-container":     "#eeeeee",
+                        "surface-container-high":"#c8e6c9",
+                        "surface-container-lowest":"#ffffff",
+                        "on-surface":            "#1a1c1c",
+                        "on-surface-variant":    "#40493d",
+                        "outline":               "#707a6c",
+                        "outline-variant":       "#bfcaba",
+                        "background":            "#f9f9f9",
+                        "background-light":      "#f9f9f6",
+                        "text-main":             "#2b4228",
+                        "text-sub":              "#6c7c66",
+                        "earth":                 "#8d5524",
+                        "border-color":          "#e2e5dd",
                     },
                     "borderRadius": {
                         "DEFAULT": "1rem",
@@ -70,7 +92,12 @@ module.exports = {
                         "body": ["Inter"],
                         "label": ["Inter"],
                         "display": ["Spline Sans", "sans-serif"]
-                    }
+                  },
+                  boxShadow: {
+                  "soft":         "0 10px 40px -10px rgba(43,66,40,0.10)",
+                  "primary-glow": "0 4px 18px rgba(13,99,27,0.22)",
+                  "card":         "0 2px 12px rgba(43,66,40,0.07)",
+                }
                 }
             },
   plugins: [require('@tailwindcss/container-queries')],

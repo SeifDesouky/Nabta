@@ -1,1 +1,222 @@
-<p>cart works!</p>
+<div class="bg-[#f9f9f9] text-text-main min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="w-full top-0 sticky z-50 bg-white/90 backdrop-blur-md border-b border-[#e8e8e8]">
+    <div class="flex justify-between items-center px-8 py-4 max-w-full mx-auto">
+      <div class="flex items-center gap-12">
+        <div class="flex items-center gap-2.5 cursor-pointer">
+          <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-primary-glow flex-shrink-0">
+            <span class="material-symbols-outlined text-white"
+              style="font-size:20px;font-variation-settings:'FILL' 1;">agriculture</span>
+          </div>
+          <span class="text-xl font-extrabold text-primary tracking-tight font-headline">NABTA</span>
+        </div>
+        <span class="hidden md:inline-block ml-3 pl-3 border-l border-border-color text-sm font-semibold text-text-sub">
+          Cart <span *ngIf="itemCount > 0" class="text-primary">({{ itemCount }})</span>
+        </span>
+      </div>
+      <div class="flex items-center gap-6">
+        <div class="flex items-center gap-2">
+          <button class="relative p-2 pb-0 text-zinc-500 hover:bg-[#f3f3f3] rounded-full transition-colors">
+            <span class="material-symbols-outlined" style="font-size:22px;">notifications</span>
+          </button>
+          <button class="relative p-2 pb-0 text-primary bg-primary/10 rounded-full transition-colors">
+            <span class="material-symbols-outlined"
+              style="font-size:22px;font-variation-settings:'FILL' 1;">shopping_cart</span>
+          </button>
+        </div>
+        <div class="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden">
+          <img alt="User profile" class="w-full h-full object-cover" src="assets/avatar.png" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="max-w-7xl mx-auto px-4 md:px-8 py-12 flex flex-col lg:flex-row gap-12 flex-1 w-full">
+
+    <!-- LEFT: Cart Items -->
+    <div class="flex-1 space-y-8">
+      <div class="flex flex-col gap-2 mb-4">
+        <h1 class="text-4xl font-extrabold font-headline tracking-tight text-text-main">Your Harvest Basket</h1>
+        <p class="text-text-sub font-body">Manage your agricultural assets and digital tools before checkout.</p>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="flex justify-center py-12">
+        <span class="material-symbols-outlined animate-spin text-primary" style="font-size:36px;">progress_activity</span>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!loading && (!cart || cart.items.length === 0)"
+           class="flex flex-col items-center justify-center py-20 text-center">
+        <span class="material-symbols-outlined text-zinc-300 mb-4" style="font-size:72px;">shopping_cart</span>
+        <h3 class="text-xl font-bold font-headline text-text-sub">Your basket is empty</h3>
+        <p class="text-sm text-zinc-400 mt-1">Add some products to get started.</p>
+      </div>
+
+      <!-- Items List -->
+      <div class="space-y-5" *ngIf="!loading && cart && cart.items.length > 0">
+        <div *ngFor="let item of cart.items"
+             class="bg-white p-5 rounded-3xl border border-border-color shadow-card flex flex-col sm:flex-row items-start gap-6 transition-all hover:shadow-soft">
+
+          <!-- Image -->
+          <div class="w-full sm:w-32 h-32 rounded-2xl bg-background-light overflow-hidden flex-shrink-0 border border-border-color">
+            <img [alt]="item.productName" [src]="item.imageUrl" class="w-full h-full object-cover"
+                 onerror="this.src='assets/placeholder.png'" />
+          </div>
+
+          <!-- Info -->
+          <div class="flex-1 w-full flex flex-col gap-3 py-1">
+
+            <!-- Top Row -->
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="text-lg font-bold font-headline text-text-main">{{ item.productName }}</h3>
+                <p class="text-text-sub text-sm mt-0.5">
+                  ${{ item.price | number:'1.2-2' }} / unit
+                </p>
+              </div>
+              <div class="text-right">
+                <!-- bulk badge -->
+                <span *ngIf="isBulkActive(item)"
+                      class="inline-block mb-1 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20
+                             text-primary text-[10px] font-bold uppercase tracking-wide">
+                  Bulk Active
+                </span>
+                <p class="text-xl font-bold text-text-main">
+                  ${{ (item.price * item.quantity) | number:'1.2-2' }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Bulk Progress Bar -->
+            <div *ngIf="hasBulk(item)" class="space-y-1.5">
+              <div class="flex justify-between text-[11px] font-medium">
+                <span class="text-zinc-400">Bulk discount progress</span>
+                <span [ngClass]="isBulkActive(item) ? 'text-primary font-bold' : 'text-zinc-400'">
+                  {{ isBulkActive(item) ? '✓ Active — $' + getBulkPrice(item) + '/unit' : getRemainingForBulk(item) + ' more to unlock' }}
+                </span>
+              </div>
+              <div class="h-1.5 bg-[#e2e5dd] rounded-full overflow-hidden">
+                <div class="h-full bg-primary rounded-full transition-all duration-300"
+                     [style.width]="getBulkProgress(item) + '%'"></div>
+              </div>
+            </div>
+
+            <!-- Controls Row -->
+            <div class="flex items-center justify-between mt-1">
+
+              <!-- Stepper + Manual Input -->
+              <div class="flex items-center gap-2">
+                <div class="flex items-center bg-[#f3f3f3] rounded-xl p-1 border border-border-color">
+                  <button (click)="decrement(item)"
+                          class="w-8 h-8 flex items-center justify-center hover:bg-white hover:shadow-sm
+                                 rounded-lg text-text-sub transition-all">
+                    <span class="material-symbols-outlined" style="font-size:18px;">remove</span>
+                  </button>
+
+                  <!-- Manual input -->
+                  <input
+                    type="number"
+                    min="1"
+                    [value]="item.quantity"
+                    (change)="onQuantityInput(item, $event)"
+                    class="w-12 text-center font-bold text-sm text-text-main bg-transparent
+                           border-none outline-none focus:ring-0 [-moz-appearance:textfield]
+                           [&::-webkit-outer-spin-button]:appearance-none
+                           [&::-webkit-inner-spin-button]:appearance-none" />
+
+                  <button (click)="increment(item)"
+                          class="w-8 h-8 flex items-center justify-center hover:bg-white hover:shadow-sm
+                                 rounded-lg text-text-sub transition-all">
+                    <span class="material-symbols-outlined" style="font-size:18px;">add</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Remove -->
+              <button (click)="removeItem(item)"
+                      class="flex items-center gap-1.5 text-zinc-400 hover:text-red-500 font-semibold
+                             text-sm transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50">
+                <span class="material-symbols-outlined" style="font-size:18px;">delete</span> Remove
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Order Summary -->
+    <aside class="w-full lg:w-[400px]">
+      <div class="bg-white p-8 rounded-3xl sticky top-28 border border-border-color shadow-soft">
+        <h2 class="text-2xl font-extrabold font-headline text-text-main mb-8">Order Summary</h2>
+
+        <div class="space-y-5 mb-8 border-b border-border-color pb-8">
+          <div class="flex justify-between items-center text-sm">
+            <span class="font-medium text-text-sub">Subtotal</span>
+            <span class="font-bold text-text-main">${{ subtotal | number:'1.2-2' }}</span>
+          </div>
+          <div class="flex justify-between items-center text-sm">
+            <span class="font-medium text-text-sub">Estimated Shipping</span>
+            <span class="font-bold text-primary">Free</span>
+          </div>
+          <div class="flex justify-between items-center text-sm">
+            <span class="font-medium text-text-sub">Estimated Tax (8%)</span>
+            <span class="font-bold text-text-main">${{ tax | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-end mb-10">
+          <span class="text-lg font-bold font-headline text-text-sub">Total</span>
+          <div class="text-right">
+            <span class="text-4xl font-extrabold font-headline text-text-main tracking-tight">
+              ${{ total | number:'1.2-2' }}
+            </span>
+            <p class="text-[10px] uppercase tracking-widest text-zinc-400 mt-1 font-bold">Includes VAT</p>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <button routerLink="/marketplace/orders"
+        class="w-full py-4 bg-primary text-white rounded-2xl ...">
+  Proceed to Checkout
+  <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+</button>
+          <button routerLink="/marketplace" class="w-full py-4 bg-background-light border border-border-color text-text-main rounded-2xl
+                         font-bold text-sm hover:bg-white hover:shadow-card transition-all">
+            Continue Shopping
+          </button>
+          <button (click)="clearCart()"
+                  class="w-full py-3 text-red-400 hover:text-red-600 font-semibold text-sm
+                         transition-colors rounded-2xl hover:bg-red-50">
+            Clear Cart
+          </button>
+        </div>
+
+        <div class="mt-8 flex items-center justify-center gap-6 text-zinc-300">
+          <span class="material-symbols-outlined" style="font-size:28px;">credit_card</span>
+          <span class="material-symbols-outlined" style="font-size:28px;">account_balance</span>
+          <span class="material-symbols-outlined" style="font-size:28px;">contactless</span>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mt-auto py-8 border-t border-[#e8e8e8] bg-white">
+    <div class="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-extrabold text-primary tracking-tight font-headline">NABTA</span>
+        <span class="text-xs text-text-sub font-medium">© 2024 Digital Agronomy Solutions.</span>
+      </div>
+      <div class="flex gap-6 text-xs font-semibold text-zinc-400">
+        <a class="hover:text-primary transition-colors" href="#">Privacy</a>
+        <a class="hover:text-primary transition-colors" href="#">Terms</a>
+        <a class="hover:text-primary transition-colors" href="#">Help Center</a>
+      </div>
+    </div>
+  </footer>
+
+</div>

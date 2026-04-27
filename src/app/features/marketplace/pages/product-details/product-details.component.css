@@ -1,0 +1,66 @@
+.material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #bfcaba;
+            border-radius: 10px;
+        }
+
+        .nav-active {
+            background: #0d631b;
+            color: #ffffff;
+            box-shadow: 0 4px 18px rgba(13, 99, 27, .22);
+        }
+
+        .nav-item-base {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 0.75rem;
+            border-radius: 0.875rem;
+            transition: background .18s, color .18s, box-shadow .18s;
+            font-size: .875rem;
+            font-weight: 500;
+            color: #5a6b57;
+            text-decoration: none;
+        }
+
+        .nav-item-base:hover {
+            background: #ffffff;
+            color: #0d631b;
+            box-shadow: 0 2px 8px rgba(43, 66, 40, .08);
+        }
+
+        /* ── AI flyout ──────────────────────────────── */
+        #ai-flyout {
+            opacity: 0;
+            transform: translateX(-8px);
+            pointer-events: none;
+            transition: opacity .18s ease, transform .18s ease;
+        }
+
+        #ai-flyout.visible {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }

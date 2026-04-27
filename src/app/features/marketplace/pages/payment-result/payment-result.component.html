@@ -1,0 +1,152 @@
+<div class="bg-[#f9f9f9] min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="w-full sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#e8e8e8]">
+    <div class="flex justify-between items-center px-8 py-4">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-primary-glow">
+          <span class="material-symbols-outlined text-white"
+                style="font-size:20px;font-variation-settings:'FILL' 1;">agriculture</span>
+        </div>
+        <span class="text-xl font-extrabold text-primary tracking-tight font-headline">NABTA</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1 flex items-center justify-center px-4 py-16">
+    <div class="w-full max-w-lg">
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="flex flex-col items-center gap-4">
+        <span class="material-symbols-outlined animate-spin text-primary" style="font-size:48px;">
+          progress_activity
+        </span>
+        <p class="text-text-sub font-semibold">Confirming your order...</p>
+      </div>
+
+      <!-- Success -->
+      <div *ngIf="!loading && isSuccess"
+           class="bg-white rounded-3xl border border-border-color shadow-soft p-10 text-center space-y-6">
+
+        <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+          <span class="material-symbols-outlined text-primary"
+                style="font-size:44px;font-variation-settings:'FILL' 1;">check_circle</span>
+        </div>
+
+        <div>
+          <h1 class="text-3xl font-extrabold font-headline text-text-main mb-2">Order Confirmed!</h1>
+          <p class="text-text-sub text-sm">Your payment was successful. We'll prepare your harvest supplies right away.</p>
+        </div>
+
+        <!-- Order Summary -->
+        <div *ngIf="order" class="bg-[#f9f9f9] rounded-2xl border border-border-color p-5 text-left space-y-3">
+          <div class="flex justify-between text-sm">
+            <span class="text-text-sub font-medium">Order ID</span>
+            <span class="font-bold text-text-main font-mono text-xs">{{ order._id }}</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-text-sub font-medium">Total Paid</span>
+            <span class="font-bold text-primary text-lg">${{ order.totalPrice | number:'1.2-2' }}</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-text-sub font-medium">Shipping to</span>
+            <span class="font-semibold text-text-main text-right max-w-[60%]">{{ order.shippingAddress }}</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-text-sub font-medium">Status</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20
+                         text-[11px] font-bold uppercase tracking-wide">
+              {{ order.status }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Items -->
+        <div *ngIf="order && order.items.length > 0" class="text-left space-y-3">
+          <p class="text-xs font-bold text-text-sub uppercase tracking-wider">Items Ordered</p>
+          <div *ngFor="let item of order.items" class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-background-light border border-border-color overflow-hidden flex-shrink-0">
+              <img [src]="item.imageUrl" [alt]="item.productName"
+                   class="w-full h-full object-cover"
+                   onerror="this.src='assets/placeholder.png'" />
+            </div>
+            <div class="flex-1">
+              <p class="text-sm font-bold text-text-main">{{ item.productName }}</p>
+              <p class="text-xs text-text-sub">Qty: {{ item.quantity }} · ${{ item.price | number:'1.2-2' }}/unit</p>
+            </div>
+            <span class="text-sm font-bold text-text-main">
+              ${{ (item.price * item.quantity) | number:'1.2-2' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3 pt-2">
+          <a routerLink="/marketplace"
+             class="w-full py-3.5 bg-primary text-white rounded-2xl font-bold text-center
+                    shadow-primary-glow hover:brightness-110 transition-all">
+            Continue Shopping
+          </a>
+          <a routerLink="/marketplace/my-orders"
+             class="w-full py-3.5 bg-white border border-border-color text-text-main rounded-2xl
+                    font-bold text-sm text-center hover:shadow-card transition-all">
+            View My Orders
+          </a>
+        </div>
+      </div>
+
+      <!-- Failed / Error -->
+      <div *ngIf="!loading && isFailed"
+           class="bg-white rounded-3xl border border-red-200 shadow-soft p-10 text-center space-y-6">
+
+        <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto">
+          <span class="material-symbols-outlined text-red-500"
+                style="font-size:44px;font-variation-settings:'FILL' 1;">cancel</span>
+        </div>
+
+        <div>
+          <h1 class="text-3xl font-extrabold font-headline text-text-main mb-2">Payment Failed</h1>
+          <p class="text-text-sub text-sm">
+            Something went wrong with your payment. Your cart is still saved — you can try again.
+          </p>
+        </div>
+
+        <div *ngIf="orderId"
+             class="bg-[#f9f9f9] rounded-2xl border border-border-color p-4 text-sm text-left">
+          <span class="text-text-sub font-medium">Reference: </span>
+          <span class="font-mono text-xs text-text-main">{{ orderId }}</span>
+        </div>
+
+        <div class="flex flex-col gap-3 pt-2">
+          <a routerLink="/marketplace/orders"
+             class="w-full py-3.5 bg-primary text-white rounded-2xl font-bold text-center
+                    shadow-primary-glow hover:brightness-110 transition-all">
+            Try Again
+          </a>
+          <a routerLink="/marketplace/cart"
+             class="w-full py-3.5 bg-white border border-border-color text-text-main rounded-2xl
+                    font-bold text-sm text-center hover:shadow-card transition-all">
+            Return to Cart
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="py-8 border-t border-[#e8e8e8] bg-white">
+    <div class="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-extrabold text-primary tracking-tight font-headline">NABTA</span>
+        <span class="text-xs text-text-sub font-medium">© 2024 Digital Agronomy Solutions.</span>
+      </div>
+      <div class="flex gap-6 text-xs font-semibold text-zinc-400">
+        <a class="hover:text-primary transition-colors" href="#">Privacy</a>
+        <a class="hover:text-primary transition-colors" href="#">Terms</a>
+        <a class="hover:text-primary transition-colors" href="#">Help Center</a>
+      </div>
+    </div>
+  </footer>
+
+</div>

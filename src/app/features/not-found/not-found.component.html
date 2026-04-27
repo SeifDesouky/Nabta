@@ -1,0 +1,138 @@
+<!-- Floating Seeds -->
+<div *ngFor="let seed of seeds"
+     class="seed"
+     [style.width.px]="seed.size"
+     [style.height.px]="seed.size"
+     [style.left.vw]="seed.left"
+     [style.bottom.px]="-20"
+     [style.background]="seed.color"
+     [style.animation-duration.s]="seed.duration"
+     [style.animation-delay.s]="seed.delay">
+</div>
+
+<!-- Background -->
+<div class="bg-layer bg-dots" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></div>
+<div style="position:fixed;inset:0;z-index:0;pointer-events:none;">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<!-- Page -->
+<div style="position:relative;z-index:10;height:100vh;display:grid;grid-template-rows:auto 1fr auto;">
+
+  <!-- Header -->
+  <header style="display:flex;align-items:center;justify-content:space-between;
+                 padding:1.25rem 2.5rem;border-bottom:1.5px solid #e2e5dd;
+                 background:rgba(255,255,255,.7);backdrop-filter:blur(12px);">
+    <a routerLink="/" style="display:flex;align-items:center;gap:.625rem;text-decoration:none;">
+      <div style="width:36px;height:36px;background:#0d631b;border-radius:.75rem;
+                  display:flex;align-items:center;justify-content:center;
+                  box-shadow:0 4px 14px rgba(13,99,27,.28);">
+        <span class="material-symbols-outlined" style="color:white;font-size:20px;
+              font-variation-settings:'FILL' 1;">agriculture</span>
+      </div>
+      <span style="font-family:'Manrope',sans-serif;font-size:.9375rem;font-weight:900;
+                   color:#0d631b;letter-spacing:-.01em;">NABTA</span>
+    </a>
+
+    <a routerLink="/"
+       style="display:flex;align-items:center;gap:.5rem;padding:.5rem 1.125rem;
+              background:white;border:1.5px solid #e2e5dd;border-radius:9999px;
+              font-size:.8125rem;font-weight:700;color:#2b4228;text-decoration:none;
+              font-family:'Manrope',sans-serif;transition:all .18s;">
+      <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span>
+      Go Back
+    </a>
+  </header>
+
+  <!-- Center -->
+  <div style="display:flex;flex-direction:column;align-items:center;
+              justify-content:center;text-align:center;padding:2rem 1.5rem;">
+
+    <!-- 404 + Plant -->
+    <div style="position:relative;display:flex;align-items:center;
+                justify-content:center;margin-bottom:1.75rem;">
+      <div class="num-404">404</div>
+      <div class="plant-wrap">
+        <svg width="96" height="110" viewBox="0 0 96 110" fill="none">
+          <path d="M30 88 L34 108 L62 108 L66 88 Z" fill="#c8a97e"/>
+          <path d="M27 84 C27 81.8 28.8 80 31 80 L65 80 C67.2 80 69 81.8 69 84 L69 88 L27 88 Z" fill="#b8956a"/>
+          <ellipse cx="48" cy="80" rx="19" ry="4" fill="#5c3a1e" opacity=".5"/>
+          <g class="stem">
+            <line x1="48" y1="80" x2="48" y2="34" stroke="#388e3c" stroke-width="3.5" stroke-linecap="round"/>
+            <g class="leaf-l">
+              <path d="M48 58 C40 50 24 52 22 42 C30 40 44 46 48 58Z" fill="#2e7d32"/>
+              <path d="M48 58 C43 52 32 48 25 43" stroke="#1b5e20" stroke-width="1" stroke-linecap="round" opacity=".6"/>
+            </g>
+            <g class="leaf-r">
+              <path d="M48 50 C56 42 72 44 74 34 C66 32 52 38 48 50Z" fill="#388e3c"/>
+              <path d="M48 50 C53 44 64 40 71 35" stroke="#1b5e20" stroke-width="1" stroke-linecap="round" opacity=".6"/>
+            </g>
+            <g class="leaf-l" style="transform-origin:48px 38px;">
+              <path d="M48 38 C38 28 26 30 24 20 C34 18 46 26 48 38Z" fill="#43a047"/>
+            </g>
+            <g class="leaf-r" style="transform-origin:48px 34px;">
+              <path d="M48 34 C58 24 70 26 72 16 C62 14 50 22 48 34Z" fill="#2e7d32"/>
+            </g>
+            <circle cx="48" cy="22" r="7" fill="#a5d6a7" opacity=".8"/>
+            <circle cx="48" cy="22" r="4" fill="#81c784"/>
+            <path d="M54 32 C54 32 56 36 54 38 C52 40 50 38 50 36 C50 34 52 30 54 32Z" fill="#64b5f6" opacity=".7"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Tag -->
+    <div class="tag" style="display:inline-flex;align-items:center;gap:.4rem;
+                background:rgba(13,99,27,.08);border:1px solid rgba(13,99,27,.14);
+                color:#0d631b;font-size:.625rem;font-weight:800;letter-spacing:.12em;
+                text-transform:uppercase;font-family:'Manrope',sans-serif;
+                padding:.3rem .875rem;border-radius:9999px;margin-bottom:1.25rem;">
+      <span class="tag-dot" style="width:6px;height:6px;border-radius:50%;background:#0d631b;"></span>
+      Error 404
+    </div>
+
+    <h1 style="font-family:'Manrope',sans-serif;font-size:clamp(1.5rem,4vw,2.25rem);
+               font-weight:900;color:#2b4228;margin-bottom:.875rem;
+               animation:fadeUp .5s ease both .55s;">
+      This field is <span style="color:#0d631b;">empty</span> 🌾
+    </h1>
+
+    <p class="desc" style="font-size:.9375rem;color:#6c7c66;max-width:420px;
+               line-height:1.65;margin-bottom:2.25rem;">
+      Looks like this crop didn't make it to harvest. The page you're looking for
+      has either been moved, renamed, or never existed.
+    </p>
+
+    <!-- Buttons -->
+    <div class="btns" style="display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;">
+      <a routerLink="/"
+         style="display:flex;align-items:center;gap:.5rem;background:#0d631b;color:#fff;
+                padding:.75rem 1.625rem;border-radius:.875rem;font-size:.875rem;font-weight:800;
+                font-family:'Manrope',sans-serif;text-decoration:none;
+                box-shadow:0 4px 18px rgba(13,99,27,.28);">
+        <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;">home</span>
+        Back to Home
+      </a>
+      <a routerLink="/marketplace"
+         style="display:flex;align-items:center;gap:.5rem;background:white;color:#2b4228;
+                padding:.75rem 1.625rem;border-radius:.875rem;border:1.5px solid #e2e5dd;
+                font-size:.875rem;font-weight:700;font-family:'Manrope',sans-serif;text-decoration:none;">
+        <span class="material-symbols-outlined" style="font-size:18px;">storefront</span>
+        Marketplace
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer style="padding:1.125rem 2.5rem;border-top:1.5px solid #e2e5dd;
+                 background:rgba(255,255,255,.7);backdrop-filter:blur(12px);
+                 display:flex;align-items:center;justify-content:center;
+                 font-size:.75rem;color:#6c7c66;animation:fadeUp .4s ease both 1s;">
+    © 2024 <span style="color:#0d631b;font-weight:700;margin:0 .25rem;">NABTA</span>
+    Agricultural Platform · All rights reserved
+  </footer>
+
+</div>

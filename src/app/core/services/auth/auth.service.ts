@@ -24,7 +24,7 @@ export class AuthService {
     if (user.role === 'admin') {
       this.router.navigate(['/admin']);
     } else if (user.role === 'farmer') {
-      this.router.navigate(['/farmer']);
+      this.router.navigate(['/marketplace']);
     } else if (user.role === 'expert') {
       this.router.navigate(['/expert']);
     } else if (user.role === 'buyer') {

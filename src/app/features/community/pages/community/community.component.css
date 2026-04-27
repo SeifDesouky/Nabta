@@ -1,0 +1,85 @@
+ * { box-sizing: border-box; }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .ms-fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+  body { font-family: 'Inter', sans-serif; background: #f8f8f5; }
+  h1,h2,h3,h4 { font-family: 'Manrope', sans-serif; }
+
+  ::-webkit-scrollbar        { width: 4px; }
+  ::-webkit-scrollbar-track  { background: transparent; }
+  ::-webkit-scrollbar-thumb  { background: #bfcaba; border-radius: 10px; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+
+  /* ── AI flyout ──────────────────────────────────── */
+  #ai-flyout {
+    opacity: 0; transform: translateX(-8px);
+    pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+  }
+  #ai-flyout.visible { opacity: 1; transform: translateX(0); pointer-events: auto; }
+
+  /* ── Page load ──────────────────────────────────── */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+  .fade-up { animation: fadeUp .4s ease both; }
+  .d1{animation-delay:.05s} .d2{animation-delay:.10s} .d3{animation-delay:.15s} .d4{animation-delay:.20s} .d5{animation-delay:.25s}
+
+  /* ── Post card ──────────────────────────────────── */
+  .post-card {
+    background: #ffffff;
+    border: 1.5px solid #e8ebe4;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(43,66,40,0.06);
+    transition: box-shadow .2s, border-color .2s;
+  }
+  .post-card:hover { box-shadow: 0 6px 28px rgba(43,66,40,0.10); border-color: #d4dace; }
+
+  /* ── Create-post textarea ───────────────────────── */
+  .post-textarea {
+    width: 100%;
+    background: #f8f8f5;
+    border: 1.5px solid #e2e5dd;
+    border-radius: 1rem;
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    color: #1a1c1c;
+    resize: none;
+    outline: none;
+    transition: border-color .18s, box-shadow .18s;
+    min-height: 96px;
+  }
+  .post-textarea::placeholder { color: #b5c2af; }
+  .post-textarea:focus {
+    border-color: #0d631b;
+    box-shadow: 0 0 0 3px rgba(13,99,27,0.09);
+    background: #ffffff;
+  }
+
+  /* ── Right sidebar fading border ───────────────── */
+  .right-sidebar {
+    position: fixed;
+  }
+  .right-sidebar::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10%;
+    bottom: 10%;
+    width: 1.5px;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #e2e5dd 18%,
+      #e2e5dd 82%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+
+  /* ── Like button active ─────────────────────────── */
+  .like-btn.liked { color: #ba1a1a; }
+  .like-btn.liked .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }

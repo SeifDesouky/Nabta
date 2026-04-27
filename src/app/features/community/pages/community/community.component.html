@@ -1,0 +1,464 @@
+<div class="bg-[#f8f8f5] text-on-surface">
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="h-screen w-[17.5rem] fixed left-0 top-0 hidden md:flex flex-col
+              bg-[#f3f3f3] border-r border-[#e4e4e4] z-40">
+  <div class="px-5 h-16 pt-3 border-b border-[#e4e4e4] flex-shrink-0">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-primary-glow flex-shrink-0">
+        <span class="material-symbols-outlined text-white"
+              style="font-size:20px;font-variation-settings:'FILL' 1;">agriculture</span>
+      </div>
+      <h1 class="text-[15px] font-extrabold text-primary tracking-tight leading-none">NABTA</h1>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto min-h-0 px-3 pt-5 pb-6">
+    <p class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-[.12em] px-2 mb-3">Menu</p>
+
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;">dashboard</span>Dashboard
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">storefront</span>Marketplace
+    </a>
+
+    <!-- Community ACTIVE -->
+    <div class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] bg-primary text-white shadow-primary-glow mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">groups</span>
+      <span class="text-sm font-semibold">Community</span>
+    </div>
+
+    <!-- AI Tools -->
+    <div #aiToolsBtn
+         class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5 cursor-pointer select-none"
+         (mouseenter)="showAiFlyout(aiToolsBtn)"
+         (mouseleave)="scheduleHideAiFlyout()">
+      <span class="material-symbols-outlined" style="font-size:20px;">psychology</span>
+      <span>AI Tools</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-400" style="font-size:15px;">chevron_right</span>
+    </div>
+
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;">chat</span>Chats
+    </a>
+
+    <div class="mx-1 mt-4 mb-4 border-t border-[#e0e0e0]"></div>
+
+    <p class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-[.12em] px-2 mb-3">Community</p>
+
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;">home</span>Home Feed
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;">trending_up</span>Trending Crops
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-semibold
+                       text-primary mb-0.5" style="background:rgba(13,99,27,0.08)">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">group_work</span>Local Groups
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;">psychology</span>Expert Q&A
+    </a>
+    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;">bookmark</span>Saved Posts
+    </a>
+  </div>
+</aside>
+
+<!-- ══ AI FLYOUT ══ -->
+<div class="fixed z-[600] w-56 bg-white rounded-3xl overflow-hidden
+            shadow-[0_8px_32px_rgba(0,0,0,0.13)] border border-[#eaeaea] transition-all duration-200"
+     [style.top]="aiFlyoutTop"
+     [style.left]="aiFlyoutLeft"
+     [style.opacity]="aiFlyoutOpen ? '1' : '0'"
+     [style.pointer-events]="aiFlyoutOpen ? 'auto' : 'none'"
+     [style.transform]="aiFlyoutOpen ? 'translateX(0)' : 'translateX(-8px)'"
+     (mouseenter)="keepAiFlyout()"
+     (mouseleave)="scheduleHideAiFlyout()">
+  <div class="py-1.5">
+    <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary" style="font-size:15px;font-variation-settings:'FILL' 1;">smart_toy</span>
+      </div>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-primary">ChatBot</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary" style="font-size:14px;">arrow_forward</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary" style="font-size:15px;">monitoring</span>
+      </div>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-primary">Yield Expectations</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary" style="font-size:14px;">arrow_forward</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary" style="font-size:15px;">yard</span>
+      </div>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-primary">Crop Recommendation</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary" style="font-size:14px;">arrow_forward</span>
+    </a>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<main class="md:ml-[17.5rem] lg:mr-[21rem] min-h-screen pt-16">
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 md:left-[17.5rem] right-0 h-16 bg-white/90 backdrop-blur-md
+                 border-b border-[#e8e8e8] flex items-center justify-between px-8 z-30">
+    <div class="flex items-center gap-2 text-sm">
+      <span class="text-text-sub font-medium">Community</span>
+      <span class="material-symbols-outlined text-zinc-300" style="font-size:16px;">chevron_right</span>
+      <span class="font-bold text-text-main">Local Groups</span>
+    </div>
+    <div class="flex items-center gap-2 pl-5 border-l border-[#e8e8e8] ml-4">
+      <button class="relative p-2 pb-0 text-zinc-500 hover:bg-[#f3f3f3] rounded-full transition-colors">
+        <span class="material-symbols-outlined" style="font-size:22px;">notifications</span>
+        <span class="absolute top-2 right-2 w-2 h-2 bg-tertiary rounded-full"></span>
+      </button>
+      <div class="flex items-center gap-2.5 pl-3">
+        <div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary"
+                style="font-size:22px;font-variation-settings:'FILL' 1;">account_circle</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Feed -->
+  <div class="p-8 px-16 mx-auto space-y-6">
+
+    <!-- Title -->
+    <div>
+      <h1 class="text-2xl font-extrabold tracking-tight text-primary">Community Feed</h1>
+      <p class="text-sm text-text-sub mt-1">Connect with agronomists, share insights, and grow together.</p>
+    </div>
+
+    <!-- ── Create Post ── -->
+    <section class="bg-white border border-[#e8ebe4] rounded-[1.5rem] overflow-hidden
+                    shadow-[0_2px_16px_rgba(43,66,40,0.06)] p-6">
+      <div class="flex gap-4 mb-4">
+        <div class="w-10 h-10 rounded-full bg-primary/10 border border-primary/20
+                    flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-primary"
+                style="font-size:22px;font-variation-settings:'FILL' 1;">account_circle</span>
+        </div>
+        <textarea
+          [(ngModel)]="newPostContent"
+          placeholder="Share an agricultural insight or update..."
+          rows="3"
+          class="flex-1 w-full bg-[#f8f8f5] border border-[#e2e5dd] rounded-[1rem] px-4 py-3.5
+                 text-sm font-body text-on-surface placeholder:text-zinc-400 resize-none outline-none
+                 focus:border-primary focus:ring-2 focus:ring-primary/10 focus:bg-white transition-all">
+        </textarea>
+      </div>
+      <div class="flex items-center justify-between border-t border-[#f0f2ee] pt-4">
+        <div class="flex gap-1">
+          <button class="flex items-center gap-1.5 px-3 py-2 rounded-[.875rem] hover:bg-[#f3f3f3] transition-colors text-text-sub font-medium text-xs">
+            <span class="material-symbols-outlined text-primary" style="font-size:17px;">image</span>Photo
+          </button>
+          <button class="flex items-center gap-1.5 px-3 py-2 rounded-[.875rem] hover:bg-[#f3f3f3] transition-colors text-text-sub font-medium text-xs">
+            <span class="material-symbols-outlined text-tertiary" style="font-size:17px;">videocam</span>Video
+          </button>
+          <button class="flex items-center gap-1.5 px-3 py-2 rounded-[.875rem] hover:bg-[#f3f3f3] transition-colors text-text-sub font-medium text-xs">
+            <span class="material-symbols-outlined text-secondary" style="font-size:17px;">event</span>Event
+          </button>
+        </div>
+        <button (click)="submitPost()"
+                [disabled]="!newPostContent.trim() || postSubmitting"
+                class="bg-primary text-white px-6 py-2 rounded-[.875rem] text-sm font-extrabold font-headline
+                       shadow-primary-glow hover:brightness-110 transition-all active:scale-[0.98]
+                       disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+          <span *ngIf="postSubmitting" class="material-symbols-outlined animate-spin" style="font-size:16px;">progress_activity</span>
+          Post
+        </button>
+      </div>
+    </section>
+
+    <!-- ── Loading ── -->
+    <div *ngIf="loading" class="flex justify-center py-12">
+      <span class="material-symbols-outlined animate-spin text-primary" style="font-size:36px;">progress_activity</span>
+    </div>
+
+    <!-- ── Error ── -->
+    <div *ngIf="!loading && error" class="text-center py-10 text-red-500 font-semibold">{{ error }}</div>
+
+    <!-- ── Posts ── -->
+    <article *ngFor="let post of posts"
+             class="bg-white border border-[#e8ebe4] rounded-[1.5rem] overflow-hidden
+                    shadow-[0_2px_16px_rgba(43,66,40,0.06)] hover:shadow-[0_6px_28px_rgba(43,66,40,0.10)]
+                    hover:border-[#d4dace] transition-all duration-200">
+      <div class="p-6">
+
+        <!-- Post Header -->
+        <div class="flex justify-between items-start mb-5">
+          <div class="flex gap-3">
+            <!-- Avatar -->
+            <div *ngIf="post.author?.imageUrl; else initials"
+                 class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+              <img [src]="post.author?.imageUrl" [alt]="post.author?.name" class="w-full h-full object-cover" />
+            </div>
+            <ng-template #initials>
+              <div class="w-10 h-10 rounded-full bg-primary/10 border border-primary/20
+                          flex items-center justify-center text-primary font-extrabold text-sm flex-shrink-0">
+                {{ getInitials(post.author?.name ?? '') }}
+              </div>
+            </ng-template>
+
+            <div>
+              <h4 class="font-bold text-sm text-text-main font-headline leading-tight">
+                {{ post.author?.name ?? 'Unknown' }}
+              </h4>
+              <p class="text-[11px] text-text-sub font-medium flex items-center gap-1.5 mt-0.5">
+                <span *ngIf="post.author?.role">{{ post.author?.role }}</span>
+                <span *ngIf="post.author?.role" class="w-1 h-1 bg-[#bfcaba] rounded-full"></span>
+                {{ timeAgo(post.createdAt) }}
+              </p>
+            </div>
+          </div>
+          <button class="p-1.5 text-zinc-400 hover:text-zinc-600 hover:bg-[#f3f3f3] rounded-lg transition-colors">
+            <span class="material-symbols-outlined" style="font-size:20px;">more_horiz</span>
+          </button>
+        </div>
+
+        <!-- Post Title -->
+        <h3 *ngIf="post.title" class="font-bold text-base text-text-main mb-2 font-headline">{{ post.title }}</h3>
+
+        <!-- Post Content -->
+        <p class="text-sm text-on-surface leading-relaxed mb-5">{{ post.content }}</p>
+
+        <!-- Tags -->
+        <div *ngIf="post.tags?.length" class="flex flex-wrap gap-2 mb-5">
+          <span *ngFor="let tag of post.tags"
+                class="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20
+                       text-[11px] font-bold">
+            #{{ tag }}
+          </span>
+        </div>
+
+        <!-- Actions Row -->
+        <div class="flex items-center gap-5 py-3 border-t border-[#f0f2ee]">
+          <!-- Like -->
+          <button (click)="toggleLike(post)"
+                  class="flex items-center gap-1.5 text-xs font-semibold transition-colors"
+                  [ngClass]="post.isLiked ? 'text-red-500' : 'text-text-sub hover:text-primary'">
+            <span class="material-symbols-outlined" style="font-size:18px;"
+>
+              favorite
+            </span>
+            {{ post.likesCount }}
+          </button>
+
+          <!-- Comments -->
+         <button (click)="toggleComments(post._id)"
+        class="flex items-center gap-1.5 text-text-sub hover:text-primary transition-colors text-xs font-semibold">
+  <span class="material-symbols-outlined" style="font-size:18px;">chat_bubble</span>
+  {{ isCommentsExpanded(post._id) ? getTotalCommentCount(post._id) : post.commentCount }} Comments
+</button>
+
+          <!-- Share -->
+          <button class="flex items-center gap-1.5 text-text-sub hover:text-primary transition-colors text-xs font-semibold ml-auto">
+            <span class="material-symbols-outlined" style="font-size:18px;">share</span>Share
+          </button>
+        </div>
+
+        <!-- Comments Section -->
+        <div *ngIf="isCommentsExpanded(post._id)"
+             class="space-y-3 mt-3 pt-4 border-t border-[#f0f2ee]">
+
+          <!-- Loading comments -->
+          <div *ngIf="loadingComments[post._id]" class="text-center py-3">
+            <span class="material-symbols-outlined animate-spin text-primary" style="font-size:20px;">progress_activity</span>
+          </div>
+
+          <!-- Comments list -->
+          <!-- <div *ngFor="let comment of commentsMap[post._id]" class="flex gap-2.5">
+            <div class="w-7 h-7 rounded-full bg-primary/10 border border-primary/20
+                        flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-primary">
+              {{ getInitials(comment.author?.name ?? '') }}
+            </div>
+            <div class="flex-1 bg-[#f8f8f5] border border-[#f0f2ee] rounded-[1rem] p-3">
+              <div class="flex justify-between mb-1">
+                <span class="font-bold text-xs text-text-main">{{ comment.author?.name }}</span>
+                <span class="text-[10px] text-zinc-400">{{ timeAgo(comment.createdAt) }}</span>
+              </div>
+              <p class="text-xs text-text-sub leading-relaxed">{{ comment.content }}</p>
+              <span *ngIf="comment.isExpertReply"
+                    class="inline-block mt-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary
+                           border border-primary/20 text-[9px] font-bold uppercase tracking-wide">
+                Expert Reply
+              </span>
+            </div>
+          </div> -->
+
+          <!-- Comments list -->
+<div *ngFor="let comment of commentsMap[post._id]" class="space-y-2">
+
+  <!-- Parent Comment -->
+  <div class="flex gap-2.5">
+    <div class="w-7 h-7 rounded-full bg-primary/10 border border-primary/20
+                flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-primary">
+      {{ getInitials(comment.author?.name ?? '') }}
+    </div>
+    <div class="flex-1 bg-[#f8f8f5] border border-[#f0f2ee] rounded-[1rem] p-3">
+      <div class="flex justify-between mb-1">
+        <span class="font-bold text-xs text-text-main">{{ comment.author?.name }}</span>
+        <span class="text-[10px] text-zinc-400">{{ timeAgo(comment.createdAt) }}</span>
+      </div>
+      <p class="text-xs text-text-sub leading-relaxed">{{ comment.content }}</p>
+      <span *ngIf="comment.isExpertReply"
+            class="inline-block mt-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary
+                   border border-primary/20 text-[9px] font-bold uppercase tracking-wide">
+        Expert Reply
+      </span>
+    </div>
+  </div>
+
+  <!-- ← Nested Replies -->
+  <div *ngIf="comment.replies?.length" class="ml-9 space-y-2">
+    <div *ngFor="let reply of comment.replies" class="flex gap-2.5">
+      <div class="w-6 h-6 rounded-full bg-primary/5 border border-primary/20
+                  flex items-center justify-center flex-shrink-0 text-[9px] font-bold text-primary">
+        {{ getInitials(reply.author?.name ?? '') }}
+      </div>
+      <div class="flex-1 bg-white border border-[#f0f2ee] rounded-[1rem] p-3">
+        <div class="flex justify-between mb-1">
+          <div class="flex items-center gap-1.5">
+            <span class="font-bold text-xs text-text-main">{{ reply.author?.name }}</span>
+            <span *ngIf="reply.isExpertReply"
+                  class="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary
+                         border border-primary/20 text-[9px] font-bold uppercase tracking-wide">
+              Expert
+            </span>
+          </div>
+          <span class="text-[10px] text-zinc-400">{{ timeAgo(reply.createdAt) }}</span>
+        </div>
+        <p class="text-xs text-text-sub leading-relaxed">{{ reply.content }}</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+          <!-- Add comment input -->
+          <div class="flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-full bg-primary/10 border border-primary/20
+                        flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-primary"
+                    style="font-size:16px;font-variation-settings:'FILL' 1;">account_circle</span>
+            </div>
+            <div class="flex-1 relative">
+              <input
+                type="text"
+                [(ngModel)]="commentInputs[post._id]"
+                (keyup.enter)="submitComment(post)"
+                placeholder="Add a comment..."
+                class="w-full bg-[#f3f3f3] border-2 border-transparent rounded-full py-2 pr-11 pl-4
+                       text-xs text-on-surface placeholder:text-text-sub outline-none
+                       focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all" />
+              <button (click)="submitComment(post)"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-primary hover:text-primary-container transition-colors">
+                <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;">send</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </article>
+
+  </div>
+</main>
+
+<!-- ══ RIGHT SIDEBAR ══ -->
+<aside class="hidden lg:block w-[21rem] fixed right-0 top-0 h-screen pt-16 px-6 overflow-y-auto bg-[#f8f8f5]"
+       style="border-left: 1.5px solid #e2e5dd;">
+  <div class="space-y-5 py-6">
+
+    <!-- Trending Topics -->
+    <div class="bg-white border border-[#e8ebe4] rounded-[1.5rem] p-5
+                shadow-[0_2px_16px_rgba(43,66,40,0.06)]">
+      <h3 class="font-headline font-bold text-text-main text-sm mb-4 flex items-center justify-between">
+        Trending Topics
+        <span class="material-symbols-outlined text-primary"
+              style="font-size:18px;font-variation-settings:'FILL' 1;">insights</span>
+      </h3>
+      <div class="space-y-4">
+        <a href="#" class="group block">
+          <p class="text-primary font-bold text-sm group-hover:underline">#SustainableFarming</p>
+          <p class="text-[11px] text-text-sub mt-0.5">2.4k posts this week</p>
+        </a>
+        <a href="#" class="group block">
+          <p class="text-primary font-bold text-sm group-hover:underline">#CropHealth</p>
+          <p class="text-[11px] text-text-sub mt-0.5">1.8k posts this week</p>
+        </a>
+        <a href="#" class="group block">
+          <p class="text-primary font-bold text-sm group-hover:underline">#PrecisionAg</p>
+          <p class="text-[11px] text-text-sub mt-0.5">942 posts</p>
+        </a>
+      </div>
+      <button class="w-full mt-5 text-primary text-xs font-bold py-2 rounded-[.875rem]
+                     hover:bg-primary/5 transition-colors border border-primary/20">
+        View More
+      </button>
+    </div>
+
+    <!-- Top Contributors -->
+    <div class="bg-white border border-[#e8ebe4] rounded-[1.5rem] p-5
+                shadow-[0_2px_16px_rgba(43,66,40,0.06)]">
+      <h3 class="font-headline font-bold text-text-main text-sm mb-4">Top Contributors</h3>
+      <div class="space-y-4">
+        <div *ngFor="let contributor of topContributors"
+             class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-primary/10 border border-primary/20
+                      flex items-center justify-center text-primary font-bold text-xs flex-shrink-0">
+            {{ getInitials(contributor.name) }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-bold text-text-main truncate">{{ contributor.name }}</p>
+            <p class="text-[9px] uppercase tracking-wider text-text-sub font-bold">{{ contributor.role }}</p>
+          </div>
+          <button class="text-primary font-bold text-xs px-3 py-1 rounded-full
+                         border border-primary/20 hover:bg-primary/5 transition-colors">
+            Follow
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<!-- ══ MOBILE BOTTOM NAV ══ -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-[#e8e8e8]
+            flex items-center justify-around z-40">
+  <a href="#" class="flex flex-col items-center gap-1 text-zinc-400">
+    <span class="material-symbols-outlined" style="font-size:22px;">dashboard</span>
+    <span class="text-[10px] font-medium">Dashboard</span>
+  </a>
+  <a href="#" class="flex flex-col items-center gap-1 text-zinc-400">
+    <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 1;">storefront</span>
+    <span class="text-[10px]">Market</span>
+  </a>
+  <button class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center -mt-5 shadow-primary-glow">
+    <span class="material-symbols-outlined" style="font-size:22px;">add</span>
+  </button>
+  <a href="#" class="flex flex-col items-center gap-1 text-primary font-bold">
+    <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 1;">groups</span>
+    <span class="text-[10px]">Community</span>
+  </a>
+  <a href="#" class="flex flex-col items-center gap-1 text-zinc-400">
+    <span class="material-symbols-outlined" style="font-size:22px;">chat</span>
+    <span class="text-[10px] font-medium">Chats</span>
+  </a>
+</nav>
+
+</div>

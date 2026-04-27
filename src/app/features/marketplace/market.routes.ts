@@ -24,5 +24,17 @@ export const marketplaceRoutes: Routes = [
     loadComponent: () =>
       import('./pages/orders/orders.component')
         .then(m => m.OrdersComponent)
-  }
+  },
+  {
+  path: 'payment-result',
+  loadComponent: () =>
+    import('./pages/payment-result/payment-result.component')
+    .then(m => m.PaymentResultComponent)
+  },
+  {
+  path: 'my-orders',
+  loadComponent: () =>
+    import('./pages/my-orders/my-orders.component')
+      .then(m => m.MyOrdersComponent)
+}
 ];

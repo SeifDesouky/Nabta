@@ -1,1 +1,308 @@
-<p>orders works!</p>
+<div class="bg-[#f9f9f9] text-text-main antialiased min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="w-full top-0 sticky z-50 bg-white/90 backdrop-blur-md border-b border-[#e8e8e8]">
+    <div class="flex justify-between items-center px-8 py-4 max-w-full mx-auto">
+      <div class="flex items-center gap-2.5 cursor-pointer">
+        <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-primary-glow flex-shrink-0">
+          <span class="material-symbols-outlined text-white"
+                style="font-size:20px;font-variation-settings:'FILL' 1;">agriculture</span>
+        </div>
+        <span class="text-xl font-extrabold text-primary tracking-tight font-headline">NABTA</span>
+        <span class="hidden md:inline-block ml-3 pl-3 border-l border-border-color text-sm font-semibold text-text-sub">
+          Secure Checkout
+        </span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="material-symbols-outlined text-zinc-300" style="font-size:20px;">lock</span>
+        <a routerLink="/marketplace/cart"
+           class="text-sm font-semibold text-zinc-500 hover:text-primary transition-colors">
+          Return to Cart
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="max-w-7xl mx-auto px-4 md:px-8 py-10 flex flex-col lg:flex-row gap-12 flex-1 w-full">
+
+    <!-- LEFT: Form -->
+    <div class="flex-1 space-y-10">
+
+      <!-- Steps -->
+      <div class="flex items-center gap-3 overflow-x-auto pb-2">
+        <div class="flex items-center gap-2 text-primary">
+          <div class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold shadow-primary-glow">1</div>
+          <span class="text-sm font-headline font-bold whitespace-nowrap">Shipping</span>
+        </div>
+        <div class="h-px w-6 bg-border-color"></div>
+        <div class="flex items-center gap-2 text-zinc-400">
+          <div class="w-7 h-7 rounded-full bg-[#f3f3f3] border border-border-color flex items-center justify-center text-xs font-bold">2</div>
+          <span class="text-sm font-headline font-semibold whitespace-nowrap">Delivery</span>
+        </div>
+        <div class="h-px w-6 bg-border-color"></div>
+        <div class="flex items-center gap-2 text-zinc-400">
+          <div class="w-7 h-7 rounded-full bg-[#f3f3f3] border border-border-color flex items-center justify-center text-xs font-bold">3</div>
+          <span class="text-sm font-headline font-semibold whitespace-nowrap">Payment</span>
+        </div>
+        <div class="h-px w-6 bg-border-color"></div>
+        <div class="flex items-center gap-2 text-zinc-400">
+          <div class="w-7 h-7 rounded-full bg-[#f3f3f3] border border-border-color flex items-center justify-center text-xs font-bold">4</div>
+          <span class="text-sm font-headline font-semibold whitespace-nowrap">Review</span>
+        </div>
+      </div>
+
+      <!-- Section -->
+      <section class="space-y-8">
+        <div>
+          <h1 class="text-3xl font-extrabold tracking-tight text-text-main mb-2 font-headline">Shipping Address</h1>
+          <p class="text-text-sub text-sm">Where should we send your harvest supplies?</p>
+        </div>
+
+        <!-- Error Banner -->
+        <div *ngIf="error"
+             class="flex items-center gap-3 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-semibold">
+          <span class="material-symbols-outlined" style="font-size:18px;">error_outline</span>
+          {{ error }}
+        </div>
+
+        <!-- Form -->
+        <form [formGroup]="form" (ngSubmit)="submit()"
+              class="bg-white rounded-3xl p-8 border border-border-color shadow-card space-y-6">
+
+          <!-- First / Last Name -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="flex flex-col">
+              <label class="text-[11px] font-bold text-text-sub uppercase tracking-wider mb-2 px-1">
+                First Name *
+              </label>
+              <input formControlName="firstName" type="text" placeholder="Ahmad"
+                     class="w-full bg-background-light border rounded-xl p-3.5 transition-all text-sm
+                            text-text-main placeholder:text-zinc-400 outline-none focus:bg-white
+                            focus:ring-1 focus:ring-primary/40 focus:border-primary"
+                     [ngClass]="isInvalid('firstName') ? 'border-red-400' : 'border-border-color'" />
+              <p *ngIf="isInvalid('firstName')" class="text-red-500 text-[11px] mt-1 px-1">Required</p>
+            </div>
+            <div class="flex flex-col">
+              <label class="text-[11px] font-bold text-text-sub uppercase tracking-wider mb-2 px-1">
+                Last Name *
+              </label>
+              <input formControlName="lastName" type="text" placeholder="Zaid"
+                     class="w-full bg-background-light border rounded-xl p-3.5 transition-all text-sm
+                            text-text-main placeholder:text-zinc-400 outline-none focus:bg-white
+                            focus:ring-1 focus:ring-primary/40 focus:border-primary"
+                     [ngClass]="isInvalid('lastName') ? 'border-red-400' : 'border-border-color'" />
+              <p *ngIf="isInvalid('lastName')" class="text-red-500 text-[11px] mt-1 px-1">Required</p>
+            </div>
+          </div>
+
+          <!-- Organization -->
+          <div class="flex flex-col">
+            <label class="text-[11px] font-bold text-text-sub uppercase tracking-wider mb-2 px-1">
+              Farm / Organization (Optional)
+            </label>
+            <input formControlName="organization" type="text" placeholder="Green Valley Farms Ltd."
+                   class="w-full bg-background-light border border-border-color rounded-xl p-3.5
+                          focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary/40
+                          transition-all text-sm text-text-main placeholder:text-zinc-400 outline-none" />
+          </div>
+
+          <!-- Street -->
+          <div class="flex flex-col">
+            <label class="text-[11px] font-bold text-text-sub uppercase tracking-wider mb-2 px-1">
+              Street Address *
+            </label>
+            <input formControlName="street" type="text" placeholder="123 Agronomy Road, Sector 4"
+                   class="w-full bg-background-light border rounded-xl p-3.5 transition-all text-sm
+                          text-text-main placeholder:text-zinc-400 outline-none focus:bg-white
+                          focus:ring-1 focus:ring-primary/40 focus:border-primary"
+                   [ngClass]="isInvalid('street') ? 'border-red-400' : 'border-border-color'" />
+            <p *ngIf="isInvalid('street')" class="text-red-500 text-[11px] mt-1 px-1">Required</p>
+          </div>
+
+          <!-- City / Province / Postal -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="flex flex-col">
+              <label class="text-[11px] font-bold text-text-sub uppercase tracking-wider mb-2 px-1">City *</label>
+              <input formControlName="city" type="text" placeholder="Cairo"
+                     class="w-full bg-background-light border rounded-xl p-3.5 transition-all text-sm
+                            text-text-main placeholder:text-zinc-400 outline-none focus:bg-white
+                            focus:ring-1 focus:ring-primary/40 focus:border-primary"
+                     [ngClass]="isInvalid('city') ? 'border-red-400' : 'border-border-color'" />
+            </div>
+            <div class="flex flex-col">
+              <label class="text-[11px] font-bold text-text-sub uppercase tracking-wider mb-2 px-1">Province *</label>
+              <input formControlName="province" type="text" placeholder="Giza"
+                     class="w-full bg-background-light border rounded-xl p-3.5 transition-all text-sm
+                            text-text-main placeholder:text-zinc-400 outline-none focus:bg-white
+                            focus:ring-1 focus:ring-primary/40 focus:border-primary"
+                     [ngClass]="isInvalid('province') ? 'border-red-400' : 'border-border-color'" />
+            </div>
+            <div class="flex flex-col">
+              <label class="text-[11px] font-bold text-text-sub uppercase tracking-wider mb-2 px-1">Postal Code *</label>
+              <input formControlName="postalCode" type="text" placeholder="12345"
+                     class="w-full bg-background-light border rounded-xl p-3.5 transition-all text-sm
+                            text-text-main placeholder:text-zinc-400 outline-none focus:bg-white
+                            focus:ring-1 focus:ring-primary/40 focus:border-primary"
+                     [ngClass]="isInvalid('postalCode') ? 'border-red-400' : 'border-border-color'" />
+            </div>
+          </div>
+
+          <!-- Phone -->
+          <div class="flex flex-col">
+            <label class="text-[11px] font-bold text-text-sub uppercase tracking-wider mb-2 px-1">
+              Phone Number *
+            </label>
+            <div class="flex gap-2">
+              <span class="bg-background-light border border-border-color px-4 py-3.5 rounded-xl
+                           flex items-center text-text-sub font-bold text-sm flex-shrink-0">+20</span>
+              <input formControlName="phone" type="tel" placeholder="123 456 7890"
+                     class="w-full bg-background-light border rounded-xl p-3.5 transition-all text-sm
+                            text-text-main placeholder:text-zinc-400 outline-none focus:bg-white
+                            focus:ring-1 focus:ring-primary/40 focus:border-primary"
+                     [ngClass]="isInvalid('phone') ? 'border-red-400' : 'border-border-color'" />
+            </div>
+            <p *ngIf="isInvalid('phone')" class="text-red-500 text-[11px] mt-1 px-1">
+              Enter a valid phone number (10–11 digits)
+            </p>
+          </div>
+
+          <!-- Save default -->
+          <div class="flex items-center gap-3 pt-2">
+            <input formControlName="saveDefault" type="checkbox" id="save-default"
+                   class="w-5 h-5 rounded-md border-border-color text-primary
+                          focus:ring-primary bg-background-light cursor-pointer accent-primary" />
+            <label for="save-default" class="text-sm text-text-sub font-medium cursor-pointer select-none">
+              Save this as my default shipping address.
+            </label>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex flex-col-reverse sm:flex-row justify-between items-center gap-4 pt-4 border-t border-border-color">
+            <a routerLink="/marketplace/cart"
+               class="w-full sm:w-auto flex items-center justify-center gap-2 text-text-sub
+                      font-semibold hover:text-text-main transition-colors py-3">
+              <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+              Return to Cart
+            </a>
+            <button type="submit"
+                    [disabled]="loading"
+                    class="w-full sm:w-auto px-10 py-4 bg-primary text-white rounded-2xl font-bold
+                           shadow-primary-glow hover:brightness-110 active:scale-95 transition-all
+                           flex justify-center items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+              <span *ngIf="!loading">
+                Proceed to Payment
+                <span class="material-symbols-outlined align-middle ml-1" style="font-size:18px;">arrow_forward</span>
+              </span>
+              <span *ngIf="loading" class="flex items-center gap-2">
+                <span class="material-symbols-outlined animate-spin" style="font-size:18px;">progress_activity</span>
+                Placing Order...
+              </span>
+            </button>
+          </div>
+
+        </form>
+      </section>
+    </div>
+
+    <!-- RIGHT: Order Summary -->
+    <aside class="w-full lg:w-[400px]">
+      <div class="sticky top-24 space-y-6">
+
+        <div class="bg-white rounded-3xl overflow-hidden shadow-soft border border-border-color flex flex-col">
+
+          <!-- Header -->
+          <div class="p-6 bg-[#f9f9f9] border-b border-border-color flex justify-between items-center">
+            <h2 class="text-lg font-bold text-text-main font-headline">Order Summary</h2>
+            <span class="text-xs font-bold text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full">
+              {{ itemCount }} {{ itemCount === 1 ? 'Item' : 'Items' }}
+            </span>
+          </div>
+
+          <div class="p-6 space-y-6 flex-1">
+
+            <!-- Loading -->
+            <div *ngIf="cartLoading" class="flex justify-center py-6">
+              <span class="material-symbols-outlined animate-spin text-primary" style="font-size:28px;">progress_activity</span>
+            </div>
+
+            <!-- Items -->
+            <div *ngIf="!cartLoading && cart" class="space-y-4">
+              <div *ngFor="let item of cart.items" class="flex gap-4 items-center">
+                <div class="w-16 h-16 rounded-xl bg-background-light border border-border-color
+                            overflow-hidden flex-shrink-0 p-1">
+                  <img [src]="item.imageUrl" [alt]="item.productName"
+                       class="w-full h-full object-cover rounded-lg"
+                       onerror="this.src='assets/placeholder.png'" />
+                </div>
+                <div class="flex-1">
+                  <h4 class="text-sm font-bold text-text-main line-clamp-1">{{ item.productName }}</h4>
+                  <p class="text-xs text-text-sub mt-0.5">Qty: {{ item.quantity }}</p>
+                  <p class="text-sm font-bold text-text-main mt-1">
+                    ${{ (item.price * item.quantity) | number:'1.2-2' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Empty cart -->
+            <div *ngIf="!cartLoading && (!cart || cart.items.length === 0)"
+                 class="text-center py-6 text-zinc-400 text-sm">
+              Your cart is empty.
+            </div>
+
+            <!-- Totals -->
+            <div class="pt-6 border-t border-border-color space-y-3">
+              <div class="flex justify-between text-sm">
+                <span class="text-text-sub font-medium">Subtotal</span>
+                <span class="font-bold text-text-main">${{ subtotal | number:'1.2-2' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-text-sub font-medium">Shipping</span>
+                <span class="text-primary font-bold">Calculated at payment</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-text-sub font-medium">Estimated Tax (8%)</span>
+                <span class="font-bold text-text-main">${{ tax | number:'1.2-2' }}</span>
+              </div>
+              <div class="flex justify-between items-end pt-4">
+                <span class="text-base font-bold text-text-sub">Total</span>
+                <span class="text-2xl font-extrabold text-text-main">${{ total | number:'1.2-2' }}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Security Badge -->
+        <div class="flex flex-col items-center gap-3 text-zinc-400">
+          <div class="flex items-center gap-5">
+            <span class="material-symbols-outlined" style="font-size:24px;">verified_user</span>
+            <span class="material-symbols-outlined" style="font-size:24px;">payments</span>
+            <span class="material-symbols-outlined" style="font-size:24px;">lock</span>
+          </div>
+          <p class="text-[10px] text-center font-semibold uppercase tracking-widest px-4">
+            Secure 256-bit SSL Encryption
+          </p>
+        </div>
+
+      </div>
+    </aside>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mt-auto py-8 border-t border-[#e8e8e8] bg-white">
+    <div class="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-extrabold text-primary tracking-tight font-headline">NABTA</span>
+        <span class="text-xs text-text-sub font-medium">© 2024 Digital Agronomy Solutions.</span>
+      </div>
+      <div class="flex gap-6 text-xs font-semibold text-zinc-400">
+        <a class="hover:text-primary transition-colors" href="#">Privacy</a>
+        <a class="hover:text-primary transition-colors" href="#">Terms</a>
+        <a class="hover:text-primary transition-colors" href="#">Help Center</a>
+      </div>
+    </div>
+  </footer>
+
+</div>

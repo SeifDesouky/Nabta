@@ -1,8 +1,221 @@
+<!-- products.component.html -->
+<div class="bg-[#f9f9f9] text-on-surface">
+<!-- ══════════════════════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════════════════════ -->
+<aside class="h-screen w-[17.5rem] fixed left-0 top-0 hidden md:flex flex-col
+              bg-[#f3f3f3] border-r border-[#e4e4e4] z-40">
+
+  <!-- Logo -->
+  <div class="px-5 h-16 pt-3 border-b border-[#e4e4e4] flex-shrink-0">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-primary-glow flex-shrink-0">
+        <span class="material-symbols-outlined text-white"
+          style="font-size:20px;font-variation-settings:'FILL' 1;">agriculture</span>
+      </div>
+      <h1 class="text-[15px] font-extrabold text-primary tracking-tight leading-none">NABTA</h1>
+    </div>
+  </div>
+
+  <!-- Scrollable body -->
+  <div class="flex-1 overflow-y-auto min-h-0">
+
+    <!-- Navigation -->
+    <div class="px-3 pt-5 pb-2">
+      <p class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-[.12em] px-2 mb-3">Menu</p>
+
+      <!-- Dashboard -->
+      <div class="mb-0.5" [class.hidden]="!navOpen">
+        <a href="#" class="nav-item-base flex items-center gap-3 px-3 py-2.5 rounded-[.875rem]
+                           text-sm font-medium text-[#5a6b57] hover:bg-white hover:text-primary transition-all">
+          <span class="material-symbols-outlined" style="font-size:20px;">dashboard</span>
+          Dashboard
+        </a>
+      </div>
+
+      <!-- Marketplace row (always visible) -->
+      <div class="flex items-center gap-1 mb-0.5">
+        <button (click)="navOpen = !navOpen"
+          class="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-xl
+                 hover:bg-primary/10 transition-all duration-200"
+          [attr.aria-expanded]="navOpen">
+          <span class="material-symbols-outlined text-primary transition-transform duration-300"
+            style="font-size:18px;"
+            [style.transform]="navOpen ? 'rotate(90deg)' : 'rotate(0deg)'">chevron_right</span>
+        </button>
+        <a href="#" class="flex-1 bg-primary text-white flex items-center gap-3 px-3 py-2.5 rounded-[.875rem]
+                           shadow-primary-glow hover:brightness-95 transition-all duration-200">
+          <span class="material-symbols-outlined flex-shrink-0"
+            style="font-size:20px;font-variation-settings:'FILL' 1;">storefront</span>
+          <span class="text-sm font-semibold">Marketplace</span>
+        </a>
+      </div>
+
+      <!-- Community · AI Tools · Chats -->
+      <div *ngIf="navOpen" class="flex flex-col gap-0.5 pt-0.5">
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem]
+                           text-sm font-medium text-[#5a6b57] hover:bg-white hover:text-primary transition-all">
+          <span class="material-symbols-outlined" style="font-size:20px;">groups</span>
+          Community
+        </a>
+
+        <!-- AI Tools — hover flyout (positioned by Angular via JS like the original) -->
+        <div
+          #aiToolsBtn
+          class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] cursor-default select-none
+                 text-sm font-medium text-[#5a6b57] hover:bg-white hover:text-primary transition-all"
+          (mouseenter)="showAiFlyout(aiToolsBtn)"
+          (mouseleave)="scheduleHideAiFlyout()">
+          <span class="material-symbols-outlined" style="font-size:20px;">psychology</span>
+          <span>AI Tools</span>
+          <span class="material-symbols-outlined ml-auto text-zinc-400" style="font-size:15px;">chevron_right</span>
+        </div>
+
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem]
+                           text-sm font-medium text-[#5a6b57] hover:bg-white hover:text-primary transition-all">
+          <span class="material-symbols-outlined" style="font-size:20px;">chat</span>
+          Chats
+        </a>
+      </div>
+    </div>
+
+    <!-- Separator -->
+    <div class="mx-4 mt-3 mb-4 border-t border-[#e0e0e0]"></div>
+
+    <!-- Filters -->
+    <div class="px-4 pb-8">
+
+      <div class="flex items-center justify-between mb-4">
+        <p class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-[.12em]">Filters</p>
+        <button (click)="clearFilters()"
+          class="text-[11px] text-primary font-semibold hover:underline transition-all">
+          Clear all
+        </button>
+      </div>
+
+      <!-- Category chips -->
+      <div class="mb-5">
+        <h3 class="text-xs font-bold text-text-main mb-3">Category</h3>
+        <div class="flex flex-wrap gap-2">
+          <button
+            *ngFor="let cat of categories"
+            (click)="selectCategory(cat)"
+            class="px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all"
+            [ngClass]="selectedCategory === cat
+              ? 'bg-primary text-white shadow-primary-glow'
+              : 'bg-white border border-border-color text-zinc-500 hover:border-primary hover:text-primary'">
+            {{ cat }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Price Range -->
+      <div class="mb-5">
+        <h3 class="text-xs font-bold text-text-main mb-3">Price Range</h3>
+        <input
+          type="range"
+          class="price-slider mb-3 accent-primary"
+          min="0" [max]="priceMax"
+          [value]="selectedPrice"
+          (input)="onPriceChange($event)"
+          [style.background]="
+  'linear-gradient(to right, var(--tw-color-primary) ' + pricePct + '%, #e2e5dd ' + pricePct + '%)'
+"/>
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex-1 text-center px-2.5 py-1.5 bg-white rounded-xl border border-border-color text-xs font-semibold text-text-sub">$0</div>
+          <span class="text-[10px] text-zinc-400">—</span>
+          <div class="flex-1 text-center px-2.5 py-1.5 bg-white rounded-xl border border-primary/40 text-xs font-bold text-primary">
+            ${{ selectedPrice }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="mb-5">
+        <h3 class="text-xs font-bold text-text-main mb-2.5">Location</h3>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
+            style="font-size:15px;">location_on</span>
+          <input
+            type="text"
+            placeholder="Region or State"
+            [ngModel]="locationQuery"
+            (ngModelChange)="onLocationChange($event)"
+            class="w-full pl-8 pr-3 py-2 bg-white border border-border-color rounded-xl text-xs
+                   text-text-main placeholder:text-zinc-400
+                   focus:border-primary focus:ring-0 transition-colors"/>
+        </div>
+      </div>
+
+      <!-- Seller Rating -->
+      <div>
+        <h3 class="text-xs font-bold text-text-main mb-2.5">Seller Rating</h3>
+        <div class="space-y-2">
+          <label
+            *ngFor="let r of ratings"
+            class="flex items-center gap-2.5 cursor-pointer group"
+            (click)="selectRating(r)">
+            <div class="w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors"
+              [ngClass]="selectedRating === r
+                ? 'border-primary bg-primary'
+                : 'border-border-color bg-white group-hover:border-primary'">
+              <div *ngIf="selectedRating === r" class="w-1.5 h-1.5 rounded-full bg-white"></div>
+            </div>
+            <div class="flex items-center gap-0.5 text-earth">
+              <ng-container *ngFor="let s of [1,2,3,4,5]">
+                <span class="material-symbols-outlined" style="font-size:13px;"
+                  [style.font-variation-settings]="getStarFill(s, r)">star</span>
+              </ng-container>
+              <span class="text-[11px] text-zinc-400 ml-1">&amp; up</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</aside>
+
 
 <!-- ══════════════════════════════════════════════════════
      MAIN CONTENT
 ══════════════════════════════════════════════════════ -->
 <main class="md:ml-[17.5rem] min-h-screen">
+
+  <!-- Top Header -->
+  <header class="w-full h-16 bg-white/90 backdrop-blur-md border-b border-[#e8e8e8]
+                 flex items-center justify-between px-8 sticky top-0 z-30">
+    <div class="flex items-center gap-4 flex-1">
+      <div class="relative w-full">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
+          style="font-size:18px;">search</span>
+        <input type="text" placeholder="Search seeds, equipment, or produce..."
+          class="w-full pl-9 pr-4 py-2 bg-[#f3f3f3] border border-transparent rounded-full text-sm
+                 text-on-surface placeholder:text-zinc-400
+                 focus:border-primary focus:ring-0 transition-colors"/>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 pl-5 border-l border-[#e8e8e8] ml-4">
+      <button class="relative p-2 text-zinc-500 hover:bg-[#f3f3f3] rounded-full transition-colors">
+        <span class="material-symbols-outlined" style="font-size:22px;">notifications</span>
+        <span class="absolute top-2 right-2 w-2 h-2 bg-tertiary rounded-full"></span>
+      </button>
+      <button class="relative p-2 text-zinc-500 hover:bg-[#f3f3f3] rounded-full transition-colors">
+        <span class="material-symbols-outlined" style="font-size:22px;">shopping_cart</span>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-earth rounded-full border border-white"></span>
+      </button>
+      <div class="flex items-center gap-2.5 pl-3">
+        <div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary"
+            style="font-size:22px;font-variation-settings:'FILL' 1;">account_circle</span>
+        </div>
+        <div class="hidden sm:block">
+          <p class="text-xs font-semibold text-text-main leading-tight">Marketplace Admin</p>
+          <p class="text-[10px] text-zinc-400">Admin</p>
+        </div>
+      </div>
+    </div>
+  </header>
 
   <!-- Content -->
   <div class="p-8">
@@ -12,66 +225,51 @@
       <div>
         <h1 class="text-2xl font-extrabold tracking-tight text-primary">Featured Inventory</h1>
         <p class="text-sm text-text-sub mt-1">
-          Showing <span class="font-bold text-text-main">156</span> verified items in
-          <span class="font-bold text-text-main">Grains &amp; Seeds</span>
+          Showing <span class="font-bold text-text-main">{{ totalResult }}</span> verified items in
+          <span class="font-bold text-text-main">{{ selectedCategory }}</span>
         </p>
       </div>
-      <!-- Custom Sort Dropdown -->
+
+      <!-- Sort Dropdown -->
       <div class="flex items-center gap-3">
         <span class="text-sm text-text-sub hidden sm:inline">Sort by:</span>
-        <div class="relative" id="sort-wrapper">
+        <div class="relative">
 
-          <!-- Trigger button -->
-          <button id="sort-btn"
+          <button (click)="toggleSort()"
             class="flex items-center gap-2.5 pl-4 pr-3 py-2 bg-white border border-border-color
                    rounded-full text-sm font-semibold text-text-main
-                   hover:border-primary/40 hover:shadow-card
-                   focus:border-primary focus:ring-0 focus:border-1.5
-                   transition-colors duration-200 min-w-[170px] justify-between"
-            aria-haspopup="listbox" aria-expanded="false">
-            <span id="sort-label">Relevance</span>
-            <span id="sort-chevron" class="material-symbols-outlined text-zinc-400 flex-shrink-0 transition-transform duration-200"
-              style="font-size:18px;">expand_more</span>
+                   hover:border-primary/40 hover:shadow-card transition-colors min-w-[170px] justify-between"
+            [attr.aria-expanded]="sortOpen">
+            <span>{{ selectedSort.label }}</span>
+            <span class="material-symbols-outlined text-zinc-400 flex-shrink-0 transition-transform duration-200"
+              style="font-size:18px;"
+              [style.transform]="sortOpen ? 'rotate(180deg)' : 'rotate(0deg)'">expand_more</span>
           </button>
 
           <!-- Dropdown panel -->
-          <div id="sort-panel"
+          <div *ngIf="sortOpen"
             class="absolute right-0 mt-2 w-52 bg-white rounded-3xl
                    shadow-[0_8px_32px_rgba(43,66,40,0.13)] border border-[#eaeaea]
-                   overflow-hidden z-[100]
-                   opacity-0 scale-95 pointer-events-none
-                   transition-colors duration-200 origin-top-right"
-            role="listbox">
-
-            <div class="py-1.5" id="sort-options">
-              <button role="option" data-value="Relevance" aria-selected="true"
-                class="sort-option w-full flex items-center gap-3 px-4 py-2.5 rounded-3xl
-                       text-sm font-medium text-left transition-colors group
-                       text-primary bg-primary/5">
-                <span class="material-symbols-outlined text-primary flex-shrink-0" style="font-size:16px;font-variation-settings:'FILL' 1;">adjust</span>
-                <span>Relevance</span>
-                <span class="material-symbols-outlined ml-auto text-primary" style="font-size:15px;">check</span>
-              </button>
-              <button role="option" data-value="Price: Low to High" aria-selected="false"
-                class="sort-option w-full flex items-center gap-3 px-4 py-2.5 rouned-3xl 
-                       text-sm font-medium text-left hover:bg-green-50 hover:text-primary
-                       text-zinc-600 transition-colors group">
-                <span class="material-symbols-outlined text-zinc-400 group-hover:text-primary flex-shrink-0" style="font-size:16px;">arrow_upward</span>
-                <span>Price: Low to High</span>
-              </button>
-              <button role="option" data-value="Price: High to Low" aria-selected="false"
-                class="sort-option w-full flex items-center gap-3 px-4 py-2.5 rounded-3xl
-                       text-sm font-medium text-left hover:bg-green-50 hover:text-primary
-                       text-zinc-600 transition-colors group">
-                <span class="material-symbols-outlined text-zinc-400 group-hover:text-primary flex-shrink-0" style="font-size:16px;">arrow_downward</span>
-                <span>Price: High to Low</span>
-              </button>
-              <button role="option" data-value="Sustainability Score" aria-selected="false"
-                class="sort-option w-full flex items-center gap-3 px-4 py-2.5
-                       text-sm font-medium text-left hover:bg-green-50 hover:text-primary rounded-3xl
-                       text-zinc-600 transition-colors group">
-                <span class="material-symbols-outlined text-zinc-400 group-hover:text-primary flex-shrink-0" style="font-size:16px;font-variation-settings:'FILL' 1;">eco</span>
-                <span>Sustainability Score</span>
+                   overflow-hidden z-[100]">
+            <div class="py-1.5">
+              <button
+                *ngFor="let opt of sortOptions"
+                (click)="selectSort(opt)"
+                class="w-full flex items-center gap-3 px-4 py-2.5 rounded-3xl
+                       text-sm font-medium text-left transition-colors"
+                [ngClass]="selectedSort.value === opt.value && selectedSort.order === opt.order
+                  ? 'text-primary bg-primary/5'
+                  : 'text-zinc-600 hover:bg-green-50 hover:text-primary'">
+                <span class="material-symbols-outlined flex-shrink-0"
+                  style="font-size:16px;"
+                  [ngClass]="selectedSort.value === opt.value && selectedSort.order === opt.order
+                    ? 'text-primary' : 'text-zinc-400'">
+                  {{ opt.icon }}
+                </span>
+                <span>{{ opt.label }}</span>
+                <span *ngIf="selectedSort.value === opt.value && selectedSort.order === opt.order"
+                  class="material-symbols-outlined ml-auto text-primary"
+                  style="font-size:15px;font-variation-settings:'FILL' 1;">check</span>
               </button>
             </div>
           </div>
@@ -80,431 +278,152 @@
       </div>
     </div>
 
-    <!-- ────────────────── Product Grid ────────────────── -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-
-      <!-- ╔═══════════════╗  CARD TEMPLATE (repeated x6)  ╔═══════════════╗ -->
-
-      <!-- CARD 1 — Premium Durum Wheat Seeds -->
-      <div class="group bg-white rounded-xl border border-border-color overflow-hidden
-                  hover:shadow-soft transition-all duration-300 hover:-translate-y-1 flex flex-col">
-        <div class="relative aspect-[4/3] overflow-hidden bg-background-light">
-          <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtTqzMHesc_0TKa0VOI42ww2jRO-ZUTSdOwKO9XzQlqf_9XCWIMcCClLj5uKJB_YKeHqK3oukEyh4iGpxGOnpgD8VCsAI703hP4hlwa82_Bz9hRQy5FzoIEYJFIE2to0vCm4CAAuioxFBCdNnZ8lM3WPn_PQvUVJGJfZXY9-xK1gmnJWrWe9vDBIBp-mlvJKMimVjUuMcRQJzzrhasRBorjJ8S99MSHAx-5lCQB_9yLkAYXgWuAPAS8IgTCHkXqb6DLaPDYQa0"
-            alt="Premium Durum Wheat Seeds"/>
-          <!-- Badges -->
-          <div class="absolute top-3 left-3 flex flex-col gap-1.5">
-            <span class="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur text-[10px] font-bold uppercase tracking-wide text-primary flex items-center gap-1 shadow-sm">
-              <span class="material-symbols-outlined text-primary" style="font-size:11px;font-variation-settings:'FILL' 1;">eco</span> Organic
-            </span>
-            <span class="px-2.5 py-1 rounded-full bg-secondary/90 backdrop-blur text-[10px] font-bold uppercase tracking-wide text-white shadow-sm">Local</span>
-          </div>
-          <!-- Favourite -->
-          <button class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur
-                         flex items-center justify-center text-zinc-400 hover:text-red-500 transition-colors
-                         opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 duration-300">
-            <span class="material-symbols-outlined" style="font-size:18px;">favorite</span>
-          </button>
-          <!-- Quick View -->
-          <div class="absolute bottom-3 right-3">
-            <button class="bg-primary hover:bg-white text-white hover:text-text-main px-3 py-1.5 rounded-full
-                           text-[11px] font-bold shadow-lg
-                           transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100
-                           transition-all duration-300 flex items-center gap-1">
-              <span class="material-symbols-outlined" style="font-size:13px;">visibility</span> Quick View
-            </button>
-          </div>
-        </div>
-        <div class="p-5 flex flex-col flex-1">
-          <div class="flex justify-between items-start mb-1.5">
-            <h3 class="font-bold text-base text-text-main leading-tight group-hover:text-primary transition-colors">
-              Premium Durum Wheat Seeds
-            </h3>
-            <div class="flex items-center gap-1 text-[11px] font-semibold text-primary bg-primary/10
-                        px-2 py-0.5 rounded-md border border-primary/20 flex-shrink-0 ml-2">
-              <span class="material-symbols-outlined" style="font-size:11px;">eco</span> 97%
-            </div>
-          </div>
-          <p class="text-[11px] text-text-sub flex items-center gap-1 mb-3">
-            <span class="material-symbols-outlined" style="font-size:11px;">location_on</span>Kansas Valley Farm
-          </p>
-          <p class="text-sm text-text-sub line-clamp-2 mb-4">
-            High-quality durum wheat seeds, sustainably grown and AI-verified for premium yield.
-          </p>
-          <div class="mt-auto pt-4 border-t border-border-color">
-            <div class="flex items-end justify-between mb-3">
-              <div>
-                <span class="text-[11px] text-text-sub block mb-0.5">Starting at</span>
-                <span class="text-xl font-bold text-text-main">$45.50</span>
-                <span class="text-xs text-zinc-400"> / quintal</span>
-              </div>
-              <div class="text-right">
-                <span class="text-[11px] text-text-sub block mb-0.5">Bulk (10+)</span>
-                <span class="text-sm font-semibold text-earth">$38.00</span>
-              </div>
-            </div>
-            <div class="flex gap-2">
-              <input type="number" value="1" min="1" placeholder="Qty"
-                class="flex w-[30%] bg-background-light border-none rounded-xl text-sm font-semibold
-                       focus:ring-1 focus:ring-primary/40 py-2 px-3 text-center outline-none"/>
-              <button class="flex w-[70%] bg-text-main text-white font-bold py-2 rounded-xl
-                             hover:bg-earth transition-colors flex items-center justify-center gap-1.5 text-sm">
-                <span class="material-symbols-outlined" style="font-size:16px;">add_shopping_cart</span> Add to Cart
-              </button>
-            </div>
+    <!-- ── Loading State ── -->
+    <div *ngIf="loading" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div *ngFor="let i of [1,2,3,4,5,6]"
+        class="bg-white rounded-xl border border-border-color overflow-hidden animate-pulse">
+        <div class="aspect-[4/3] bg-[#e8e8e8]"></div>
+        <div class="p-5 space-y-3">
+          <div class="h-4 bg-[#e8e8e8] rounded-full w-3/4"></div>
+          <div class="h-3 bg-[#e8e8e8] rounded-full w-1/2"></div>
+          <div class="h-3 bg-[#e8e8e8] rounded-full w-full"></div>
+          <div class="h-3 bg-[#e8e8e8] rounded-full w-5/6"></div>
+          <div class="pt-2 flex gap-2">
+            <div class="h-9 bg-[#e8e8e8] rounded-xl w-[30%]"></div>
+            <div class="h-9 bg-[#e8e8e8] rounded-xl w-[70%]"></div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- CARD 2 — NPK 20-20-20 Soluble -->
-      <div class="group bg-white rounded-xl border border-border-color overflow-hidden
-                  hover:shadow-soft transition-all duration-300 hover:-translate-y-1 flex flex-col">
-        <div class="relative aspect-[4/3] overflow-hidden bg-background-light">
-          <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXulBGKuzPoCeOVaow8GpOBVCXLdbHL4BZt0RWuMGfHKfXPb3lsiMr88giBFnDvfY1ZTqtx7ZsHFg9oj-pfj-RLlX5Z0fiKX_isb9YfEtJJTt3OtYyaolx4BHYiIHQjxtEyHkSXs-9OG3Kri_V6yCTasaTFEDzosnpb5ss-fWpW80WmC8Y3XVqgkYZazgOE9SjQURk_QcxGW5xp-Q7R-sIuRizSXz1cLlqCWgHnIdXVOMy3KUZLHinkZDHW_q4iNrcZbS11oVyDtU"
-            alt="NPK Fertilizer Bags"/>
-          <div class="absolute top-3 left-3 flex flex-col gap-1.5">
-            <span class="px-2.5 py-1 rounded-full bg-earth/90 backdrop-blur text-[10px] font-bold uppercase tracking-wide text-white flex items-center gap-1 shadow-sm">
-              <span class="material-symbols-outlined text-white" style="font-size:11px;font-variation-settings:'FILL' 1;">verified</span> Top Seller
-            </span>
-          </div>
-          <button class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur
-                         flex items-center justify-center text-zinc-400 hover:text-red-500 transition-colors
-                         opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 duration-300">
-            <span class="material-symbols-outlined" style="font-size:18px;">favorite</span>
-          </button>
-          <div class="absolute bottom-3 right-3">
-            <button class="bg-primary hover:bg-white text-white hover:text-text-main px-3 py-1.5 rounded-full
-                           text-[11px] font-bold shadow-lg
-                           transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100
-                           transition-all duration-300 flex items-center gap-1">
-              <span class="material-symbols-outlined" style="font-size:13px;">visibility</span> Quick View
-            </button>
-          </div>
-        </div>
-        <div class="p-5 flex flex-col flex-1">
-          <div class="flex justify-between items-start mb-1.5">
-            <h3 class="font-bold text-base text-text-main leading-tight group-hover:text-primary transition-colors">
-              NPK 20-20-20 Soluble
-            </h3>
-            <div class="flex items-center gap-1 text-[11px] font-semibold text-earth bg-earth/10
-                        px-2 py-0.5 rounded-md border border-earth/20 flex-shrink-0 ml-2">
-              <span class="material-symbols-outlined" style="font-size:11px;font-variation-settings:'FILL' 1;">verified</span> AI
-            </div>
-          </div>
-          <p class="text-[11px] text-text-sub flex items-center gap-1 mb-3">
-            <span class="material-symbols-outlined" style="font-size:11px;">location_on</span>Industrial Hub
-          </p>
-          <p class="text-sm text-text-sub line-clamp-2 mb-4">
-            Balanced soluble fertilizer for optimal crop nutrient management at scale.
-          </p>
-          <div class="mt-auto pt-4 border-t border-border-color">
-            <div class="flex items-end justify-between mb-3">
-              <div>
-                <span class="text-[11px] text-text-sub block mb-0.5">Unit Price</span>
-                <span class="text-xl font-bold text-text-main">$89.00</span>
-                <span class="text-xs text-zinc-400"> / 50kg</span>
-              </div>
-              <div class="text-right">
-                <span class="text-[11px] text-text-sub block mb-0.5">Pallet (20+)</span>
-                <span class="text-sm font-semibold text-earth">$74.00</span>
-              </div>
-            </div>
-            <div class="flex gap-2">
-              <input type="number" value="5" min="1" placeholder="Qty"
-                class="flex w-[30%] bg-background-light border-none rounded-xl text-sm font-semibold
-                       focus:ring-1 focus:ring-primary/40 py-2 px-3 text-center outline-none"/>
-              <button class="flex w-[70%] bg-text-main text-white font-bold py-2 rounded-xl
-                             hover:bg-earth transition-colors flex items-center justify-center gap-1.5 text-sm">
-                <span class="material-symbols-outlined" style="font-size:16px;">add_shopping_cart</span> Add to Cart
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- ── Error State ── -->
+    <div *ngIf="!loading && error"
+      class="flex flex-col items-center justify-center py-24 text-center">
+      <span class="material-symbols-outlined text-red-400 mb-4" style="font-size:48px;">error_outline</span>
+      <p class="text-base font-semibold text-red-500 mb-2">{{ error }}</p>
+      <button (click)="loadProducts()"
+        class="mt-4 px-5 py-2.5 bg-primary text-white rounded-full text-sm font-semibold
+               hover:brightness-95 transition-all shadow-primary-glow">
+        Try Again
+      </button>
+    </div>
 
-      <!-- CARD 3 — Precision Soil Sensor Kit -->
-      <div class="group bg-white rounded-xl border border-border-color overflow-hidden
-                  hover:shadow-soft transition-all duration-300 hover:-translate-y-1 flex flex-col">
-        <div class="relative aspect-[4/3] overflow-hidden bg-background-light">
-          <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJsg3PR7Vc3WR-rFwEv9Rjnxz4so1FQ5bjf2sf0JbGOc_HMOy0LZmy5UgUYA6kQRQ550BMrOtHw_2FmaNOwLVmxCpOtq98sgN_GNvychMjGMy8xsQguFy41ATNYGB2wf6acd2AE3worI1pit-DNLgJ2lNHdLRFGipFQR5EepRXlhCdoJ4G5_RrO9StYHVWoN8oilJNnRk6wEWHPw6OXW7T72XO0z14T4AilA-fIGb5nFTN-6RCmOoZchCWU7nd2WGG6S49l24-2OE"
-            alt="Tractor plowing field"/>
-          <div class="absolute top-3 left-3">
-            <span class="px-2.5 py-1 rounded-full bg-primary-container/90 backdrop-blur text-[10px] font-bold uppercase tracking-wide text-white shadow-sm">New Arrival</span>
-          </div>
-          <button class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur
-                         flex items-center justify-center text-zinc-400 hover:text-red-500 transition-colors
-                         opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 duration-300">
-            <span class="material-symbols-outlined" style="font-size:18px;">favorite</span>
-          </button>
-          <div class="absolute bottom-3 right-3">
-            <button class="bg-primary hover:bg-white text-white hover:text-text-main px-3 py-1.5 rounded-full
-                           text-[11px] font-bold shadow-lg
-                           transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100
-                           transition-all duration-300 flex items-center gap-1">
-              <span class="material-symbols-outlined" style="font-size:13px;">visibility</span> Quick View
-            </button>
-          </div>
-        </div>
-        <div class="p-5 flex flex-col flex-1">
-          <div class="flex justify-between items-start mb-1.5">
-            <h3 class="font-bold text-base text-text-main leading-tight group-hover:text-primary transition-colors">
-              Precision Soil Sensor Kit
-            </h3>
-            <div class="flex items-center gap-1 text-[11px] font-semibold text-primary bg-primary/10
-                        px-2 py-0.5 rounded-md border border-primary/20 flex-shrink-0 ml-2">
-              <span class="material-symbols-outlined" style="font-size:11px;">eco</span> 96%
-            </div>
-          </div>
-          <p class="text-[11px] text-text-sub flex items-center gap-1 mb-3">
-            <span class="material-symbols-outlined" style="font-size:11px;">location_on</span>Nabta Tech Depot
-          </p>
-          <p class="text-sm text-text-sub line-clamp-2 mb-4">
-            Real-time soil moisture &amp; nutrient monitoring. 5-year battery, one-time purchase.
-          </p>
-          <div class="mt-auto pt-4 border-t border-border-color">
-            <div class="flex items-end justify-between mb-3">
-              <div>
-                <span class="text-[11px] text-text-sub block mb-0.5">One-time purchase</span>
-                <span class="text-xl font-bold text-text-main">$299.99</span>
-                <span class="text-xs text-zinc-400"> / set</span>
-              </div>
-              <div class="text-right">
-                <span class="text-[11px] text-text-sub block mb-0.5">Bulk (10+)</span>
-                <span class="text-sm font-semibold text-earth">$260.00</span>
-              </div>
-            </div>
-            <div class="flex gap-2">
-              <input type="number" value="1" min="1" placeholder="Qty"
-                class="flex w-[30%] bg-background-light border-none rounded-xl text-sm font-semibold
-                       focus:ring-1 focus:ring-primary/40 py-2 px-3 text-center outline-none"/>
-              <button class="flex w-[70%] bg-text-main text-white font-bold py-2 rounded-xl
-                             hover:bg-earth transition-colors flex items-center justify-center gap-1.5 text-sm">
-                <span class="material-symbols-outlined" style="font-size:16px;">add_shopping_cart</span> Add to Cart
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- ── Empty State ── -->
+    <div *ngIf="!loading && !error && products.length === 0"
+      class="flex flex-col items-center justify-center py-24 text-center">
+      <span class="material-symbols-outlined text-zinc-300 mb-4" style="font-size:64px;">inventory_2</span>
+      <p class="text-lg font-bold text-text-main mb-1">No products found</p>
+      <p class="text-sm text-text-sub mb-6">Try adjusting your filters or search query.</p>
+      <button (click)="clearFilters()"
+        class="px-5 py-2.5 bg-primary text-white rounded-full text-sm font-semibold
+               hover:brightness-95 transition-all shadow-primary-glow">
+        Clear Filters
+      </button>
+    </div>
 
-      <!-- CARD 4 — Heirloom Tomato Seedlings -->
-      <div class="group bg-white rounded-xl border border-border-color overflow-hidden
-                  hover:shadow-soft transition-all duration-300 hover:-translate-y-1 flex flex-col">
-        <div class="relative aspect-[4/3] overflow-hidden bg-background-light">
-          <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsY7KhZyu_s5CT1Kd5_Du8VnFgcDk0M7f-uuFR4m8Wzy3d7PXjQzb79PpcA1upaizAbd3ta0eGrdVOHcLoMA6_18-vhMcnLl6V6axC5uct6nrS64L8-z2N9TbF_FgppZLCitYSxfejtdT_jeN3CfiG2fH9VM1puzHUUTEmtfTaUMFaua8WHmZ9Mi0_PYDwdPam_-fY0nmItz73tcyJgSpIiKpKCTFvcJpbMGaCbHJRvOR7wrhf0GsvRuTqNwYtm14YJ7K1tibqBMQ"
-            alt="Heirloom Tomato Seedlings in greenhouse"/>
-          <div class="absolute top-3 left-3">
-            <span class="px-2.5 py-1 rounded-full bg-secondary/90 backdrop-blur text-[10px] font-bold uppercase tracking-wide text-white shadow-sm">Local</span>
-          </div>
-          <button class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur
-                         flex items-center justify-center text-zinc-400 hover:text-red-500 transition-colors
-                         opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 duration-300">
-            <span class="material-symbols-outlined" style="font-size:18px;">favorite</span>
-          </button>
-          <div class="absolute bottom-3 right-3">
-            <button class="bg-primary hover:bg-white text-white hover:text-text-main px-3 py-1.5 rounded-full
-                           text-[11px] font-bold shadow-lg
-                           transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100
-                           transition-all duration-300 flex items-center gap-1">
-              <span class="material-symbols-outlined" style="font-size:13px;">visibility</span> Quick View
-            </button>
-          </div>
-        </div>
-        <div class="p-5 flex flex-col flex-1">
-          <div class="flex justify-between items-start mb-1.5">
-            <h3 class="font-bold text-base text-text-main leading-tight group-hover:text-primary transition-colors">
-              Heirloom Tomato Seedlings
-            </h3>
-            <div class="flex items-center gap-1 text-[11px] font-semibold text-primary bg-primary/10
-                        px-2 py-0.5 rounded-md border border-primary/20 flex-shrink-0 ml-2">
-              <span class="material-symbols-outlined" style="font-size:11px;">eco</span> 100%
-            </div>
-          </div>
-          <p class="text-[11px] text-text-sub flex items-center gap-1 mb-3">
-            <span class="material-symbols-outlined" style="font-size:11px;">location_on</span>Sunshine Nursery
-          </p>
-          <p class="text-sm text-text-sub line-clamp-2 mb-4">
-            High-yield variety with bulk pricing. Perfect for commercial greenhouse operations.
-          </p>
-          <div class="mt-auto pt-4 border-t border-border-color">
-            <div class="flex items-end justify-between mb-3">
-              <div>
-                <span class="text-[11px] text-text-sub block mb-0.5">Bulk Pricing</span>
-                <span class="text-xl font-bold text-text-main">$12.00</span>
-                <span class="text-xs text-zinc-400"> / tray</span>
-              </div>
-              <div class="text-right">
-                <span class="text-[11px] text-text-sub block mb-0.5">100+ trays</span>
-                <span class="text-sm font-semibold text-earth">$9.50</span>
-              </div>
-            </div>
-            <div class="flex gap-2">
-              <input type="number" value="10" min="1" placeholder="Qty"
-                class="flex w-[30%] bg-background-light border-none rounded-xl text-sm font-semibold
-                       focus:ring-1 focus:ring-primary/40 py-2 px-3 text-center outline-none"/>
-              <button class="flex w-[70%] bg-text-main text-white font-bold py-2 rounded-xl
-                             hover:bg-earth transition-colors flex items-center justify-center gap-1.5 text-sm">
-                <span class="material-symbols-outlined" style="font-size:16px;">add_shopping_cart</span> Add to Cart
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- ── Product Grid ── -->
+    <div *ngIf="!loading && !error && products.length > 0"
+      class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+      <app-product-card
+        *ngFor="let product of products"
+        [product]="product">
+      </app-product-card>
+    </div>
 
-      <!-- CARD 5 — Bulk Feed Barley -->
-      <div class="group bg-white rounded-xl border border-border-color overflow-hidden
-                  hover:shadow-soft transition-all duration-300 hover:-translate-y-1 flex flex-col">
-        <div class="relative aspect-[4/3] overflow-hidden bg-background-light">
-          <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBscGgAz2P7mo62GSG-sOaPCwzk2DrE7wyPWj9GllTllpxc3rZRowSVra0PDueJdQFT6kSRyOGHp3hhDQRw7HwvJOFTL3UZEhYbvQVqgPdQ654Gb8lJM0C54QS0UwXmQmtz-jxf7hmZJDrL_DcHSWbGhdbR5ZPfsn8yc-j0i4E850C9sX0QbKM-mKkF-WkMYQIMK2-MfZNIe0B6bUO9bnux7GLBT-NgKO1qLhVt8ifSzMrj8qY8F3Q0QXM7PnLfWWrZOCqs"
-            alt="Grain silos"/>
-          <div class="absolute top-3 left-3">
-            <span class="px-2.5 py-1 rounded-full bg-primary/90 backdrop-blur text-[10px] font-bold uppercase tracking-wide text-white flex items-center gap-1 shadow-sm">
-              <span class="material-symbols-outlined text-white" style="font-size:11px;font-variation-settings:'FILL' 1;">eco</span> Organic
-            </span>
-          </div>
-          <button class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur
-                         flex items-center justify-center text-zinc-400 hover:text-red-500 transition-colors
-                         opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 duration-300">
-            <span class="material-symbols-outlined" style="font-size:18px;">favorite</span>
-          </button>
-          <div class="absolute bottom-3 right-3">
-            <button class="bg-primary hover:bg-white text-white hover:text-text-main px-3 py-1.5 rounded-full
-                           text-[11px] font-bold shadow-lg
-                           transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100
-                           transition-all duration-300 flex items-center gap-1">
-              <span class="material-symbols-outlined" style="font-size:13px;">visibility</span> Quick View
-            </button>
-          </div>
-        </div>
-        <div class="p-5 flex flex-col flex-1">
-          <div class="flex justify-between items-start mb-1.5">
-            <h3 class="font-bold text-base text-text-main leading-tight group-hover:text-primary transition-colors">
-              Bulk Feed Barley
-            </h3>
-            <div class="flex items-center gap-1 text-[11px] font-semibold text-primary bg-primary/10
-                        px-2 py-0.5 rounded-md border border-primary/20 flex-shrink-0 ml-2">
-              <span class="material-symbols-outlined" style="font-size:11px;">eco</span> 93%
-            </div>
-          </div>
-          <p class="text-[11px] text-text-sub flex items-center gap-1 mb-3">
-            <span class="material-symbols-outlined" style="font-size:11px;">location_on</span>Northern Silos
-          </p>
-          <p class="text-sm text-text-sub line-clamp-2 mb-4">
-            Premium wholesale barley for feed and brewing. Direct from certified organic farms.
-          </p>
-          <div class="mt-auto pt-4 border-t border-border-color">
-            <div class="flex items-end justify-between mb-3">
-              <div>
-                <span class="text-[11px] text-text-sub block mb-0.5">Wholesale</span>
-                <span class="text-xl font-bold text-text-main">$320.00</span>
-                <span class="text-xs text-zinc-400"> / ton</span>
-              </div>
-              <div class="text-right">
-                <span class="text-[11px] text-text-sub block mb-0.5">10+ tons</span>
-                <span class="text-sm font-semibold text-earth">$290.00</span>
-              </div>
-            </div>
-            <div class="flex gap-2">
-              <input type="number" value="1" min="1" placeholder="Qty"
-                class="flex w-[30%] bg-background-light border-none rounded-xl text-sm font-semibold
-                       focus:ring-1 focus:ring-primary/40 py-2 px-3 text-center outline-none"/>
-              <button class="flex w-[70%] bg-text-main text-white font-bold py-2 rounded-xl
-                             hover:bg-earth transition-colors flex items-center justify-center gap-1.5 text-sm">
-                <span class="material-symbols-outlined" style="font-size:16px;">add_shopping_cart</span> Add to Cart
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- ── Pagination ── -->
+    <div *ngIf="!loading && totalPages > 1"
+      class="mt-12 flex items-center justify-center gap-2">
 
-      <!-- CARD 6 — Tractor Maintenance Kit -->
-      <div class="group bg-white rounded-xl border border-border-color overflow-hidden
-                  hover:shadow-soft transition-all duration-300 hover:-translate-y-1 flex flex-col">
-        <div class="relative aspect-[4/3] overflow-hidden bg-background-light">
-          <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiXbSzKaKkzinKF6zicVXJFoxtk0_tM7CyKwpAu717iLolDeLRhc5mW7FxZpjiKj8Ik-zmufzGBJhHYLxS9imIaWRZFOxoHGYQ5EPzMrjuJMGfK7QYA6kQRQ550BMrOtHw_2FmaNOwLVmxCpOtq98sgN_GNvychMjGMy8xsQguFy41ATNYGB2wf6acd2AE3worI1pit-DNLgJ2lNHdLRFGipFQR5EepRXlhCdoJ4G5_RrO9StYHVWoN8oilJNnRk6wEWHPw6OXW7T72XO0z14T4AilA-fIGb5nFTN-6RCmOoZchCWU7nd2WGG6S49l24-2OE"
-            alt="Agricultural machinery parts"/>
-          <!-- No badge on this card -->
-          <button class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur
-                         flex items-center justify-center text-zinc-400 hover:text-red-500 transition-colors
-                         opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 duration-300">
-            <span class="material-symbols-outlined" style="font-size:18px;">favorite</span>
-          </button>
-          <div class="absolute bottom-3 right-3">
-            <button class="bg-primary hover:bg-white text-white hover:text-text-main px-3 py-1.5 rounded-full
-                           text-[11px] font-bold shadow-lg
-                           transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100
-                           transition-all duration-300 flex items-center gap-1">
-              <span class="material-symbols-outlined" style="font-size:13px;">visibility</span> Quick View
-            </button>
-          </div>
-        </div>
-        <div class="p-5 flex flex-col flex-1">
-          <div class="flex justify-between items-start mb-1.5">
-            <h3 class="font-bold text-base text-text-main leading-tight group-hover:text-primary transition-colors">
-              Tractor Maintenance Kit
-            </h3>
-            <div class="flex items-center gap-1 text-[11px] font-semibold text-earth bg-earth/10
-                        px-2 py-0.5 rounded-md border border-earth/20 flex-shrink-0 ml-2">
-              <span class="material-symbols-outlined" style="font-size:11px;">build</span> Kit
-            </div>
-          </div>
-          <p class="text-[11px] text-text-sub flex items-center gap-1 mb-3">
-            <span class="material-symbols-outlined" style="font-size:11px;">location_on</span>Equipment Center
-          </p>
-          <p class="text-sm text-text-sub line-clamp-2 mb-4">
-            Professional-grade maintenance solution for tractors and agricultural machinery.
-          </p>
-          <div class="mt-auto pt-4 border-t border-border-color">
-            <div class="flex items-end justify-between mb-3">
-              <div>
-                <span class="text-[11px] text-text-sub block mb-0.5">Per Pack</span>
-                <span class="text-xl font-bold text-text-main">$125.00</span>
-                <span class="text-xs text-zinc-400"> / unit</span>
-              </div>
-              <div class="text-right">
-                <span class="text-[11px] text-text-sub block mb-0.5">Fleet (5+)</span>
-                <span class="text-sm font-semibold text-earth">$108.00</span>
-              </div>
-            </div>
-            <div class="flex gap-2">
-              <input type="number" value="1" min="1" placeholder="Qty"
-                class="flex w-[30%] bg-background-light border-none rounded-xl text-sm font-semibold
-                       focus:ring-1 focus:ring-primary/40 py-2 px-3 text-center outline-none"/>
-              <button class="flex w-[70%] bg-text-main text-white font-bold py-2 rounded-xl
-                             hover:bg-earth transition-colors flex items-center justify-center gap-1.5 text-sm">
-                <span class="material-symbols-outlined" style="font-size:16px;">add_shopping_cart</span> Add to Cart
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /grid -->
-
-    <!-- Pagination -->
-    <div class="mt-12 flex items-center justify-center gap-2">
-      <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-border-color hover:bg-white hover:shadow-card transition-all">
+      <!-- Prev -->
+      <button
+        (click)="goToPage(currentPage - 1)"
+        [disabled]="currentPage === 1"
+        class="w-10 h-10 flex items-center justify-center rounded-xl border border-border-color
+               hover:bg-white hover:shadow-card transition-all
+               disabled:opacity-40 disabled:cursor-not-allowed">
         <span class="material-symbols-outlined" style="font-size:18px;">chevron_left</span>
       </button>
-      <button class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary text-white font-bold text-sm shadow-primary-glow">1</button>
-      <button class="w-10 h-10 flex items-center justify-center rounded-xl text-zinc-500 font-medium text-sm hover:bg-white hover:shadow-card transition-all">2</button>
-      <button class="w-10 h-10 flex items-center justify-center rounded-xl text-zinc-500 font-medium text-sm hover:bg-white hover:shadow-card transition-all">3</button>
-      <span class="text-zinc-400 px-1 select-none">···</span>
-      <button class="w-10 h-10 flex items-center justify-center rounded-xl text-zinc-500 font-medium text-sm hover:bg-white hover:shadow-card transition-all">12</button>
-      <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-border-color hover:bg-white hover:shadow-card transition-all">
+
+      <!-- Pages -->
+      <ng-container *ngFor="let p of visiblePages">
+        <button
+          *ngIf="p !== -1"
+          (click)="goToPage(p)"
+          class="w-10 h-10 flex items-center justify-center rounded-xl text-sm font-medium transition-all"
+          [ngClass]="p === currentPage
+            ? 'bg-primary text-white font-bold shadow-primary-glow'
+            : 'text-zinc-500 hover:bg-white hover:shadow-card'">
+          {{ p }}
+        </button>
+        <span *ngIf="p === -1" class="text-zinc-400 px-1 select-none">···</span>
+      </ng-container>
+
+      <!-- Next -->
+      <button
+        (click)="goToPage(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+        class="w-10 h-10 flex items-center justify-center rounded-xl border border-border-color
+               hover:bg-white hover:shadow-card transition-all
+               disabled:opacity-40 disabled:cursor-not-allowed">
         <span class="material-symbols-outlined" style="font-size:18px;">chevron_right</span>
       </button>
+
     </div>
 
-  </div><!-- /content -->
+  </div>
 </main>
 
 
-<!-- Mobile Bottom Nav -->
+<!-- ══════════════════════════════════════════════════════
+     AI TOOLS FLYOUT — fixed, positioned by component like original
+══════════════════════════════════════════════════════ -->
+<div
+  #aiFlyoutEl
+  class="fixed z-[600] w-56 bg-white rounded-3xl overflow-hidden
+         shadow-[0_8px_32px_rgba(0,0,0,0.13)] border border-[#eaeaea]
+         transition-all duration-200"
+  [style.top]="aiFlyoutTop"
+  [style.left]="aiFlyoutLeft"
+  [style.opacity]="aiFlyoutOpen ? '1' : '0'"
+  [style.pointer-events]="aiFlyoutOpen ? 'auto' : 'none'"
+  [style.transform]="aiFlyoutOpen ? 'translateX(0)' : 'translateX(-8px)'"
+  (mouseenter)="keepAiFlyout()"
+  (mouseleave)="scheduleHideAiFlyout()"
+  role="menu">
+  <div class="py-1.5">
+    <a href="#" role="menuitem"
+      class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <span class="material-symbols-outlined text-primary"
+          style="font-size:15px;font-variation-settings:'FILL' 1;">smart_toy</span>
+      </div>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-primary transition-colors">ChatBot</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary transition-colors"
+        style="font-size:14px;">arrow_forward</span>
+    </a>
+    <a href="#" role="menuitem"
+      class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <span class="material-symbols-outlined text-primary" style="font-size:15px;">monitoring</span>
+      </div>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-primary transition-colors">Yield Expectations</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary transition-colors"
+        style="font-size:14px;">arrow_forward</span>
+    </a>
+    <a href="#" role="menuitem"
+      class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <span class="material-symbols-outlined text-primary" style="font-size:15px;">yard</span>
+      </div>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-primary transition-colors">Crop Recommendation</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary transition-colors"
+        style="font-size:14px;">arrow_forward</span>
+    </a>
+  </div>
+</div>
+
+
+<!-- ── Mobile Bottom Nav ── -->
 <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-[#e8e8e8]
             flex items-center justify-around z-40">
   <a href="#" class="flex flex-col items-center gap-1 text-zinc-400">
@@ -528,148 +447,5 @@
     <span class="text-[10px] font-medium">Chats</span>
   </a>
 </nav>
-
-
-<!-- ══════════════════════════════════════════════════════
-     SCRIPT  (TypeScript-compatible — type annotations
-              shown as comments; compile with tsc for .ts)
-══════════════════════════════════════════════════════ -->
-<script>
-  // ── Nav collapse / expand ──────────────────────────────
-  /** @type {HTMLButtonElement} */ const navArrowBtn  = document.getElementById('nav-arrow-btn');
-  /** @type {HTMLElement}       */ const navAbove     = document.getElementById('nav-above');
-  /** @type {HTMLElement}       */ const navBelow     = document.getElementById('nav-below');
-  /** @type {HTMLElement}       */ const navArrow     = document.getElementById('nav-arrow');
-  /** @type {boolean}           */ let   navOpen      = false;
-
-  navArrowBtn?.addEventListener('click', () => {
-    navOpen = !navOpen;
-    navArrowBtn.setAttribute('aria-expanded', String(navOpen));
-
-    if (navOpen) {
-      navAbove.style.maxHeight = navAbove.scrollHeight + 'px';
-      navBelow.style.maxHeight = navBelow.scrollHeight + 'px';
-      navAbove.classList.add('open');
-      navBelow.classList.add('open');
-      navArrow.style.transform = 'rotate(90deg)';
-    } else {
-      navAbove.style.maxHeight = '0';
-      navBelow.style.maxHeight = '0';
-      navAbove.classList.remove('open');
-      navBelow.classList.remove('open');
-      navArrow.style.transform = 'rotate(0deg)';
-    }
-  });
-
-  // ── AI Tools flyout ────────────────────────────────────
-  /** @type {HTMLElement} */ const aiToolsBtn = document.getElementById('ai-tools-btn');
-  /** @type {HTMLElement} */ const aiFlyout   = document.getElementById('ai-flyout');
-  /** @type {number|null} */ let   hideTimer  = null;
-
-  function showFlyout() {
-    if (hideTimer) clearTimeout(hideTimer);
-    const rect = aiToolsBtn.getBoundingClientRect();
-    aiFlyout.style.top  = rect.top  + 'px';
-    aiFlyout.style.left = (rect.right + 10) + 'px';
-    aiFlyout.classList.add('visible');
-  }
-
-  function hideFlyout() {
-    hideTimer = setTimeout(() => aiFlyout.classList.remove('visible'), 130);
-  }
-
-  aiToolsBtn?.addEventListener('mouseenter', showFlyout);
-  aiToolsBtn?.addEventListener('mouseleave', hideFlyout);
-  aiFlyout?.addEventListener('mouseenter', () => { if (hideTimer) clearTimeout(hideTimer); });
-  aiFlyout?.addEventListener('mouseleave', hideFlyout);
-
-  // ── Sort dropdown ──────────────────────────────────────
-  /** @type {HTMLButtonElement} */ const sortBtn     = document.getElementById('sort-btn');
-  /** @type {HTMLElement}       */ const sortPanel   = document.getElementById('sort-panel');
-  /** @type {HTMLElement}       */ const sortLabel   = document.getElementById('sort-label');
-  /** @type {HTMLElement}       */ const sortChevron = document.getElementById('sort-chevron');
-  /** @type {boolean}           */ let   sortOpen    = false;
-
-  function openSort() {
-    sortOpen = true;
-    sortBtn.setAttribute('aria-expanded', 'true');
-    sortPanel.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
-    sortPanel.classList.add('opacity-100', 'scale-100');
-    sortChevron.style.transform = 'rotate(180deg)';
-  }
-
-  function closeSort() {
-    sortOpen = false;
-    sortBtn.setAttribute('aria-expanded', 'false');
-    sortPanel.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
-    sortPanel.classList.remove('opacity-100', 'scale-100');
-    sortChevron.style.transform = 'rotate(0deg)';
-  }
-
-  sortBtn?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    sortOpen ? closeSort() : openSort();
-  });
-
-  document.querySelectorAll('.sort-option').forEach((opt) => {
-    opt.addEventListener('click', () => {
-      // Update label
-      if (sortLabel) sortLabel.textContent = opt.dataset.value;
-
-      // Reset all options
-      document.querySelectorAll('.sort-option').forEach((o) => {
-        o.setAttribute('aria-selected', 'false');
-        o.classList.remove('text-primary', 'bg-primary/5');
-        o.classList.add('text-zinc-600', 'hover:bg-green-50', 'hover:text-primary');
-        const check = o.querySelector('.check-icon');
-        if (check) check.remove();
-        const icon = o.querySelector('.material-symbols-outlined');
-        if (icon) {
-          icon.classList.remove('text-primary');
-          icon.classList.add('text-zinc-400', 'group-hover:text-primary');
-        }
-      });
-
-      // Mark selected
-      opt.setAttribute('aria-selected', 'true');
-      opt.classList.add('text-primary', 'bg-primary/5');
-      opt.classList.remove('text-zinc-600', 'hover:bg-green-50', 'hover:text-primary');
-      const icon = opt.querySelector('.material-symbols-outlined');
-      if (icon) {
-        icon.classList.add('text-primary');
-        icon.classList.remove('text-zinc-400', 'group-hover:text-primary');
-      }
-      // Add check mark if not already there
-      if (!opt.querySelector('[data-check]')) {
-        const check = document.createElement('span');
-        check.setAttribute('data-check', '');
-        check.className = 'material-symbols-outlined ml-auto text-primary';
-        check.style.fontSize = '15px';
-        check.style.fontVariationSettings = "'FILL' 1";
-        check.textContent = 'check';
-        opt.appendChild(check);
-      }
-
-      closeSort();
-    });
-  });
-
-  // Close on outside click
-  document.addEventListener('click', (e) => {
-    if (sortOpen && !document.getElementById('sort-wrapper')?.contains(/** @type {Node} */ (e.target))) {
-      closeSort();
-    }
-  });
-
-  // ── Price range slider ─────────────────────────────────
-  /** @type {HTMLInputElement} */ const priceRange   = document.getElementById('price-range');
-  /** @type {HTMLElement}      */ const priceDisplay = document.getElementById('price-display');
-
-  priceRange?.addEventListener('input', function () {
-    const val = /** @type {number} */ (Number(this.value));
-    const pct = ((val - Number(this.min)) / (Number(this.max) - Number(this.min))) * 100;
-    this.style.background =
-      `linear-gradient(to right, #0d631b ${pct}%, #e2e5dd ${pct}%)`;
-    if (priceDisplay) priceDisplay.textContent = '$' + val;
-  });
-</script>
+</div>
+<!-- Add navOpen property to the component class -->

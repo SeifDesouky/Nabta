@@ -1,1 +1,159 @@
-<p>product-card works!</p>
+<div class="group bg-white rounded-xl border border-border-color overflow-hidden
+            hover:shadow-soft transition-all duration-300 hover:-translate-y-1 flex flex-col">
+
+  <!-- Image -->
+  <div class="relative aspect-[4/3] overflow-hidden bg-background-light">
+    <img [src]="product.imageUrl" [alt]="product.productName"
+         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+         onerror="this.src='assets/placeholder.png'" />
+
+    <!-- Badges -->
+    <div class="absolute top-3 left-3 flex flex-col gap-1.5">
+      <span *ngIf="product.stock > 0"
+            class="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur text-[10px] font-bold
+                   uppercase tracking-wide text-primary flex items-center gap-1 shadow-sm">
+        <span class="material-symbols-outlined text-primary"
+              style="font-size:11px;font-variation-settings:'FILL' 1;">eco</span>
+        In Stock
+      </span>
+      <span *ngIf="product.stock === 0"
+            class="px-2.5 py-1 rounded-full bg-red-500/90 backdrop-blur text-[10px] font-bold
+                   uppercase tracking-wide text-white shadow-sm">
+        Out of Stock
+      </span>
+      <!-- Bulk badge — بيتحول لـ "Bulk Active" لو الكمية وصلت -->
+      <span *ngIf="product.bulkAvailable"
+            class="px-2.5 py-1 rounded-full backdrop-blur text-[10px] font-bold
+                   uppercase tracking-wide text-white shadow-sm transition-colors duration-300"
+            [ngClass]="isBulkActive ? 'bg-primary' : 'bg-secondary/90'">
+        {{ isBulkActive ? 'Bulk Active' : 'Bulk Available' }}
+      </span>
+    </div>
+
+    <!-- Favourite -->
+    <button (click)="toggleFavourite($event)"
+            class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur
+                   flex items-center justify-center transition-colors
+                   opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 duration-300"
+            [ngClass]="isFavourited ? 'text-red-500' : 'text-zinc-400 hover:text-red-500'">
+      <span class="material-symbols-outlined" style="font-size:18px;"
+            [style.font-variation-settings]="getFavFill()">favorite</span>
+    </button>
+
+    <!-- Quick View -->
+    <div class="absolute bottom-3 right-3" [routerLink]="['/marketplace/product', product.slug]">
+      <button class="bg-primary hover:bg-white text-white hover:text-text-main px-3 py-1.5 rounded-full
+                     text-[11px] font-bold shadow-lg
+                     transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100
+                     transition-all duration-300 flex items-center gap-1">
+        <span class="material-symbols-outlined" style="font-size:13px;">visibility</span>
+        Quick View
+      </button>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="p-5 flex flex-col flex-1">
+
+    <!-- Name + Stock count -->
+    <div class="flex justify-between items-start mb-1.5">
+      <h3 class="font-bold text-base text-text-main leading-tight group-hover:text-primary transition-colors">
+        {{ product.productName }}
+      </h3>
+      <div class="flex items-center gap-1 text-[11px] font-semibold text-primary bg-primary/10
+                  px-2 py-0.5 rounded-md border border-primary/20 flex-shrink-0 ml-2">
+        <span class="material-symbols-outlined" style="font-size:11px;">inventory_2</span>
+        {{ product.stock }}
+      </div>
+    </div>
+
+    <!-- Farmer -->
+    <p class="text-[11px] text-text-sub flex items-center gap-1 mb-3">
+      <span class="material-symbols-outlined" style="font-size:11px;">location_on</span>
+      {{ farmerName }}
+    </p>
+
+    <!-- Pricing -->
+    <div class="mt-auto pt-4 border-t border-border-color space-y-3">
+
+      <!-- Prices row -->
+      <div class="flex items-end justify-between">
+        <div>
+          <span class="text-[11px] text-text-sub block mb-0.5">
+            {{ isBulkActive ? 'Bulk Price' : (product.bulkAvailable ? 'Unit Price' : 'Starting at') }}
+          </span>
+          <span class="text-xl font-bold transition-colors duration-300"
+                [ngClass]="isBulkActive ? 'text-primary' : 'text-text-main'">
+            ${{ effectivePrice | number:'1.2-2' }}
+          </span>
+          <span class="text-xs text-zinc-400"> / unit</span>
+        </div>
+        <div *ngIf="product.bulkAvailable && product.bulkPrice" class="text-right">
+          <span class="text-[11px] text-text-sub block mb-0.5">{{ bulkLabel }}</span>
+          <span class="text-sm font-semibold text-earth">${{ product.bulkPrice | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <!-- Bulk Progress Bar — بتظهر بس لو فيه bulk -->
+      <div *ngIf="product.bulkAvailable" class="space-y-1">
+        <div class="h-1.5 bg-[#e2e5dd] rounded-full overflow-hidden">
+          <div class="h-full bg-primary rounded-full transition-all duration-300"
+               [style.width]="bulkProgress + '%'"></div>
+        </div>
+        <p class="text-[10px] font-medium"
+           [ngClass]="isBulkActive ? 'text-primary' : 'text-zinc-400'">
+          {{ isBulkActive ? '✓ Bulk discount active' : remaining + ' more units to unlock bulk price' }}
+        </p>
+      </div>
+
+      <!-- Line total (بيظهر بس لو quantity > 1) -->
+      <div *ngIf="quantity > 1"
+           class="flex justify-between items-center py-2 px-3 bg-[#f3f3f3] rounded-xl border border-border-color">
+        <span class="text-[11px] text-text-sub font-medium">Total ({{ quantity }} units)</span>
+        <span class="text-sm font-extrabold text-text-main">${{ lineTotal | number:'1.2-2' }}</span>
+      </div>
+
+      <!-- Qty + Add to Cart -->
+      <div class="flex gap-2">
+        <input
+          type="number"
+          [value]="quantity"
+          [min]="1"
+          [max]="product.stock"
+          (change)="onQuantityChange($event)"
+          placeholder="Qty"
+          class="flex w-[30%] bg-background-light border-none rounded-xl text-sm font-semibold
+                 focus:ring-1 focus:ring-primary/40 py-2 px-3 text-center outline-none
+                 [-moz-appearance:textfield]
+                 [&::-webkit-outer-spin-button]:appearance-none
+                 [&::-webkit-inner-spin-button]:appearance-none"/>
+
+        <button (click)="addToCart()"
+                [disabled]="addingToCart || product.stock === 0"
+                class="flex w-[70%] font-bold py-2 rounded-xl transition-all
+                       flex items-center justify-center gap-1.5 text-sm
+                       disabled:opacity-50 disabled:cursor-not-allowed"
+                [ngClass]="cartSuccess
+                  ? 'bg-primary/10 text-primary border border-primary/20'
+                  : 'bg-text-main text-white hover:bg-earth'">
+
+          <!-- States -->
+          <ng-container *ngIf="!addingToCart && !cartSuccess">
+            <span class="material-symbols-outlined" style="font-size:16px;">add_shopping_cart</span>
+            Add to Cart
+          </ng-container>
+          <ng-container *ngIf="addingToCart">
+            <span class="material-symbols-outlined animate-spin" style="font-size:16px;">progress_activity</span>
+            Adding...
+          </ng-container>
+          <ng-container *ngIf="cartSuccess">
+            <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">check_circle</span>
+            Added!
+          </ng-container>
+
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

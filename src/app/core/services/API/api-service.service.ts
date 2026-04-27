@@ -13,11 +13,13 @@ export class ApiServiceService {
   constructor(private http: HttpClient) {}
 
   // ── GET ──────────────────────────────────────────────────────────────────
-  get<T>(endpoint: string): Observable<T> {
+  get<T>(endpoint: string,params?:any): Observable<T> {
     return this.http.get<T>(`${this.baseUrl}${endpoint}`, {
-      headers: this.jsonHeaders()
+      headers: this.jsonHeaders(),
+      params: params
     });
   }
+
 
   // ── POST (JSON) ───────────────────────────────────────────────────────────
   post<T>(endpoint: string, body: any): Observable<T> {
