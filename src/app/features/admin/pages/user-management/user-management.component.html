@@ -1,0 +1,309 @@
+<div class="page-wrapper" (keydown)="onKeydown($event)" tabindex="-1">
+
+  <!-- ══════════════════════════════════
+       USER DETAIL MODAL
+  ══════════════════════════════════ -->
+  <div class="modal-overlay" [class.modal-visible]="svc.modalOpen"
+       (click)="onBackdropClick($event)" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-backdrop"></div>
+
+    <div class="modal-card" *ngIf="svc.selectedUser as user">
+      <!-- Header -->
+      <div class="modal-header">
+        <h3 id="modal-title" class="modal-title">User Details</h3>
+        <button class="icon-btn" (click)="closeModal()" aria-label="Close">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        <!-- Identity -->
+        <div class="modal-identity">
+          <div class="avatar-lg">{{ getInitials(user.name) }}</div>
+          <div>
+            <p class="modal-name">{{ user.name }}</p>
+            <p class="modal-email">{{ user.email }}</p>
+            <span class="role-badge"
+                  [style.background]="getRoleDisplay(user.role).bg"
+                  [style.color]="getRoleDisplay(user.role).color">
+              <span class="material-symbols-outlined ms-fill">{{ getRoleDisplay(user.role).icon }}</span>
+              {{ getRoleDisplay(user.role).label }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Info grid -->
+        <div class="modal-info-grid">
+          <div class="info-tile">
+            <span class="info-label">Status</span>
+            <div class="status-row">
+              <span class="status-dot" [style.background]="getStatusDisplay(user.status).dot"></span>
+              <span class="info-value" [style.color]="getStatusDisplay(user.status).color">
+                {{ getStatusDisplay(user.status).label }}
+              </span>
+            </div>
+          </div>
+          <div class="info-tile">
+            <span class="info-label">Verified</span>
+            <span class="info-value">{{ user.isVerified ? 'Yes' : 'No' }}</span>
+          </div>
+          <div class="info-tile">
+            <span class="info-label">Phone</span>
+            <span class="info-value">{{ user.phone || '—' }}</span>
+          </div>
+          <div class="info-tile">
+            <span class="info-label">Joined</span>
+            <span class="info-value">{{ getTimeAgo(user.createdAt) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button class="btn-toggle"
+                [class.btn-unblock]="user.status === 'blocked'"
+                (click)="toggleStatusFromModal()"
+                [disabled]="isActionLoading(user._id)">
+          <span class="material-symbols-outlined ms-fill">
+            {{ user.status === 'active' ? 'block' : 'check_circle' }}
+          </span>
+          {{ user.status === 'active' ? 'Block User' : 'Unblock User' }}
+        </button>
+        <button class="btn-delete-modal" (click)="deleteFromModal()" [disabled]="isActionLoading(user._id)">
+          <span class="material-symbols-outlined ms-fill">delete</span>
+          {{ user.isDeleted ? 'Restore' : 'Delete' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════ -->
+  <div class="main-content">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div>
+        <h2 class="page-title">User Management</h2>
+        <p class="page-sub">Manage accounts, roles, and platform access permissions.</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary">
+          <span class="material-symbols-outlined">download</span>Export CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Stat Cards ── -->
+    <div class="stat-grid">
+      <div class="stat-card stat-clickable"
+           [class.stat-active]="isActiveRole('all')"
+           (click)="onStatCardClick('all')"
+           role="button" tabindex="0" (keydown.enter)="onStatCardClick('all')">
+        <span class="material-symbols-outlined stat-icon" style="background:rgba(13,99,27,0.08);color:#0d631b;">group</span>
+        <div>
+          <p class="stat-label">Total Users</p>
+          <p class="stat-value" *ngIf="!svc.statsLoading; else sk">{{ svc.stats.total }}</p>
+          <ng-template #sk><div class="skeleton-val"></div></ng-template>
+        </div>
+      </div>
+      <div class="stat-card stat-clickable"
+           [class.stat-active]="isActiveRole('farmer')"
+           (click)="onStatCardClick('farmer')"
+           role="button" tabindex="0" (keydown.enter)="onStatCardClick('farmer')">
+        <span class="material-symbols-outlined stat-icon ms-fill" style="background:rgba(13,99,27,0.08);color:#0d631b;">agriculture</span>
+        <div>
+          <p class="stat-label">Farmers</p>
+          <p class="stat-value" *ngIf="!svc.statsLoading">{{ svc.stats.farmer ?? 0 }}</p>
+        </div>
+      </div>
+      <div class="stat-card stat-clickable"
+           [class.stat-active]="isActiveRole('expert')"
+           (click)="onStatCardClick('expert')"
+           role="button" tabindex="0" (keydown.enter)="onStatCardClick('expert')">
+        <span class="material-symbols-outlined stat-icon ms-fill" style="background:rgba(141,85,36,0.10);color:#8d5524;">verified</span>
+        <div>
+          <p class="stat-label">Experts</p>
+          <p class="stat-value expert-val" *ngIf="!svc.statsLoading">{{ svc.stats.expert ?? 0 }}</p>
+        </div>
+      </div>
+      <div class="stat-card stat-clickable"
+           [class.stat-active]="isActiveRole('buyer')"
+           (click)="onStatCardClick('buyer')"
+           role="button" tabindex="0" (keydown.enter)="onStatCardClick('buyer')">
+        <span class="material-symbols-outlined stat-icon ms-fill" style="background:rgba(141,85,36,0.10);color:#8d5524;">shopping_bag</span>
+        <div>
+          <p class="stat-label">Buyers</p>
+          <p class="stat-value expert-val" *ngIf="!svc.statsLoading">{{ svc.stats.buyer ?? 0 }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Filters Row ── -->
+    <div class="filters-row">
+      <div class="select-wrapper">
+        <select class="filter-select" (change)="onRoleChange($event)">
+          <option *ngFor="let o of roleOptions" [value]="o.value">{{ o.label }}</option>
+        </select>
+        <span class="material-symbols-outlined select-chevron">expand_more</span>
+      </div>
+      <div class="select-wrapper">
+        <select class="filter-select" (change)="onStatusChange($event)">
+          <option *ngFor="let o of statusOptions" [value]="o.value">{{ o.label }}</option>
+        </select>
+        <span class="material-symbols-outlined select-chevron">expand_more</span>
+      </div>
+      <span class="filter-count" *ngIf="!svc.loading">
+        Showing <strong>{{ showingFrom }}–{{ showingTo }}</strong> of
+        <strong>{{ svc.totalResult }}</strong> users
+      </span>
+    </div>
+
+    <!-- ── Table ── -->
+    <div class="table-card">
+      <div class="table-scroll">
+        <table class="nabta-table">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Joined</th>
+              <th>Last Updated</th>
+              <th class="th-right">Actions</th>
+            </tr>
+          </thead>
+
+          <!-- Loading skeleton rows -->
+          <tbody *ngIf="svc.loading">
+            <tr *ngFor="let i of [1,2,3,4,5,6]" class="sk-row">
+              <td>
+                <div class="sk-user">
+                  <div class="sk-avatar"></div>
+                  <div class="sk-lines">
+                    <div class="sk-line sk-w50"></div>
+                    <div class="sk-line sk-w35"></div>
+                  </div>
+                </div>
+              </td>
+              <td><div class="sk-line sk-w40"></div></td>
+              <td><div class="sk-line sk-w30"></div></td>
+              <td><div class="sk-line sk-w40"></div></td>
+              <td><div class="sk-line sk-w35"></div></td>
+              <td></td>
+            </tr>
+          </tbody>
+
+          <!-- Actual rows -->
+          <tbody *ngIf="!svc.loading">
+            <!-- Empty state -->
+            <tr *ngIf="svc.users.length === 0">
+              <td colspan="6" class="empty-cell">
+                <div class="empty-state">
+                  <span class="material-symbols-outlined empty-icon">inbox</span>
+                  <p class="empty-title">No users found</p>
+                  <p class="empty-sub">Try adjusting your filters or search query.</p>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Data rows -->
+            <tr *ngFor="let user of svc.users; trackBy: trackByUser"
+                class="data-row"
+                [class.row-loading]="isActionLoading(user._id)"
+                (click)="openModal(user)">
+
+              <!-- User cell -->
+              <td>
+                <div class="user-cell">
+                  <div class="avatar-sm">{{ getInitials(user.name) }}</div>
+                  <div>
+                    <p class="user-name">{{ user.name }}</p>
+                    <p class="user-email">{{ user.email }}</p>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Role -->
+              <td>
+                <span class="role-badge"
+                      [style.background]="getRoleDisplay(user.role).bg"
+                      [style.color]="getRoleDisplay(user.role).color">
+                  <span class="material-symbols-outlined ms-fill role-icon">{{ getRoleDisplay(user.role).icon }}</span>
+                  {{ getRoleDisplay(user.role).label }}
+                </span>
+              </td>
+
+              <!-- Status -->
+              <td>
+                <div class="status-row">
+                  <span class="status-dot" [style.background]="getStatusDisplay(user.status).dot"></span>
+                  <span class="status-label" [style.color]="getStatusDisplay(user.status).color">
+                    {{ getStatusDisplay(user.status).label }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- Joined -->
+              <td class="cell-sub">{{ getTimeAgo(user.createdAt) }}</td>
+
+              <!-- Last Updated -->
+              <td class="cell-sub">{{ getTimeAgo(user.updatedAt) }}</td>
+
+              <!-- Actions -->
+              <td class="td-actions" (click)="$event.stopPropagation()">
+                <div class="row-actions">
+                  <!-- Toggle block -->
+                  <button class="action-btn"
+                          [title]="user.status === 'active' ? 'Block user' : 'Unblock user'"
+                          [class.action-btn-danger]="user.status === 'active'"
+                          [class.action-btn-success]="user.status !== 'active'"
+                          (click)="toggleStatus(user, $event)"
+                          [disabled]="isActionLoading(user._id)">
+                    <span class="material-symbols-outlined">
+                      {{ user.status === 'active' ? 'block' : 'lock_open' }}
+                    </span>
+                  </button>
+                  <!-- Delete / Restore -->
+                  <button class="action-btn action-btn-muted"
+                          [title]="user.isDeleted ? 'Restore user' : 'Delete user'"
+                          (click)="deleteUser(user, $event)"
+                          [disabled]="isActionLoading(user._id)">
+                    <span class="material-symbols-outlined">
+                      {{ user.isDeleted ? 'restore_from_trash' : 'delete' }}
+                    </span>
+                  </button>
+                  <!-- View details -->
+                  <button class="action-btn action-btn-muted" title="View details" (click)="openModal(user)">
+                    <span class="material-symbols-outlined">open_in_full</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="table-footer" *ngIf="svc.totalResult > 0 && !svc.loading">
+        <span class="pagination-info">
+          Showing <strong>{{ showingFrom }}–{{ showingTo }}</strong> of
+          <strong>{{ svc.totalResult }}</strong>
+        </span>
+        <div class="pagination-btns">
+          <button class="page-btn" (click)="prevPage()" [disabled]="!hasPrev">
+            <span class="material-symbols-outlined">chevron_left</span> Previous
+          </button>
+          <span class="page-indicator">{{ svc.currentPage }} / {{ svc.totalPages }}</span>
+          <button class="page-btn" (click)="nextPage()" [disabled]="!hasNext">
+            Next <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+</div>

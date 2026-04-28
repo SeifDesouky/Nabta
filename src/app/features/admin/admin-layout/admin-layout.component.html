@@ -1,0 +1,40 @@
+<div class="admin-shell">
+  <!-- Sidebar -->
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <!-- Right side: header + scrollable content -->
+  <div class="admin-body">
+
+    <!-- Top Header -->
+    <header class="admin-header">
+      <div class="header-search">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input
+          class="search-input"
+          type="text"
+          placeholder="Search applicants or specialties…"
+        />
+      </div>
+
+      <div class="header-actions">
+        <button class="header-icon-btn" aria-label="Notifications">
+          <span class="material-symbols-outlined">notifications</span>
+          <span class="notif-dot"></span>
+        </button>
+
+        <div class="admin-user">
+          <div class="admin-avatar">
+            <span class="material-symbols-outlined ms-fill">admin_panel_settings</span>
+          </div>
+          <span class="admin-name">Admin User</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content (router outlet) -->
+    <main class="admin-main">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+</div>

@@ -22,13 +22,13 @@ export class AuthService {
     localStorage.setItem('role', user.role);
 
     if (user.role === 'admin') {
-      this.router.navigate(['/admin']);
+      this.router.navigate(['/admin/users']);
     } else if (user.role === 'farmer') {
       this.router.navigate(['/marketplace']);
     } else if (user.role === 'expert') {
-      this.router.navigate(['/expert']);
+      this.router.navigate(['/marketplace']);
     } else if (user.role === 'buyer') {
-      this.router.navigate(['/buyer']);
+      this.router.navigate(['/marketplace']);
     } else {
       this.router.navigate(['/']);
     }

@@ -9,6 +9,7 @@ import { VerifyComponent } from './features/auth/pages/verify/verify.component';
 import { ResetPasswordComponent } from './features/auth/pages/reset-password/reset-password.component';
 import { ForgotPasswordComponent } from './features/auth/pages/forgot-password/forgot-password.component';
 import { CommunityFeedComponent } from './features/community/pages/community/community.component';
+import { ExpertApplicationsComponent } from './features/admin/pages/expert-applications/expert-applications.component';
 
 export const routes: Routes = [
   {
@@ -19,7 +20,7 @@ export const routes: Routes = [
       },
       // {
       //   path: 'community', loadChildren: () => import('./features/community/pages/community/community.component').then(m => m.CommunityFeedComponent)
-        
+
       // }
       {path:'community',component:CommunityFeedComponent}
 
@@ -33,6 +34,12 @@ export const routes: Routes = [
       {path:'forgot-password',component:ForgotPasswordComponent},
       {path:'reset-password',component:ResetPasswordComponent},
     ]
+  },
+  {
+    path: 'admin',
+    loadChildren: () =>
+      import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES)          // add your auth guard here
+    // canActivate: [adminGuard],          // add your auth guard here
   },
   {
   path: '**',

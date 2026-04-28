@@ -11,7 +11,7 @@ import { Comment, CreateCommentRequest } from '../../../../core/models/comment.m
 @Component({
   selector: 'app-community-feed',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,RouterLink],
   templateUrl: './community.component.html',
 })
 export class CommunityFeedComponent implements OnInit {

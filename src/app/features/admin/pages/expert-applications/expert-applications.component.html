@@ -1,0 +1,344 @@
+<div class="page-wrapper" (keydown)="onKeydown($event)" tabindex="-1">
+
+  <!-- ══════════════════════════════════════
+       DETAIL MODAL
+  ══════════════════════════════════════ -->
+  <div
+    class="modal-overlay"
+    [class.modal-visible]="svc.modalOpen"
+    (click)="onModalBackdropClick($event)"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+  >
+    <div class="modal-backdrop"></div>
+
+    <div class="modal-card" *ngIf="svc.selectedExpert as expert">
+      <!-- Header -->
+      <div class="modal-header">
+        <h3 id="modal-title" class="modal-title">Application Details</h3>
+        <button class="icon-btn" (click)="closeModal()" aria-label="Close modal">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        <!-- Identity row -->
+        <div class="modal-identity">
+          <div class="avatar-lg">{{ getInitials(expert.user.name) }}</div>
+          <div>
+            <p class="expert-name-lg">{{ expert.user.name }}</p>
+            <p class="expert-specialty-sm">{{ (expert.expertiseAreas || []).join(' · ') }}</p>
+            <p class="expert-email-sm">{{ expert.user.email }}</p>
+          </div>
+        </div>
+
+        <!-- Info grid -->
+        <div class="modal-info-grid">
+          <div class="info-tile">
+            <span class="info-label">Experience</span>
+            <span class="info-value">{{ expert.experienceYears }} years</span>
+          </div>
+          <div class="info-tile">
+            <span class="info-label">Status</span>
+            <span class="status-badge" [class]="'status-' + expert.expertStatus">
+              {{ expert.expertStatus | titlecase }}
+            </span>
+          </div>
+          <div class="info-tile">
+            <span class="info-label">Applied</span>
+            <span class="info-value">{{ getTimeAgo(expert.createdAt) }}</span>
+          </div>
+          <div class="info-tile">
+            <span class="info-label">CV</span>
+            <span class="info-value">
+              <ng-container *ngIf="expert.cvPublicId; else noCv">Attached</ng-container>
+              <ng-template #noCv>Not provided</ng-template>
+            </span>
+          </div>
+        </div>
+
+        <!-- Bio -->
+        <div *ngIf="expert.bio">
+          <p class="section-label">Bio</p>
+          <p class="bio-text">{{ expert.bio }}</p>
+        </div>
+
+        <!-- Skills -->
+        <div *ngIf="expert.expertiseAreas && expert.expertiseAreas.length">
+          <p class="section-label">Expertise Areas</p>
+          <div class="skills-row">
+            <span class="skill-tag" *ngFor="let area of expert.expertiseAreas">{{ area }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button
+          class="btn-approve"
+          (click)="approveFromModal()"
+          [disabled]="isActionLoading(expert.user._id)"
+        >
+          <span class="material-symbols-outlined ms-fill">check_circle</span>
+          <span>{{ isActionLoading(expert.user._id) ? 'Approving…' : 'Approve' }}</span>
+        </button>
+        <button
+          class="btn-reject"
+          (click)="rejectFromModal()"
+          [disabled]="isActionLoading(expert.user._id)"
+        >
+          <span class="material-symbols-outlined ms-fill">cancel</span>
+          <span>Reject</span>
+        </button>
+        <button
+          *ngIf="expert.cvPublicId"
+          class="btn-resume-modal"
+          (click)="downloadResume(expert, $event)"
+        >
+          <span class="material-symbols-outlined">download</span>
+          <span>Resume</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════ -->
+  <div class="main-content">
+
+    <!-- Page title -->
+    <div class="page-header">
+      <div>
+        <h2 class="page-title">Expert Applications</h2>
+        <p class="page-sub">Review and verify expert credentials before granting platform access.</p>
+      </div>
+    </div>
+
+    <!-- ── Stat Cards ── -->
+    <div class="stat-grid">
+      <!-- Pending -->
+      <div
+        class="stat-card stat-pending"
+        [class.stat-active]="isActiveFilter('pending')"
+        (click)="onStatCardClick('pending')"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="onStatCardClick('pending')"
+        aria-label="Filter by pending"
+      >
+        <span class="material-symbols-outlined stat-icon">pending_actions</span>
+        <div>
+          <p class="stat-label">Pending Review</p>
+          <p class="stat-value" *ngIf="!svc.statsLoading; else skeleton">
+            {{ svc.stats.pending }}
+          </p>
+          <ng-template #skeleton><div class="skeleton-val"></div></ng-template>
+        </div>
+      </div>
+
+      <!-- Approved -->
+      <div
+        class="stat-card stat-approved"
+        [class.stat-active]="isActiveFilter('accepted')"
+        (click)="onStatCardClick('accepted')"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="onStatCardClick('accepted')"
+        aria-label="Filter by approved"
+      >
+        <span class="material-symbols-outlined stat-icon ms-fill">verified</span>
+        <div>
+          <p class="stat-label">Approved</p>
+          <p class="stat-value" *ngIf="!svc.statsLoading">{{ svc.stats.accepted }}</p>
+        </div>
+      </div>
+
+      <!-- Rejected -->
+      <div
+        class="stat-card stat-rejected"
+        [class.stat-active]="isActiveFilter('rejected')"
+        (click)="onStatCardClick('rejected')"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="onStatCardClick('rejected')"
+        aria-label="Filter by rejected"
+      >
+        <span class="material-symbols-outlined stat-icon ms-fill">cancel</span>
+        <div>
+          <p class="stat-label">Rejected</p>
+          <p class="stat-value" *ngIf="!svc.statsLoading">{{ svc.stats.rejected }}</p>
+        </div>
+      </div>
+
+      <!-- Total Experts -->
+      <div
+        class="stat-card stat-total"
+        [class.stat-active]="isActiveFilter('all')"
+        (click)="onStatCardClick('all')"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="onStatCardClick('all')"
+        aria-label="Show all experts"
+      >
+        <span class="material-symbols-outlined stat-icon">groups</span>
+        <div>
+          <p class="stat-label">Total Experts</p>
+          <p class="stat-value" *ngIf="!svc.statsLoading">{{ svc.stats.total }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Filter Tabs ── -->
+    <div class="filter-row">
+      <button
+        *ngFor="let tab of filterTabs"
+        class="filter-tab"
+        [class.filter-tab-active]="isActiveFilter(tab.value)"
+        (click)="onFilterChange(tab.value)"
+      >
+        {{ tab.label }}
+        <span class="tab-count" *ngIf="tab.value === 'pending'">{{ svc.stats.pending }}</span>
+        <span class="tab-count" *ngIf="tab.value === 'accepted'">{{ svc.stats.accepted }}</span>
+        <span class="tab-count" *ngIf="tab.value === 'rejected'">{{ svc.stats.rejected }}</span>
+        <span class="tab-count" *ngIf="tab.value === 'all'">{{ svc.stats.total }}</span>
+      </button>
+    </div>
+
+    <!-- ── Loading Skeleton ── -->
+    <div class="apps-grid" *ngIf="svc.loading; else content">
+      <div class="skeleton-card" *ngFor="let i of [1,2,3,4]">
+        <div class="sk-row">
+          <div class="sk-avatar"></div>
+          <div class="sk-lines">
+            <div class="sk-line sk-w60"></div>
+            <div class="sk-line sk-w40"></div>
+          </div>
+        </div>
+        <div class="sk-line sk-w100 sk-mt"></div>
+        <div class="sk-line sk-w80"></div>
+        <div class="sk-tags">
+          <div class="sk-tag"></div>
+          <div class="sk-tag"></div>
+          <div class="sk-tag"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Cards Grid ── -->
+    <ng-template #content>
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="svc.experts.length === 0">
+        <span class="material-symbols-outlined empty-icon">inbox</span>
+        <p class="empty-title">No applications found</p>
+        <p class="empty-sub">Try changing the filter or search query.</p>
+      </div>
+
+      <div class="apps-grid" *ngIf="svc.experts.length > 0">
+        <div
+          class="app-card"
+          *ngFor="let expert of svc.experts; trackBy: trackByExpert"
+          [class.card-loading]="isActionLoading(expert.user._id)"
+        >
+          <!-- Card Header -->
+          <div class="card-header">
+            <div class="card-identity">
+              <div class="avatar-sm">{{ getInitials(expert.user.name) }}</div>
+              <div>
+                <p class="expert-name">{{ expert.user.name }}</p>
+                <p class="expert-email">{{ expert.user.email }}</p>
+                <p class="expert-specialty">{{ (expert.expertiseAreas || []).slice(0,2).join(' · ') }}</p>
+              </div>
+            </div>
+            <span class="status-badge" [class]="'status-' + expert.expertStatus">
+              {{ expert.expertStatus | titlecase }}
+            </span>
+          </div>
+
+          <!-- Bio -->
+          <p class="card-bio" *ngIf="expert.bio">{{ expert.bio }}</p>
+
+          <!-- Skills -->
+          <div class="skills-row" *ngIf="expert.expertiseAreas && expert.expertiseAreas.length">
+            <span class="skill-tag" *ngFor="let area of (expert.expertiseAreas || []).slice(0, 4)">
+              {{ area }}
+            </span>
+          </div>
+
+          <!-- Meta -->
+          <div class="card-meta">
+            <span class="meta-item">
+              <span class="material-symbols-outlined">schedule</span>
+              {{ getTimeAgo(expert.createdAt) }}
+            </span>
+            <span class="meta-item">
+              <span class="material-symbols-outlined">work</span>
+              {{ expert.experienceYears }} yrs exp
+            </span>
+          </div>
+
+          <!-- Actions -->
+          <div class="card-actions">
+            <!-- View Resume -->
+            <button
+              class="btn-view-resume"
+              (click)="downloadResume(expert, $event)"
+              [disabled]="!expert.cvPublicId"
+              [title]="expert.cvPublicId ? 'Download Resume' : 'No CV attached'"
+            >
+              <span class="material-symbols-outlined">description</span>
+              View Resume
+            </button>
+
+            <!-- View Details -->
+            <button class="btn-details" (click)="openModal(expert)">
+              <span class="material-symbols-outlined">open_in_full</span>
+              Details
+            </button>
+
+            <!-- Approve -->
+            <button
+              class="btn-approve-sm"
+              (click)="approve(expert)"
+              [disabled]="isActionLoading(expert.user._id) || expert.expertStatus === 'accepted'"
+            >
+              <span class="material-symbols-outlined ms-fill" *ngIf="!isActionLoading(expert.user._id)">check_circle</span>
+              <span class="spinner" *ngIf="isActionLoading(expert.user._id)"></span>
+              <span *ngIf="!isActionLoading(expert.user._id)">Approve</span>
+            </button>
+
+            <!-- Reject -->
+            <button
+              class="btn-reject-sm"
+              (click)="reject(expert)"
+              [disabled]="isActionLoading(expert.user._id) || expert.expertStatus === 'rejected'"
+            >
+              <span class="material-symbols-outlined ms-fill">cancel</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- ── Pagination ── -->
+    <div class="pagination-row" *ngIf="svc.totalResult > 0 && !svc.loading">
+      <span class="pagination-info">
+        Showing <strong>{{ showingFrom }}–{{ showingTo }}</strong> of
+        <strong>{{ svc.totalResult }}</strong>
+      </span>
+      <div class="pagination-btns">
+        <button class="page-btn" (click)="prevPage()" [disabled]="!hasPrev">
+          <span class="material-symbols-outlined">chevron_left</span> Previous
+        </button>
+        <span class="page-indicator">{{ svc.currentPage }} / {{ svc.totalPages }}</span>
+        <button class="page-btn" (click)="nextPage()" [disabled]="!hasNext">
+          Next <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+</div>

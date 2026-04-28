@@ -20,7 +20,7 @@
                        text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
       <span class="material-symbols-outlined" style="font-size:20px;">dashboard</span>Dashboard
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+    <a routerLink="/marketplace" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
                        text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
       <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">storefront</span>Marketplace
     </a>
@@ -42,7 +42,7 @@
       <span class="material-symbols-outlined ml-auto text-zinc-400" style="font-size:15px;">chevron_right</span>
     </div>
 
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+    <a class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
                        text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
       <span class="material-symbols-outlined" style="font-size:20px;">chat</span>Chats
     </a>
@@ -51,23 +51,23 @@
 
     <p class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-[.12em] px-2 mb-3">Community</p>
 
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+    <a routerLink="/" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
                        text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
       <span class="material-symbols-outlined" style="font-size:20px;">home</span>Home Feed
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+    <a  class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
                        text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
       <span class="material-symbols-outlined" style="font-size:20px;">trending_up</span>Trending Crops
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-semibold
+    <a  class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-semibold
                        text-primary mb-0.5" style="background:rgba(13,99,27,0.08)">
       <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">group_work</span>Local Groups
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+    <a  class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
                        text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
       <span class="material-symbols-outlined" style="font-size:20px;">psychology</span>Expert Q&A
     </a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+    <a  class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
                        text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
       <span class="material-symbols-outlined" style="font-size:20px;">bookmark</span>Saved Posts
     </a>
@@ -85,21 +85,21 @@
      (mouseenter)="keepAiFlyout()"
      (mouseleave)="scheduleHideAiFlyout()">
   <div class="py-1.5">
-    <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
+    <a  class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
       <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
         <span class="material-symbols-outlined text-primary" style="font-size:15px;font-variation-settings:'FILL' 1;">smart_toy</span>
       </div>
       <span class="text-sm font-medium text-zinc-600 group-hover:text-primary">ChatBot</span>
       <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary" style="font-size:14px;">arrow_forward</span>
     </a>
-    <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
+    <a  class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
       <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
         <span class="material-symbols-outlined text-primary" style="font-size:15px;">monitoring</span>
       </div>
       <span class="text-sm font-medium text-zinc-600 group-hover:text-primary">Yield Expectations</span>
       <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary" style="font-size:14px;">arrow_forward</span>
     </a>
-    <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
+    <a  class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
       <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
         <span class="material-symbols-outlined text-primary" style="font-size:15px;">yard</span>
       </div>
@@ -237,7 +237,7 @@
         <p class="text-sm text-on-surface leading-relaxed mb-5">{{ post.content }}</p>
 
         <!-- Tags -->
-        <div *ngIf="post.tags?.length" class="flex flex-wrap gap-2 mb-5">
+        <div *ngIf="post.tags.length" class="flex flex-wrap gap-2 mb-5">
           <span *ngFor="let tag of post.tags"
                 class="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20
                        text-[11px] font-bold">
@@ -440,11 +440,11 @@
 <!-- ══ MOBILE BOTTOM NAV ══ -->
 <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-[#e8e8e8]
             flex items-center justify-around z-40">
-  <a href="#" class="flex flex-col items-center gap-1 text-zinc-400">
+  <a  class="flex flex-col items-center gap-1 text-zinc-400">
     <span class="material-symbols-outlined" style="font-size:22px;">dashboard</span>
     <span class="text-[10px] font-medium">Dashboard</span>
   </a>
-  <a href="#" class="flex flex-col items-center gap-1 text-zinc-400">
+  <a  class="flex flex-col items-center gap-1 text-zinc-400">
     <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 1;">storefront</span>
     <span class="text-[10px]">Market</span>
   </a>
@@ -455,7 +455,7 @@
     <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 1;">groups</span>
     <span class="text-[10px]">Community</span>
   </a>
-  <a href="#" class="flex flex-col items-center gap-1 text-zinc-400">
+  <a  class="flex flex-col items-center gap-1 text-zinc-400">
     <span class="material-symbols-outlined" style="font-size:22px;">chat</span>
     <span class="text-[10px] font-medium">Chats</span>
   </a>

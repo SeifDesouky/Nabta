@@ -1,0 +1,52 @@
+<aside class="sidebar">
+
+  <!-- ── Logo ── -->
+  <div class="sidebar-logo">
+    <div class="logo-icon">
+      <span class="material-symbols-outlined ms-fill">agriculture</span>
+    </div>
+    <span class="logo-text">NABTA</span>
+  </div>
+
+  <!-- ── Nav ── -->
+  <nav class="sidebar-nav">
+
+    <!-- Admin section -->
+    <p class="nav-section-label">Admin Menu</p>
+
+    <a
+      *ngFor="let item of adminNav; trackBy: trackByRoute"
+      [routerLink]="item.route"
+      routerLinkActive="nav-item-active"
+      class="nav-item"
+    >
+      <span
+        class="material-symbols-outlined"
+        [class.ms-fill]="item.filled"
+      >{{ item.icon }}</span>
+      <span class="nav-label">{{ item.label }}</span>
+      <span class="nav-badge" *ngIf="item.badge">{{ item.badge }}</span>
+    </a>
+
+    <div class="nav-divider"></div>
+
+    <!-- System section -->
+    <p class="nav-section-label">System</p>
+
+    <a
+      *ngFor="let item of systemNav; trackBy: trackByRoute"
+      [routerLink]="item.route"
+      routerLinkActive="nav-item-active"
+      class="nav-item"
+    >
+      <span class="material-symbols-outlined">{{ item.icon }}</span>
+      <span class="nav-label">{{ item.label }}</span>
+    </a>
+
+    <button class="nav-item nav-logout" (click)="logout()">
+      <span class="material-symbols-outlined">logout</span>
+      <span class="nav-label">Log Out</span>
+    </button>
+
+  </nav>
+</aside>
