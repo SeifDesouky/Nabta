@@ -10,6 +10,7 @@ import { ResetPasswordComponent } from './features/auth/pages/reset-password/res
 import { ForgotPasswordComponent } from './features/auth/pages/forgot-password/forgot-password.component';
 import { CommunityFeedComponent } from './features/community/pages/community/community.component';
 import { ExpertApplicationsComponent } from './features/admin/pages/expert-applications/expert-applications.component';
+import { EducationalComponent } from './features/educational/pages/educational/educational.component';
 
 export const routes: Routes = [
   {
@@ -22,7 +23,8 @@ export const routes: Routes = [
       //   path: 'community', loadChildren: () => import('./features/community/pages/community/community.component').then(m => m.CommunityFeedComponent)
 
       // }
-      {path:'community',component:CommunityFeedComponent}
+      {path:'community',component:CommunityFeedComponent},
+      {path:'educational',loadChildren: () => import('./features/educational/educational.routes').then(m => m.educationalRoutes)}
 
     ]
   },

@@ -1,0 +1,282 @@
+<div class="bg-[#f8f8f5] text-on-surface">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="h-screen w-[17.5rem] fixed left-0 top-0 hidden md:flex flex-col
+                bg-[#f3f3f3] border-r border-[#e4e4e4] z-40">
+    <div class="px-5 h-16 flex items-center border-b border-[#e4e4e4] flex-shrink-0">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-primary-glow flex-shrink-0">
+          <span class="material-symbols-outlined text-white"
+                style="font-size:20px;font-variation-settings:'FILL' 1;">agriculture</span>
+        </div>
+        <h1 class="text-[15px] font-extrabold text-primary tracking-tight leading-none">NABTA</h1>
+      </div>
+    </div>
+    <div class="flex-1 overflow-y-auto px-3 pt-5 pb-6">
+      <p class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-[.12em] px-2 mb-3">Menu</p>
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                         text-[#5a6b57] hover:bg-white hover:text-primary hover:shadow-card transition-all mb-0.5">
+        <span class="material-symbols-outlined" style="font-size:20px;">dashboard</span>Dashboard
+      </a>
+      <div class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] bg-primary text-white
+                  shadow-primary-glow mb-0.5">
+        <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">school</span>
+        <span class="text-sm font-semibold">Educational Content</span>
+      </div>
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                         text-[#5a6b57] hover:bg-white hover:text-primary hover:shadow-card transition-all mb-0.5">
+        <span class="material-symbols-outlined" style="font-size:20px;">person</span>Profile
+      </a>
+      <div class="mx-1 mt-4 mb-4 border-t border-[#e0e0e0]"></div>
+      <p class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-[.12em] px-2 mb-3">Support</p>
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                         text-[#5a6b57] hover:bg-white hover:text-primary hover:shadow-card transition-all mb-0.5">
+        <span class="material-symbols-outlined" style="font-size:20px;">help_outline</span>Help Center
+      </a>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN ══ -->
+  <div class="md:ml-[17.5rem] flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-[#e8e8e8]
+                   flex items-center justify-between px-8 h-16">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-primary"
+              style="font-variation-settings:'FILL' 1;">school</span>
+        <h2 class="font-headline font-bold text-primary text-lg">Educational Content</h2>
+      </div>
+      <!-- Search -->
+      <div class="flex items-center gap-4">
+        <div class="relative hidden md:block">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
+          <input
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="onSearch()"
+            placeholder="Search topics, crops…"
+            class="pl-10 pr-10 py-2 bg-surface-container-high rounded-full border-none
+                   focus:ring-2 focus:ring-primary/40 w-64 text-sm outline-none transition-all" />
+          <!-- Clear search -->
+          <button *ngIf="searchQuery"
+                  (click)="clearSearch()"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-lg">close</span>
+          </button>
+        </div>
+        <div class="w-9 h-9 rounded-full bg-primary/10 border border-primary/20
+                    flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary"
+                style="font-size:22px;font-variation-settings:'FILL' 1;">account_circle</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 p-6 lg:p-10 space-y-8">
+
+      <!-- Page Title -->
+      <header class="space-y-1">
+        <h1 class="text-4xl font-extrabold font-headline text-on-surface tracking-tight">Learn</h1>
+        <p class="text-on-surface-variant font-body">
+          Master sustainable techniques with our curated digital library for modern agronomists.
+        </p>
+      </header>
+
+      <!-- ── Filter Tabs ── -->
+      <section>
+        <div class="flex flex-wrap items-center gap-3">
+          <button *ngFor="let tab of filterTabs"
+                  (click)="setFilter(tab.value)"
+                  class="flex items-center gap-1.5 px-5 py-2.5 rounded-full text-sm font-semibold transition-all"
+                  [ngClass]="isActiveFilter(tab.value)
+                    ? 'bg-primary text-white shadow-primary-glow'
+                    : 'bg-surface-container-high text-on-surface-variant hover:bg-primary/10 hover:text-primary'">
+            <span class="material-symbols-outlined" style="font-size:16px;">{{ tab.icon }}</span>
+            {{ tab.label }}
+            <span *ngIf="tab.value !== 'all'"
+                  class="text-xs font-bold px-1.5 py-0.5 rounded-full"
+                  [ngClass]="isActiveFilter(tab.value) ? 'bg-white/20' : 'bg-outline-variant/20'">
+              {{ getCount(tab.value) }}
+            </span>
+          </button>
+
+          <!-- Active filter badge + clear -->
+          <div *ngIf="guideService.activeFilter !== 'all'"
+               class="ml-auto flex items-center gap-2">
+            <span class="text-xs text-on-surface-variant">
+              Showing: <strong class="text-primary">{{ getActiveFilterLabel() }}</strong>
+            </span>
+            <button (click)="clearFilter()"
+                    class="text-xs text-primary font-semibold hover:underline flex items-center gap-0.5">
+              <span class="material-symbols-outlined" style="font-size:14px;">close</span>
+              Clear
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Loading ── -->
+      <div *ngIf="loading" class="flex flex-col items-center justify-center py-24 gap-4">
+        <span class="material-symbols-outlined animate-spin text-primary" style="font-size:40px;">
+          progress_activity
+        </span>
+        <p class="text-sm text-on-surface-variant">Loading content…</p>
+      </div>
+
+      <!-- ── Search result info ── -->
+      <div *ngIf="!loading && searchQuery && guides.length > 0"
+           class="flex items-center gap-2 text-sm text-on-surface-variant">
+        <span class="material-symbols-outlined text-primary" style="font-size:16px;">search</span>
+        Found <strong class="text-on-surface">{{ guides.length }}</strong> result(s) for
+        "<strong class="text-primary">{{ searchQuery }}</strong>"
+      </div>
+
+      <!-- ── Empty State ── -->
+      <div *ngIf="guides.length === 0 && !loading"
+           class="py-20 flex flex-col items-center justify-center text-center gap-4">
+        <div class="w-20 h-20 rounded-2xl bg-surface-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-4xl text-outline">search_off</span>
+        </div>
+        <div class="space-y-1">
+          <p class="font-bold text-on-surface text-lg">No content found</p>
+          <p class="text-sm text-on-surface-variant max-w-xs">
+            {{ searchQuery ? 'No results for "' + searchQuery + '"' : 'No content matches this filter.' }}
+            Try a different filter or search term.
+          </p>
+        </div>
+        <button (click)="resetAll()"
+                class="mt-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-bold
+                       hover:shadow-lg transition-all active:scale-95">
+          Reset filters
+        </button>
+      </div>
+
+      <!-- ── Cards ── -->
+      <section *ngIf="!loading && guides.length > 0" class="space-y-4">
+
+        <div *ngFor="let guide of filteredGuides; trackBy: trackByGuide"
+             (click)="openGuide(guide)"
+             class="group flex flex-col md:flex-row gap-6 bg-surface-container-lowest p-5 rounded-2xl
+                    border border-outline-variant/10 hover:shadow-md hover:border-primary/20
+                    transition-all cursor-pointer">
+
+          <!-- Thumbnail -->
+          <div class="md:w-56 h-44 shrink-0 overflow-hidden rounded-xl relative">
+            <img [src]="getFirstImage(guide)" [alt]="guide.title"
+                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                 onerror="this.src='assets/placeholder.png'" />
+
+            <!-- Type pill overlay -->
+            <div class="absolute top-3 left-3">
+              <span class="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold
+                           uppercase backdrop-blur-sm shadow-sm"
+                    [ngClass]="getTypePillClass(guide.guide_type)">
+                <span class="material-symbols-outlined" style="font-size:12px;">{{ getTypeIcon(guide.guide_type) }}</span>
+                {{ getTypeLabel(guide.guide_type) }}
+              </span>
+            </div>
+
+            <!-- Play overlay for videos -->
+            <div *ngIf="isVideo(guide)"
+                 class="absolute inset-0 flex items-center justify-center
+                        bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div class="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                <span class="material-symbols-outlined text-primary text-2xl"
+                      style="font-variation-settings:'FILL' 1;">play_arrow</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info -->
+          <div class="flex flex-col justify-between flex-1 py-1">
+            <div>
+              <div class="flex items-center gap-2 mb-2.5">
+                <span class="text-[10px] font-bold px-2.5 py-1 rounded-lg
+                             bg-surface-container text-on-surface-variant uppercase tracking-wider">
+                  {{ guide.category }}
+                </span>
+              </div>
+              <h3 class="text-lg font-bold text-on-surface mb-2
+                         group-hover:text-primary transition-colors leading-snug">
+                {{ guide.title }}
+              </h3>
+              <p class="text-on-surface-variant text-sm leading-relaxed line-clamp-2">
+                {{ guide.content }}
+              </p>
+            </div>
+
+            <div class="mt-4 flex items-center justify-between flex-wrap gap-3">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-primary" style="font-size:16px;">person</span>
+                </div>
+                <span class="text-xs font-medium text-on-surface-variant">
+                  {{ guide.author.name }} · {{ timeAgo(guide.createdAt) }}
+                </span>
+              </div>
+
+              <button (click)="openGuide(guide); $event.stopPropagation()"
+                      class="flex items-center gap-2 px-5 py-2 font-bold rounded-xl text-sm
+                             transition-all active:scale-95 group-hover:gap-3"
+                      [ngClass]="isVideo(guide)
+                        ? 'bg-primary text-white hover:shadow-lg hover:shadow-primary/20'
+                        : 'border-2 border-primary/30 text-primary hover:bg-primary hover:text-white'">
+                <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">
+                  {{ getTypeActionIcon(guide.guide_type) }}
+                </span>
+                {{ getActionLabel(guide.guide_type) }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ── Pagination ── -->
+      <div *ngIf="!loading && guideService.totalPages > 1"
+           class="flex items-center justify-between mt-8 pt-6 border-t border-outline-variant/10">
+        <span class="text-sm text-on-surface-variant">
+          Page <strong class="text-on-surface">{{ guideService.currentPage }}</strong> of
+          <strong class="text-on-surface">{{ guideService.totalPages }}</strong>
+          · <span class="text-primary font-medium">{{ guideService.totalResult }} total</span>
+        </span>
+        <div class="flex gap-3">
+          <button (click)="prevPage()" [disabled]="!hasPrev"
+                  class="flex items-center gap-1.5 px-5 py-2.5 bg-surface-container-high
+                         text-on-surface-variant font-bold rounded-xl hover:bg-outline-variant/20
+                         transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+            <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+            Previous
+          </button>
+          <button (click)="nextPage()" [disabled]="!hasNext"
+                  class="flex items-center gap-1.5 px-5 py-2.5 bg-primary text-white font-bold
+                         rounded-xl hover:brightness-110 shadow-primary-glow transition-all
+                         disabled:opacity-40 disabled:cursor-not-allowed">
+            Next
+            <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+          </button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface-container-lowest
+              border-t border-outline-variant/10 px-6 py-3 flex justify-between items-center z-50">
+    <button class="flex flex-col items-center gap-1 text-outline">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span class="text-[10px] font-medium">Dashboard</span>
+    </button>
+    <button class="flex flex-col items-center gap-1 text-primary">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">school</span>
+      <span class="text-[10px] font-bold">Learn</span>
+    </button>
+    <button class="flex flex-col items-center gap-1 text-outline">
+      <span class="material-symbols-outlined">person</span>
+      <span class="text-[10px] font-medium">Profile</span>
+    </button>
+  </nav>
+
+</div>

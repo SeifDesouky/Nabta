@@ -1,0 +1,204 @@
+<div class="bg-[#f8f8f5] min-h-screen md:ml-[17.5rem]">
+  <aside class="h-screen w-[17.5rem] fixed left-0 top-0 hidden md:flex flex-col
+                bg-[#f3f3f3] border-r border-[#e4e4e4] z-40">
+    <div class="px-5 h-16 flex items-center border-b border-[#e4e4e4] flex-shrink-0">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-primary-glow flex-shrink-0">
+          <span class="material-symbols-outlined text-white"
+                style="font-size:20px;font-variation-settings:'FILL' 1;">agriculture</span>
+        </div>
+        <h1 class="text-[15px] font-extrabold text-primary tracking-tight leading-none">NABTA</h1>
+      </div>
+    </div>
+    <div class="flex-1 overflow-y-auto px-3 pt-5 pb-6">
+      <p class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-[.12em] px-2 mb-3">Menu</p>
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                         text-[#5a6b57] hover:bg-white hover:text-primary hover:shadow-card transition-all mb-0.5">
+        <span class="material-symbols-outlined" style="font-size:20px;">dashboard</span>Dashboard
+      </a>
+      <div class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] bg-primary text-white
+                  shadow-primary-glow mb-0.5">
+        <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">school</span>
+        <span class="text-sm font-semibold">Educational Content</span>
+      </div>
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                         text-[#5a6b57] hover:bg-white hover:text-primary hover:shadow-card transition-all mb-0.5">
+        <span class="material-symbols-outlined" style="font-size:20px;">person</span>Profile
+      </a>
+      <div class="mx-1 mt-4 mb-4 border-t border-[#e0e0e0]"></div>
+      <p class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-[.12em] px-2 mb-3">Support</p>
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                         text-[#5a6b57] hover:bg-white hover:text-primary hover:shadow-card transition-all mb-0.5">
+        <span class="material-symbols-outlined" style="font-size:20px;">help_outline</span>Help Center
+      </a>
+    </div>
+  </aside>
+  <!-- Header -->
+  <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-[#e8e8e8]
+                 flex items-center gap-4 px-6 md:px-8 h-16">
+    <button (click)="goBack()"
+            class="flex items-center gap-2 text-on-surface-variant hover:text-primary
+                   font-semibold text-sm transition-colors">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Back
+    </button>
+    <div class="h-5 w-px bg-outline-variant/30"></div>
+    <span class="text-sm text-on-surface-variant truncate hidden md:block">{{ guide?.title }}</span>
+  </header>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex flex-col items-center justify-center py-32 gap-4">
+    <span class="material-symbols-outlined animate-spin text-primary" style="font-size:40px;">
+      progress_activity
+    </span>
+    <p class="text-sm text-on-surface-variant">Loading content…</p>
+  </div>
+
+  <!-- Not Found -->
+  <div *ngIf="!loading && !guide"
+       class="flex flex-col items-center justify-center py-32 gap-4 text-center">
+    <div class="w-20 h-20 rounded-2xl bg-surface-container flex items-center justify-center">
+      <span class="material-symbols-outlined text-4xl text-outline">error_outline</span>
+    </div>
+    <p class="font-bold text-on-surface text-xl">Content not found</p>
+    <button (click)="goBack()"
+            class="mt-2 px-6 py-3 bg-primary text-white rounded-xl font-bold
+                   hover:shadow-lg transition-all active:scale-95">
+      Go back
+    </button>
+  </div>
+
+  <!-- ══ MAIN CONTENT ══ -->
+  <main *ngIf="!loading && guide" class="max-w-4xl mx-auto px-6 md:px-10 py-10 space-y-8">
+
+    <!-- Meta tags row -->
+    <div class="flex items-center gap-3 flex-wrap">
+      <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider"
+            [ngClass]="getTypePillClass(guide.guide_type)">
+        <span class="material-symbols-outlined" style="font-size:14px;">{{ getTypeIcon(guide.guide_type) }}</span>
+        {{ getTypeLabel(guide.guide_type) }}
+      </span>
+      <span class="text-xs font-bold px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant uppercase">
+        {{ guide.category }}
+      </span>
+      <span *ngFor="let tag of guide.tags"
+            class="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary font-medium">
+        #{{ tag }}
+      </span>
+    </div>
+
+    <!-- Title -->
+    <h1 class="text-3xl md:text-4xl font-extrabold font-headline text-on-surface tracking-tight leading-tight">
+      {{ guide.title }}
+    </h1>
+
+    <!-- Author + date -->
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">account_circle</span>
+      </div>
+      <div>
+        <p class="text-sm font-semibold text-on-surface">{{ guide.author.name }}</p>
+        <p class="text-xs text-on-surface-variant">{{ formatDate(guide.createdAt) }} · {{ timeAgo(guide.createdAt) }}</p>
+      </div>
+    </div>
+
+    <!-- ── VIDEO TYPE ── -->
+    <ng-container *ngIf="guide.guide_type === 'video'">
+      <!-- Embedded video player -->
+      <div *ngIf="guide.videoUrl"
+           class="rounded-2xl overflow-hidden bg-black shadow-xl aspect-video">
+        <video [src]="guide.videoUrl"
+               controls
+               class="w-full h-full object-contain"
+               preload="metadata">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
+      <!-- Fallback cover if no video -->
+      <div *ngIf="!guide.videoUrl && getFirstImage(guide)"
+           class="rounded-2xl overflow-hidden shadow-xl aspect-video relative">
+        <img [src]="getFirstImage(guide)" [alt]="guide.title"
+             class="w-full h-full object-cover" />
+        <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+          <p class="text-white font-semibold text-sm bg-black/50 px-4 py-2 rounded-full">
+            Video not available
+          </p>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- ── ARTICLE / TUTORIAL TYPE - Cover Image ── -->
+    <ng-container *ngIf="guide.guide_type !== 'video'">
+      <div *ngIf="getFirstImage(guide)"
+           class="rounded-2xl overflow-hidden shadow-md h-72 md:h-96">
+        <img [src]="getFirstImage(guide)" [alt]="guide.title"
+             class="w-full h-full object-cover" />
+      </div>
+    </ng-container>
+
+    <!-- Content body -->
+    <div class="prose prose-green max-w-none">
+      <div class="text-on-surface leading-relaxed text-base space-y-4 whitespace-pre-line">
+        {{ guide.content }}
+      </div>
+    </div>
+
+    <!-- ── Extra images (gallery) for article/tutorial ── -->
+    <ng-container *ngIf="guide.guide_type !== 'video' && guide.imageUrl && guide.imageUrl.length > 1">
+      <div class="space-y-4">
+        <h3 class="text-lg font-bold text-on-surface">Gallery</h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div *ngFor="let img of guide.imageUrl.slice(1)"
+               class="rounded-xl overflow-hidden h-48 group cursor-pointer"
+               (click)="openImage(img)">
+            <img [src]="img" [alt]="guide.title"
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- ── Tutorial Steps placeholder ── -->
+    <div *ngIf="guide.guide_type === 'tutorial'"
+         class="bg-primary/5 border border-primary/15 rounded-2xl p-6 space-y-3">
+      <div class="flex items-center gap-2 text-primary font-bold">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">checklist</span>
+        Tutorial Guide
+      </div>
+      <p class="text-sm text-on-surface-variant leading-relaxed">
+        Follow the steps in the content above. Mark steps complete as you go.
+      </p>
+    </div>
+
+    <!-- ── CTA / Like area ── -->
+    <div class="flex items-center justify-between pt-6 border-t border-outline-variant/10">
+      <div class="flex items-center gap-2 text-on-surface-variant text-sm">
+        <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">favorite</span>
+        <span>{{ guide.likesCount }} likes</span>
+      </div>
+      <button (click)="goBack()"
+              class="flex items-center gap-2 px-5 py-2.5 border-2 border-primary/30
+                     text-primary font-bold rounded-xl text-sm hover:bg-primary hover:text-white
+                     transition-all active:scale-95">
+        <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span>
+        Back to Learn
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Lightbox -->
+  <div *ngIf="lightboxImage"
+       class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+       (click)="closeLightbox()">
+    <button class="absolute top-4 right-4 text-white/70 hover:text-white">
+      <span class="material-symbols-outlined text-3xl">close</span>
+    </button>
+    <img [src]="lightboxImage" alt="Gallery image"
+         class="max-w-full max-h-full rounded-xl shadow-2xl"
+         (click)="$event.stopPropagation()" />
+  </div>
+
+</div>
