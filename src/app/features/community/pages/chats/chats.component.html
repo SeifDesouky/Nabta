@@ -1,0 +1,401 @@
+
+
+
+<div class="bg-background-light text-on-surface">
+
+    <!-- ══════════════════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════════════════ -->
+    <aside class="h-screen w-[17.5rem] fixed left-0 top-0 hidden md:flex flex-col
+              bg-[#f3f3f3] border-r border-[#e4e4e4] z-40">
+
+        <div class="px-5 h-16 pt-3 border-b border-[#e4e4e4] flex-shrink-0">
+            <div class="flex items-center gap-2.5">
+                <div
+                    class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-primary-glow flex-shrink-0">
+                    <span class="material-symbols-outlined ms-fill text-white"
+                        style="font-size:20px;">agriculture</span>
+                </div>
+                <div>
+                    <h1 class="text-[15px] font-extrabold text-primary tracking-tight leading-none">NABTA</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto min-h-0 px-3 pt-5 pb-6">
+            <p class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-[.12em] px-2 mb-3">Menu</p>
+
+            <a href="#"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-[0.875rem] text-[0.875rem] font-medium text-[#5a6b57] no-underline transition-colors hover:bg-white hover:text-[#0d631b] hover:shadow-card mb-0.5">
+                <span class="material-symbols-outlined" style="font-size:20px;">dashboard</span>
+                Dashboard
+            </a>
+            <a href="#"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-[0.875rem] text-[0.875rem] font-medium text-[#5a6b57] no-underline transition-colors hover:bg-white hover:text-[#0d631b] hover:shadow-card mb-0.5">
+                <span class="material-symbols-outlined ms-fill" style="font-size:20px;">storefront</span>
+                Marketplace
+            </a>
+            <a href="#"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-[0.875rem] text-[0.875rem] font-medium text-[#5a6b57] no-underline transition-colors hover:bg-white hover:text-[#0d631b] hover:shadow-card mb-0.5">
+                <span class="material-symbols-outlined" style="font-size:20px;">groups</span>
+                Community
+            </a>
+            <div id="ai-tools-btn"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-[0.875rem] text-[0.875rem] font-medium text-[#5a6b57] transition-colors hover:bg-white hover:text-[#0d631b] hover:shadow-card mb-0.5 cursor-pointer select-none"
+                role="button" tabindex="0">
+                <span class="material-symbols-outlined" style="font-size:20px;">psychology</span>
+                <span>AI Tools</span>
+                <span class="material-symbols-outlined ml-auto text-zinc-400"
+                    style="font-size:15px;">chevron_right</span>
+            </div>
+
+            <!-- Chats — ACTIVE -->
+            <div
+                class="flex items-center gap-3 px-3 py-2.5 rounded-[0.875rem] bg-[#0d631b] text-white shadow-[0_4px_18px_rgba(13,99,27,.22)] mb-0.5">
+                <span class="material-symbols-outlined ms-fill" style="font-size:20px;">chat</span>
+                <span class="text-sm font-semibold">Chats</span>
+            </div>
+
+            <div class="mx-1 mt-4 mb-4 border-t border-[#e0e0e0]"></div>
+        </div>
+    </aside>
+    
+
+
+    <!-- ══════════════════════════════════════════════════
+     AI TOOLS FLYOUT
+══════════════════════════════════════════════════ -->
+    <div id="ai-flyout" class="fixed z-[600] w-64 bg-white rounded-3xl overflow-hidden
+         shadow-[0_8px_32px_rgba(0,0,0,0.13)] border border-[#eaeaea]" role="menu">
+        <div class="py-1.5">
+            <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
+                <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined ms-fill text-primary"
+                        style="font-size:15px;">smart_toy</span>
+                </div>
+                <span class="text-sm font-medium text-zinc-600 group-hover:text-primary">ChatBot</span>
+                <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary"
+                    style="font-size:14px;">arrow_forward</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
+                <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-primary" style="font-size:15px;">monitoring</span>
+                </div>
+                <span class="text-sm font-medium text-zinc-600 group-hover:text-primary">Yield Expectations</span>
+                <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary"
+                    style="font-size:14px;">arrow_forward</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
+                <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined ms-fill text-primary" style="font-size:15px;">yard</span>
+                </div>
+                <span class="text-sm font-medium text-zinc-600 group-hover:text-primary">Crop Recommendation</span>
+                <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary"
+                    style="font-size:14px;">arrow_forward</span>
+            </a>
+        </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════
+     MAIN AREA
+══════════════════════════════════════════════════ -->
+    <div class="md:ml-[17.5rem] h-screen flex flex-col">
+
+        <!-- Fixed header -->
+        <header id="main-header" class="fixed top-0 left-0 md:left-[17.5rem] right-0 h-16 bg-white/90 backdrop-blur-md border-b border-[#e8e8e8]
+           flex items-center justify-between px-8 z-30 transition-all duration-300">
+
+            <!-- List header (default) -->
+            <div id="header-list" class="flex items-center gap-3 transition-all duration-300">
+                <div class="flex items-center gap-2 text-sm">
+                    <span class="font-bold text-text-main">Expert Chats</span>
+                </div>
+            </div>
+
+            <!-- Convo header (hidden initially) -->
+            <div id="header-convo" class="hidden items-center gap-3 flex-1">
+                <button onclick="goBack()"
+                    class="p-2 pb-0 rounded-xl hover:bg-[#f3f3f3] transition-colors text-text-sub hover:text-primary mr-1">
+                    <span class="material-symbols-outlined" style="font-size:22px;">arrow_back</span>
+                </button>
+                <div class="avatar-wrap" style="width:36px;height:36px;">
+                    <img id="header-avatar" src="" alt=""
+                        style="width:36px;height:36px;border-radius:50%;object-fit:cover;" />
+                    <span id="header-status-dot" class="status-dot online"
+                        style="width:10px;height:10px;bottom:0;right:0;"></span>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-text-main leading-tight" id="header-name">—</p>
+                    <p class="text-[11px] font-medium" id="header-status-text" style="color:#0d631b;">Online</p>
+                </div>
+            </div>
+
+            <!-- Right side -->
+            <div class="flex items-center gap-2 pl-5 border-l border-[#e8e8e8] ml-4 flex-shrink-0">
+                <button class="relative p-2 pb-0 text-zinc-500 hover:bg-[#f3f3f3] rounded-full transition-colors">
+                    <span class="material-symbols-outlined" style="font-size:22px;">notifications</span>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-tertiary rounded-full"></span>
+                </button>
+                <div class="flex items-center gap-2.5 pl-3">
+                    <div
+                        class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+                        <span class="material-symbols-outlined ms-fill text-primary"
+                            style="font-size:22px;">account_circle</span>
+                    </div>
+                    <div class="hidden sm:block">
+                        <p class="text-xs font-semibold text-text-main leading-tight">Ahmed Al-Farsi</p>
+                        <p class="text-[10px] text-zinc-400">Pro Member</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Panel wrapper -->
+        <div class="panel-wrap mt-16 flex-1">
+
+            <!-- ════════════════════════════════════════
+         CHAT LIST PANEL
+    ════════════════════════════════════════ -->
+            <div id="list-panel" class="h-full flex flex-col bg-white">
+
+                <!-- List -->
+                <div class="flex-1 overflow-y-auto" id="chat-list">
+
+                    <!-- Chat 1: Dr. Layla Hassan — unread -->
+                    <div class="chat-item" onclick="openChat(0)">
+                        <div class="avatar-wrap">
+                            <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=100&h=100&fit=crop&crop=face"
+                                alt="Dr. Layla Hassan" />
+                            <span class="status-dot online"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-baseline mb-0.5">
+                                <div class="flex items-center gap-1.5">
+                                    <p class="text-sm font-bold text-text-main">Dr. Layla Hassan</p>
+                                    <span class="material-symbols-outlined ms-fill text-primary"
+                                        style="font-size:13px;">verified</span>
+                                </div>
+                                <span class="text-[11px] text-text-sub flex-shrink-0">10:42 AM</span>
+                            </div>
+                            <p class="text-[11px] text-text-sub mb-1 font-semibold">Soil &amp; Fertility Specialist</p>
+                            <p class="text-sm text-text-sub truncate font-medium">Your nitrogen readings look
+                                concerning. I'd recommend a targeted fertigation cycle before...</p>
+                        </div>
+                        <div class="flex flex-col items-end gap-2 flex-shrink-0 ml-3">
+                            <span class="unread-badge">3</span>
+                        </div>
+                    </div>
+
+                    <!-- Chat 2: Marcus Chen — read -->
+                    <div class="chat-item" onclick="openChat(1)">
+                        <div class="avatar-wrap">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face"
+                                alt="Marcus Chen" />
+                            <span class="status-dot online"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-baseline mb-0.5">
+                                <div class="flex items-center gap-1.5">
+                                    <p class="text-sm font-bold text-text-main">Marcus Chen</p>
+                                    <span class="material-symbols-outlined ms-fill text-primary"
+                                        style="font-size:13px;">verified</span>
+                                </div>
+                                <span class="text-[11px] text-text-sub flex-shrink-0">Yesterday</span>
+                            </div>
+                            <p class="text-[11px] text-text-sub mb-1 font-semibold">Pest &amp; Disease Management</p>
+                            <p class="text-sm text-text-sub truncate">Great — I'll send the full spray schedule later
+                                this week.</p>
+                        </div>
+                        <div class="flex flex-col items-end gap-2 flex-shrink-0 ml-3">
+                            <span class="material-symbols-outlined ms-fill text-primary"
+                                style="font-size:16px;">done_all</span>
+                        </div>
+                    </div>
+
+                    <!-- Chat 3: Dr. Amira Saleh — unread -->
+                    <div class="chat-item" onclick="openChat(2)">
+                        <div class="avatar-wrap">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop&crop=face"
+                                alt="Dr. Amira Saleh" />
+                            <span class="status-dot away"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-baseline mb-0.5">
+                                <div class="flex items-center gap-1.5">
+                                    <p class="text-sm font-bold text-text-main">Dr. Amira Saleh</p>
+                                    <span class="material-symbols-outlined ms-fill text-primary"
+                                        style="font-size:13px;">verified</span>
+                                </div>
+                                <span class="text-[11px] text-text-sub flex-shrink-0">Monday</span>
+                            </div>
+                            <p class="text-[11px] text-text-sub mb-1 font-semibold">Irrigation &amp; Water Systems</p>
+                            <p class="text-sm text-text-sub truncate font-medium">I've attached the updated drip
+                                irrigation map for Zone B. Please review and confirm...</p>
+                        </div>
+                        <div class="flex flex-col items-end gap-2 flex-shrink-0 ml-3">
+                            <span class="unread-badge">1</span>
+                        </div>
+                    </div>
+
+                    <!-- Chat 4: David Miller — read -->
+                    <div class="chat-item" onclick="openChat(3)">
+                        <div class="avatar-wrap">
+                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop&crop=face"
+                                alt="David Miller" />
+                            <span class="status-dot offline"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-baseline mb-0.5">
+                                <div class="flex items-center gap-1.5">
+                                    <p class="text-sm font-bold text-text-main">David Miller</p>
+                                </div>
+                                <span class="text-[11px] text-text-sub flex-shrink-0">Mar 18</span>
+                            </div>
+                            <p class="text-[11px] text-text-sub mb-1 font-semibold">Crop Yield &amp; Planning</p>
+                            <p class="text-sm text-text-sub truncate">The harvest forecast for Q2 looks solid based on
+                                current data.</p>
+                        </div>
+                        <div class="flex flex-col items-end gap-2 flex-shrink-0 ml-3">
+                            <span class="material-symbols-outlined ms-fill text-[#bfcaba]"
+                                style="font-size:16px;">done_all</span>
+                        </div>
+                    </div>
+
+                    <!-- Chat 5: Elena Rodriguez — read -->
+                    <div class="chat-item" onclick="openChat(4)">
+                        <div class="avatar-wrap">
+                            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop&crop=face"
+                                alt="Elena Rodriguez" />
+                            <span class="status-dot online"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-baseline mb-0.5">
+                                <div class="flex items-center gap-1.5">
+                                    <p class="text-sm font-bold text-text-main">Elena Rodriguez</p>
+                                    <span class="material-symbols-outlined ms-fill text-primary"
+                                        style="font-size:13px;">verified</span>
+                                </div>
+                                <span class="text-[11px] text-text-sub flex-shrink-0">Mar 15</span>
+                            </div>
+                            <p class="text-[11px] text-text-sub mb-1 font-semibold">Agricultural Data Scientist</p>
+                            <p class="text-sm text-text-sub truncate">Satellite imagery analysis for your fields is
+                                ready for download.</p>
+                        </div>
+                        <div class="flex flex-col items-end gap-2 flex-shrink-0 ml-3">
+                            <span class="material-symbols-outlined ms-fill text-primary"
+                                style="font-size:16px;">done_all</span>
+                        </div>
+                    </div>
+
+                    <!-- Chat 6: Dr. Yusuf Al-Amin — read -->
+                    <div class="chat-item" onclick="openChat(5)">
+                        <div class="avatar-wrap">
+                            <div class="avatar-initials bg-primary/10 text-primary">YA</div>
+                            <span class="status-dot offline"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-baseline mb-0.5">
+                                <div class="flex items-center gap-1.5">
+                                    <p class="text-sm font-bold text-text-main">Dr. Yusuf Al-Amin</p>
+                                    <span class="material-symbols-outlined ms-fill text-primary"
+                                        style="font-size:13px;">verified</span>
+                                </div>
+                                <span class="text-[11px] text-text-sub flex-shrink-0">Mar 10</span>
+                            </div>
+                            <p class="text-[11px] text-text-sub mb-1 font-semibold">Climate &amp; Seasonal Planning</p>
+                            <p class="text-sm text-text-sub truncate">Next season's planting window opens earlier than
+                                expected — mid-October.</p>
+                        </div>
+                        <div class="flex flex-col items-end gap-2 flex-shrink-0 ml-3">
+                            <span class="material-symbols-outlined ms-fill text-primary"
+                                style="font-size:16px;">done_all</span>
+                        </div>
+                    </div>
+
+                </div><!-- /chat-list -->
+            </div><!-- /list-panel -->
+
+
+            <!-- ════════════════════════════════════════
+         CONVERSATION PANEL
+    ════════════════════════════════════════ -->
+            <div id="convo-panel" class="h-full flex flex-col bg-[#f8f8f5]">
+
+                <!-- hidden elements kept for JS refs -->
+                <div style="display:none;">
+                    <img id="convo-avatar" /><span id="convo-status-dot"></span>
+                    <span id="convo-name"></span><span id="convo-verified"></span>
+                    <span id="convo-specialty"></span>
+                    <div id="convo-online-badge"></div>
+                </div>
+
+                <!-- Messages area -->
+                <div id="messages-area" class="flex-1 overflow-y-auto px-8 py-6 space-y-1">
+                    <!-- populated by JS -->
+                </div>
+
+                <!-- Typing indicator -->
+                <div id="typing-indicator" class="hidden px-8 pb-2">
+                    <div class="flex items-center gap-2">
+                        <div
+                            class="flex items-center gap-1 bg-white border border-[#e8ebe4] rounded-[1.25rem] px-4 py-3 shadow-card">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                        <span class="text-[11px] text-text-sub italic" id="typing-name">typing...</span>
+                    </div>
+                </div>
+
+                <!-- Input bar -->
+                <div class="flex-shrink-0 px-8 py-4 bg-white border-t border-[#f0f2ee]">
+                    <div class="flex items-end gap-3">
+                        <!-- Attach image -->
+                        <label
+                            class="p-2.5 pb-1 text-text-sub hover:text-primary hover:bg-primary/5 rounded-full transition-colors cursor-pointer flex-shrink-0">
+                            <span class="material-symbols-outlined" style="font-size:22px;">image</span>
+                            <input type="file" accept="image/*" class="hidden" onchange="sendImage(event)" />
+                        </label>
+                        <textarea id="msg-input" class="msg-input" placeholder="Type a message..." rows="1"
+                            onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+                        <button class="send-btn flex-shrink-0" onclick="sendMessage()">
+                            <span class="material-symbols-outlined ms-fill" style="font-size:20px;">send</span>
+                        </button>
+                    </div>
+                </div>
+            </div><!-- /convo-panel -->
+
+        </div><!-- /panel-wrap -->
+    </div><!-- /main -->
+
+
+    <!-- ══════════════════════════════════════════════════
+     MOBILE BOTTOM NAV
+══════════════════════════════════════════════════ -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-[#e8e8e8]
+            flex items-center justify-around z-40">
+        <a href="#" class="flex flex-col items-center gap-1 text-zinc-400">
+            <span class="material-symbols-outlined" style="font-size:22px;">dashboard</span>
+            <span class="text-[10px]">Dashboard</span>
+        </a>
+        <a href="#" class="flex flex-col items-center gap-1 text-zinc-400">
+            <span class="material-symbols-outlined ms-fill" style="font-size:22px;">storefront</span>
+            <span class="text-[10px]">Market</span>
+        </a>
+        <a href="#" class="flex flex-col items-center gap-1 text-zinc-400">
+            <span class="material-symbols-outlined" style="font-size:22px;">groups</span>
+            <span class="text-[10px]">Community</span>
+        </a>
+        <a href="#" class="flex flex-col items-center gap-1 text-zinc-400">
+            <span class="material-symbols-outlined" style="font-size:22px;">psychology</span>
+            <span class="text-[10px]">AI Tools</span>
+        </a>
+        <a href="#" class="flex flex-col items-center gap-1 text-primary font-bold">
+            <span class="material-symbols-outlined ms-fill" style="font-size:22px;">chat</span>
+            <span class="text-[10px]">Chats</span>
+        </a>
+    </nav>
+
+</div>
+  

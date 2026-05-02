@@ -1,0 +1,246 @@
+<main class="page-main">
+
+  <!-- ══ Loading State ══ -->
+  <div *ngIf="svc.loading" class="loading-state">
+    <div class="skeleton-hero"></div>
+    <div class="skeleton-grid">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!svc.loading && svc.user as user">
+
+    <!-- ══ Hero Profile Card ══ -->
+    <section class="hero-card fade-up">
+      <div class="hero-blur"></div>
+
+      <!-- Avatar -->
+      <div class="avatar-wrap">
+        <div class="avatar-ring">
+          <div class="avatar-initials">{{ getInitials(user.name) }}</div>
+        </div>
+        <div *ngIf="svc.profile?.isExpertApproved" class="verified-badge">
+          <span class="material-symbols-outlined ms-fill">verified</span>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="hero-info">
+        <h3 class="hero-name">{{ user.name }}</h3>
+        <span class="expert-status-badge"
+              *ngIf="svc.profile"
+              [style.background]="getStatusConfig(svc.profile.expertStatus).bg"
+              [style.color]="getStatusConfig(svc.profile.expertStatus).color">
+          {{ getStatusConfig(svc.profile.expertStatus).label }}
+        </span>
+        <p class="hero-email">{{ user.email }}</p>
+
+        <!-- Expertise pills -->
+        <div class="expertise-row" *ngIf="svc.profile?.expertiseAreas?.length">
+          <span class="expertise-pill"
+                *ngFor="let area of svc.profile!.expertiseAreas.slice(0, 4)">
+            {{ area }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="hero-actions">
+        <button class="btn-primary-action">
+          <span class="material-symbols-outlined">edit</span>
+          Edit Profile
+        </button>
+        <button class="btn-secondary-action"
+                *ngIf="svc.cvUrl"
+                (click)="downloadCV()">
+          <span class="material-symbols-outlined">download</span>
+          Download CV
+        </button>
+      </div>
+    </section>
+
+    <!-- ══ Quick Stats ══ -->
+    <div class="quick-stats fade-up d1">
+      <div class="quick-stat">
+        <span class="material-symbols-outlined quick-stat-icon">article</span>
+        <div>
+          <p class="quick-stat-val">{{ svc.posts.length }}</p>
+          <p class="quick-stat-label">Posts</p>
+        </div>
+      </div>
+      <div class="quick-stat">
+        <span class="material-symbols-outlined quick-stat-icon tip-icon">lightbulb</span>
+        <div>
+          <p class="quick-stat-val">{{ svc.tips.length }}</p>
+          <p class="quick-stat-label">Tips Shared</p>
+        </div>
+      </div>
+      <div class="quick-stat">
+        <span class="material-symbols-outlined quick-stat-icon exp-icon">workspace_premium</span>
+        <div>
+          <p class="quick-stat-val">{{ svc.profile?.experienceYears ?? '—' }}</p>
+          <p class="quick-stat-label">Years Exp.</p>
+        </div>
+      </div>
+      <div class="quick-stat">
+        <span class="material-symbols-outlined quick-stat-icon join-icon">calendar_today</span>
+        <div>
+          <p class="quick-stat-val">{{ timeAgo(user.createdAt) }}</p>
+          <p class="quick-stat-label">Joined</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ Tabs ══ -->
+    <div class="tabs-row fade-up d2">
+      <button *ngFor="let tab of tabs"
+              class="tab-btn"
+              [class.tab-active]="isTab(tab.value)"
+              (click)="setTab(tab.value)">
+        <span class="material-symbols-outlined">{{ tab.icon }}</span>
+        {{ tab.label }}
+      </button>
+    </div>
+
+    <!-- ══ Main Grid ══ -->
+    <div class="main-grid fade-up d3">
+
+      <!-- ── Left Col ── -->
+      <div class="left-col">
+
+        <!-- ── TAB: Personal Info ── -->
+        <ng-container *ngIf="isTab('info')">
+
+          <!-- Personal Information -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-icon-wrap" style="background:rgba(13,99,27,0.1)">
+                <span class="material-symbols-outlined" style="color:#0d631b;">person</span>
+              </div>
+              <h4 class="section-title">Personal Information</h4>
+            </div>
+            <div class="info-grid">
+              <div class="info-field">
+                <label class="field-label">Full Name</label>
+                <div class="field-value">{{ user.name }}</div>
+              </div>
+              <div class="info-field">
+                <label class="field-label">Email Address</label>
+                <div class="field-value">{{ user.email }}</div>
+              </div>
+              <div class="info-field">
+                <label class="field-label">Phone Number</label>
+                <div class="field-value">{{ user.phone || '—' }}</div>
+              </div>
+              <div class="info-field">
+                <label class="field-label">Account Status</label>
+                <div class="field-value">{{ user.status | titlecase }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Expert Details -->
+          <div class="section-card" *ngIf="svc.profile as ep">
+            <div class="section-header">
+              <div class="section-icon-wrap" style="background:rgba(142,61,0,0.1)">
+                <span class="material-symbols-outlined" style="color:#8e3d00;">agriculture</span>
+              </div>
+              <h4 class="section-title">Expert Details</h4>
+            </div>
+            <div class="info-grid">
+              <div class="info-field">
+                <label class="field-label">Experience</label>
+                <div class="field-value">{{ ep.experienceYears }} years</div>
+              </div>
+              <div class="info-field">
+                <label class="field-label">Expert Status</label>
+                <div class="field-value">
+                  <span class="status-pill"
+                        [style.background]="getStatusConfig(ep.expertStatus).bg"
+                        [style.color]="getStatusConfig(ep.expertStatus).color">
+                    {{ getStatusConfig(ep.expertStatus).label }}
+                  </span>
+                </div>
+              </div>
+              <div class="info-field md-full" *ngIf="ep.bio">
+                <label class="field-label">Bio</label>
+                <div class="field-value bio-text">{{ ep.bio }}</div>
+              </div>
+              <div class="info-field md-full" *ngIf="ep.expertiseAreas.length">
+                <label class="field-label">Expertise Areas</label>
+                <div class="tags-row">
+                  <span class="expertise-pill" *ngFor="let area of ep.expertiseAreas">{{ area }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </ng-container>
+
+        <!-- ── TAB: My Posts ── -->
+        <ng-container *ngIf="isTab('posts')">
+          <div *ngIf="svc.posts.length === 0" class="empty-state">
+            <span class="material-symbols-outlined empty-icon">article</span>
+            <p class="empty-title">No posts yet</p>
+            <p class="empty-sub">Your published posts will appear here.</p>
+          </div>
+
+          <div class="post-card" *ngFor="let post of svc.posts">
+            <div class="post-header">
+              <h4 class="post-title">{{ post.title }}</h4>
+              <button class="delete-btn" (click)="deletePost(post._id, $event)">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+
+            <p class="post-content">{{ post.content }}</p>
+
+            <div class="post-meta">
+              <span class="meta-item">
+                <span class="material-symbols-outlined">favorite</span>
+                {{ post.likesCount }}
+              </span>
+              <span class="meta-item">
+                <span class="material-symbols-outlined">comment</span>
+                {{ post.commentCount ?? 0 }}
+              </span>
+              <span class="meta-time">{{ timeAgo(post.createdAt) }}</span>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- ── TAB: My Tips ── -->
+        <ng-container *ngIf="isTab('tips')">
+          <div *ngIf="svc.tips.length === 0" class="empty-state">
+            <span class="material-symbols-outlined empty-icon">lightbulb</span>
+            <p class="empty-title">No tips yet</p>
+            <p class="empty-sub">Your shared tips will appear here.</p>
+          </div>
+
+          <div class="tip-card" *ngFor="let tip of svc.tips">
+            <h4 class="tip-title">{{ tip.title }}</h4>
+            <p class="tip-content">{{ tip.content }}</p>
+          </div>
+        </ng-container>
+
+      </div>
+
+      <!-- Right -->
+      <div class="right-col">
+        <div class="section-card">
+          <h4 class="section-title">Recent Activity</h4>
+
+          <div *ngIf="activity.length === 0">No recent activity.</div>
+
+          <div *ngFor="let item of activity">
+            <p>{{ item.title }}</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </ng-container>
+
+</main>

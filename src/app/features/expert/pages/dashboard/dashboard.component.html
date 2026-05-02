@@ -1,0 +1,236 @@
+<!-- ══════════════════════════════════════════════
+     EXPERT DASHBOARD PAGE CONTENT
+     (يتحط جوا الـ expert layout مع الـ sidebar)
+══════════════════════════════════════════════ -->
+<main class="page-main">
+
+  <!-- ── Page Title ─────────────────────────────── -->
+  <header class="page-header fade-up">
+    <div>
+      <h1 class="page-title">Expert Portal</h1>
+      <p class="page-sub">Detailed breakdown of your agricultural consultancy performance.</p>
+    </div>
+    <div class="tab-toggle">
+      <button class="tab-btn tab-btn-active">Overview</button>
+      <button class="tab-btn tab-btn-inactive">Activity</button>
+    </div>
+  </header>
+
+  <!-- ── Stat Cards ─────────────────────────────── -->
+  <div class="stat-grid fade-up d1">
+
+    <div class="stat-card">
+      <div class="stat-card-top">
+        <span class="stat-label">Active Consultations</span>
+        <span class="material-symbols-outlined stat-icon">groups</span>
+      </div>
+      <div class="stat-bottom">
+        <span class="stat-value">
+          {{ svc.loading ? '—' : svc.stats.activeConsultations || 12 }}
+        </span>
+        <span class="stat-trend trend-up">+2 this week</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card-top">
+        <span class="stat-label">Pending Questions</span>
+        <span class="material-symbols-outlined stat-icon stat-icon-warning">contact_support</span>
+      </div>
+      <div class="stat-bottom">
+        <span class="stat-value">
+          {{ svc.loading ? '—' : (svc.stats.pendingQuestions || 8) | number:'2.0-0' }}
+        </span>
+        <span class="stat-trend trend-error">Action required</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card-top">
+        <span class="stat-label">Average Rating</span>
+        <span class="material-symbols-outlined ms-fill stat-icon">star</span>
+      </div>
+      <div class="stat-bottom">
+        <span class="stat-value">4.92</span>
+        <span class="stat-trend trend-muted">from 124 reviews</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card-top">
+        <span class="stat-label">Total Earnings</span>
+        <span class="material-symbols-outlined stat-icon">payments</span>
+      </div>
+      <div class="stat-bottom">
+        <span class="stat-value">$3,420</span>
+        <span class="stat-trend trend-up">↑ 12% vs last month</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Main Grid ──────────────────────────────── -->
+  <div class="main-grid">
+
+    <!-- Left Column (2/3) -->
+    <div class="left-col">
+
+      <!-- Recent Inquiries Table -->
+      <div class="card fade-up d2">
+        <div class="card-header">
+          <h3 class="card-title">Recent Inquiries</h3>
+          <button class="card-link">
+            View all <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
+        <div class="table-scroll">
+          <table class="nabta-table">
+            <thead>
+              <tr>
+                <th>Farmer Name</th>
+                <th>Subject</th>
+                <th>Priority</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let inq of recentInquiries" class="table-row">
+                <td>
+                  <div class="farmer-cell">
+                    <div class="farmer-avatar">{{ inq.initials }}</div>
+                    <span class="farmer-name">{{ inq.name }}</span>
+                  </div>
+                </td>
+                <td>
+                  <p class="subject-text">{{ inq.subject }}</p>
+                </td>
+                <td>
+                  <span class="priority-badge"
+                        [style.background]="getPriorityConfig(inq.priority).bg"
+                        [style.color]="getPriorityConfig(inq.priority).color">
+                    {{ getPriorityConfig(inq.priority).label }}
+                  </span>
+                </td>
+                <td class="time-cell">{{ inq.time }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Scheduled Consultations -->
+      <div class="fade-up d3">
+        <h3 class="section-title">Scheduled Consultations</h3>
+        <div class="consultations-grid">
+          <div *ngFor="let c of scheduledConsultations"
+               class="consultation-card"
+               [class.border-primary]="c.priority === 'primary'"
+               [class.border-tertiary]="c.priority === 'tertiary'">
+
+            <!-- Date badge -->
+            <div class="date-badge">
+              <span class="date-month">{{ c.month }}</span>
+              <span class="date-day">{{ c.day }}</span>
+            </div>
+
+            <!-- Info -->
+            <div class="consultation-info">
+              <p class="consultation-time"
+                 [class.time-primary]="c.priority === 'primary'"
+                 [class.time-tertiary]="c.priority === 'tertiary'">
+                {{ c.time }}
+              </p>
+              <h4 class="consultation-subject">{{ c.subject }}</h4>
+              <p class="consultation-farmer">Farmer: {{ c.farmer }}</p>
+            </div>
+
+            <!-- Action -->
+            <button class="consult-action-btn">
+              <span class="material-symbols-outlined">
+                {{ c.type === 'video' ? 'video_call' : 'call' }}
+              </span>
+            </button>
+
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /left-col -->
+
+    <!-- Right Column (1/3) -->
+    <div class="right-col fade-up d4">
+
+      <!-- Impact Analytics card -->
+      <div class="impact-card">
+        <div class="impact-blur-1"></div>
+        <div class="impact-blur-2"></div>
+        <div class="impact-content">
+          <span class="material-symbols-outlined ms-fill impact-icon">analytics</span>
+          <h3 class="impact-title">Expert Impact Analytics</h3>
+          <p class="impact-desc">
+            Your contributions have directly improved the yield of multiple local farms this quarter.
+          </p>
+
+          <!-- Farmers Helped -->
+          <div class="impact-metric">
+            <div class="metric-row">
+              <span class="metric-label">Farmers Helped</span>
+              <span class="metric-value">482</span>
+            </div>
+            <div class="metric-track">
+              <div class="metric-fill metric-fill-white" [style.width]="farmersHelpedPct + '%'"></div>
+            </div>
+          </div>
+
+          <!-- Solved Cases -->
+          <div class="impact-metric">
+            <div class="metric-row">
+              <span class="metric-label">Solved Cases</span>
+              <span class="metric-value">1,204</span>
+            </div>
+            <div class="metric-track">
+              <div class="metric-fill metric-fill-amber" [style.width]="solvedCasesPct + '%'"></div>
+            </div>
+          </div>
+
+          <button class="impact-btn">Generate Impact Report</button>
+        </div>
+      </div>
+
+      <!-- Community Badge -->
+      <div class="card badge-card fade-up d5">
+        <div class="badge-top">
+          <div class="badge-icon-wrap">
+            <span class="material-symbols-outlined ms-fill">military_tech</span>
+          </div>
+          <div>
+            <h4 class="badge-title">Top Contributor</h4>
+            <p class="badge-month">November 2023</p>
+          </div>
+        </div>
+        <p class="badge-desc">
+          You're in the top 5% of experts based on response time and resolution accuracy this month.
+        </p>
+      </div>
+
+      <!-- Field Overview image -->
+      <div class="field-card fade-up d6">
+        <div class="field-overlay"></div>
+        <img
+          src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=300&fit=crop"
+          alt="Farm aerial view"
+          class="field-img"
+        />
+        <div class="field-info">
+          <span class="field-badge">Active Zone</span>
+          <h4 class="field-name">Nile Delta Region</h4>
+        </div>
+        <button class="field-expand-btn">
+          <span class="material-symbols-outlined">fullscreen</span>
+        </button>
+      </div>
+
+    </div><!-- /right-col -->
+  </div><!-- /main-grid -->
+
+</main>

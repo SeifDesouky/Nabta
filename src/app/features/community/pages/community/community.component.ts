@@ -46,6 +46,29 @@ topContributors = [
   { name: 'Marcus Chen',     role: 'Soil Specialist' },
   { name: 'Elena Rodriguez', role: 'Data Scientist'  },
 ];
+// Community Flyout
+communityFlyoutOpen = false;
+communityFlyoutTop  = '0px';
+communityFlyoutLeft = '0px';
+private _communityTimer: any;
+
+showCommunityFlyout(el: HTMLElement): void {
+  if (this._communityTimer) clearTimeout(this._communityTimer);
+  const rect              = el.getBoundingClientRect();
+  this.communityFlyoutTop  = rect.top  + 'px';
+  this.communityFlyoutLeft = (rect.right + 10) + 'px';
+  this.communityFlyoutOpen = true;
+}
+
+keepCommunityFlyout(): void {
+  if (this._communityTimer) clearTimeout(this._communityTimer);
+}
+
+scheduleHideCommunityFlyout(): void {
+  this._communityTimer = setTimeout(() => {
+    this.communityFlyoutOpen = false;
+  }, 130);
+}
   constructor(
     private postService: PostService,
     private commentService: CommentService,

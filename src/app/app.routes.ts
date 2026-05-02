@@ -23,7 +23,7 @@ export const routes: Routes = [
       //   path: 'community', loadChildren: () => import('./features/community/pages/community/community.component').then(m => m.CommunityFeedComponent)
 
       // }
-      {path:'community',component:CommunityFeedComponent},
+      {path:'community',loadChildren: () => import('./features/community/community.routes').then(m => m.communityRoutes)},
       {path:'educational',loadChildren: () => import('./features/educational/educational.routes').then(m => m.educationalRoutes)}
 
     ]
@@ -41,6 +41,12 @@ export const routes: Routes = [
     path: 'admin',
     loadChildren: () =>
       import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES)          // add your auth guard here
+    // canActivate: [adminGuard],          // add your auth guard here
+  },
+  {
+    path: 'expert',
+    loadChildren: () =>
+      import('./features/expert/expert.routes').then((m) => m.EXPERT_ROUTES)          // add your auth guard here
     // canActivate: [adminGuard],          // add your auth guard here
   },
   {
