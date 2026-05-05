@@ -23,5 +23,6 @@ export const communityRoutes: Routes = [
     path: 'chats',loadComponent: () =>
       import('./pages/chats/chats.component')
         .then(m => m.ChatsComponent)
-  }
+  },
+  
 ];

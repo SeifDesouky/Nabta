@@ -1,136 +1,224 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { Expert, Message } from '../../../../core/models/chat.model';
+import { Conversation, Message } from '../../../../core/models/chat.model';
+import { ChatService } from '../../../../core/services/chat/chat.service';
+import { Subscription } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-chats',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './chats.component.html',
   styleUrl: './chats.component.css'
 })
 export class ChatsComponent {
 
-  activeChat: number | null = null;
+  conversations:Conversation[]=[]
+  activeConversation:Conversation|null=null
+  messages:Message[]=[]
+  isLoadingChats=true
+  isLoadingMsgs=false
+  isTyping = false;
+  experts:any[]=[]
+  showExperts=false
 
-  experts: Expert[] = [
-    {
-      id: 0,
-      name: "Dr. Layla Hassan",
-      specialty: "Soil & Fertility Specialist",
-      avatar: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=100&h=100&fit=crop&crop=face",
-      status: 'online',
-      verified: true,
-      messages: []
-    }
-    // باقي الداتا زي ما هي...
-  ];
-
+  currentUserId=localStorage.getItem('id') || ''
+  currentUserRole=localStorage.getItem('role')
+  private msgSub!:Subscription
   @ViewChild('messagesArea') messagesArea!: ElementRef;
 
-  // -----------------------------
-  // OPEN CHAT
-  // -----------------------------
-  openChat(index: number): void {
-    this.activeChat = index;
+  constructor(private chatService:ChatService){}
+  ngOnInit() {
+    if(!this.currentUserId) return
+
+    // 1. سجّل نفسك أونلاين
+    this.chatService.addUser(this.currentUserId);
+
+    // 2. جيب المحادثات
+    this.loadChats();
+
+    // استبدل الـ temp message بالحقيقي
+    this.chatService.onMessageSent().subscribe(({ tempId, message }) => {
+      const idx = this.messages.findIndex(m => m._id === tempId);
+      if (idx !== -1) {
+        this.messages[idx] = { ...message, from: 'me' };
+      }
+    });
+
+    // استقبل من الطرف التاني بس
+    this.msgSub = this.chatService.onReceiveMessage().subscribe(msg => {
+      if (msg.conversation === this.activeConversation?._id) {
+        // تأكد مش رسالتك انت
+        if (msg.sender !== this.currentUserId) {
+          this.messages.push({ ...msg, from: 'them' });
+          this.scrollToBottom();
+        }
+      }
+    });
   }
 
-  // -----------------------------
-  // GO BACK
-  // -----------------------------
-  goBack(): void {
-    this.activeChat = null;
+  ngOnDestroy() {
+    this.msgSub?.unsubscribe();
+    this.chatService.disconnect();
   }
 
-  // -----------------------------
-  // RENDER LOGIC (بدل DOM manipulation)
-  // -----------------------------
-  get activeMessages(): Message[] {
-    if (this.activeChat === null) return [];
-    return this.experts[this.activeChat].messages;
+  // ─── Load Chats ──────────────────────────────
+  loadChats() {
+    this.isLoadingChats = true;
+    this.chatService.getMyChats().subscribe({
+      next: (data) => {
+        this.conversations = data.filter(c => c.farmer && c.expert);
+        this.isLoadingChats = false;
+      },
+      error: () => { this.isLoadingChats = false; }
+    });
   }
 
-  // -----------------------------
-  // SEND MESSAGE
-  // -----------------------------
-  sendMessage(input: HTMLTextAreaElement): void {
-    if (this.activeChat === null) return;
+  loadExperts(){
+    this.chatService.getExperts().subscribe({
+      next:(res:any)=>{
+        this.experts=res
+      },
+      error:(err)=>{
+        console.error(err);
+        
+      }
+    })
+  }
 
+  toggleExperts(){
+    this.showExperts=!this.showExperts
+    if(this.showExperts && this.experts.length===0){
+      this.loadExperts()
+    }
+  }
+
+  startChat(expert:any){
+    console.log(expert);
+    const expertId=expert.user._id
+
+    const existing=this.conversations.find(conv=>
+      conv.expert._id===expertId || conv.farmer._id===expertId
+    )
+    if(existing){
+      this.openChat(existing)
+      this.showExperts=false
+      return
+    }
+
+    this.chatService.startConversation(expertId).subscribe({
+      next: (newConv: Conversation) => {
+        this.conversations.unshift(newConv);
+        this.openChat(newConv);
+        this.showExperts = false;
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  // ─── Open Chat ───────────────────────────────
+  openChat(conv: Conversation) {
+    this.activeConversation = conv;
+    this.messages = [];
+    this.isLoadingMsgs = true;
+
+    this.chatService.getMessages(conv._id).subscribe({
+      next: (msgs) => {
+        // حدد كل رسالة هي sent أو received
+        this.messages = msgs.map(m => ({
+          ...m,
+          from: m.sender === this.currentUserId ? 'me' : 'them'
+        }));
+        this.isLoadingMsgs = false;
+        this.scrollToBottom();
+      },
+      error: () => { this.isLoadingMsgs = false; }
+    });
+  }
+
+  goBack() {
+    this.activeConversation = null;
+    this.messages = [];
+  }
+
+    // ─── Send Message ────────────────────────────
+  sendMessage(input: HTMLTextAreaElement) {
     const text = input.value.trim();
-    if (!text) return;
+    if (!text || !this.activeConversation) return;
 
-    const time = new Date().toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit'
-    });
+    const conv = this.activeConversation;
 
-    this.experts[this.activeChat].messages.push({
-      from: 'me',
+    // استخراج الـ IDs بطريقة آمنة ومنسجمة مع الـ Interface
+    const farmerId = typeof conv.farmer === 'string'? conv.farmer: conv.farmer?._id;
+
+    const expertId = typeof conv.expert === 'string' ? conv.expert: conv.expert?._id;
+
+    if (!farmerId || !expertId) {
+      console.error('❌ Conversation data is incomplete:', conv);
+      console.log('Farmer:', conv.farmer);
+      console.log('Expert:', conv.expert);
+      alert('بيانات المحادثة ناقصة، جرب إعادة تحميل الصفحة');
+      return;
+    }
+
+    const receiverId = String(farmerId) === this.currentUserId? expertId : farmerId;
+    const tempId = 'temp-' + Date.now();
+    // Optimistic UI
+    this.messages.push({
+      _id: tempId ,
+      conversation: conv._id,
+      sender: this.currentUserId,
       text,
-      time,
-      read: false
+      from: 'me',
+      createdAt: new Date()
     });
+
+    this.chatService.sendMessage({
+      conversationId: conv._id,
+      senderId: this.currentUserId,
+      receiverId: String(receiverId),
+      text,
+      tempId 
+    });
+
+    const convIndex = this.conversations.findIndex(c => c._id === conv._id);
+    if (convIndex !== -1) {
+      this.conversations[convIndex] = {
+        ...this.conversations[convIndex],
+        lastMsg: text,
+        updatedAt: new Date().toISOString()
+      };
+    }
 
     input.value = '';
+    this.scrollToBottom();
   }
 
-  // -----------------------------
-  // IMAGE UPLOAD
-  // -----------------------------
-  sendImage(event: Event): void {
-    if (this.activeChat === null) return;
+  
+  // ─── Helpers ─────────────────────────────────
+  getOtherUser(conv: Conversation) {
+    if (!conv|| !conv.farmer || !conv.expert) return { name: 'Unknown', _id: '' };
 
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      const time = new Date().toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit'
-      });
-
-      this.experts[this.activeChat!].messages.push({
-        from: 'me',
-        image: reader.result as string,
-        time,
-        read: false
-      });
-    };
-
-    reader.readAsDataURL(file);
+    const isfarmer = conv.farmer?._id === this.currentUserId;
+    return isfarmer ? conv.expert : conv.farmer;
   }
 
-  // -----------------------------
-  // AUTO REPLY (optional)
-  // -----------------------------
-  private autoReplies = [
-    "Understood — I'll check it.",
-    "Let me analyze this and get back to you.",
-    "Noted. I'll update you soon."
-  ];
-
-  getAutoReply(): string {
-    return this.autoReplies[
-      Math.floor(Math.random() * this.autoReplies.length)
-    ];
-  }
-
-  // -----------------------------
-  // KEY HANDLER
-  // -----------------------------
-  handleKey(event: KeyboardEvent, input: HTMLTextAreaElement): void {
+  handleKey(event: KeyboardEvent, input: HTMLTextAreaElement) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       this.sendMessage(input);
     }
   }
 
-  // -----------------------------
-  // AUTO RESIZE TEXTAREA
-  // -----------------------------
-  autoResize(el: HTMLTextAreaElement): void {
+  autoResize(el: HTMLTextAreaElement) {
     el.style.height = 'auto';
     el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+
+  private scrollToBottom() {
+    setTimeout(() => {
+      const el = this.messagesArea?.nativeElement;
+      if (el) el.scrollTop = el.scrollHeight;
+    }, 50);
   }
 }

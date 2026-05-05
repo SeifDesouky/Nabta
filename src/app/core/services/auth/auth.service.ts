@@ -21,6 +21,8 @@ export class AuthService {
     localStorage.setItem('token', res.token);
     localStorage.setItem('role', user.role);
     
+    localStorage.setItem('id',user.id)
+
     if (user.role === 'admin') {
       this.router.navigate(['/admin/users']);
     } else if (user.role === 'farmer') {
