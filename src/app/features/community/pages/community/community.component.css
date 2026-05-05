@@ -83,3 +83,37 @@
   /* ── Like button active ─────────────────────────── */
   .like-btn.liked { color: #ba1a1a; }
   .like-btn.liked .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+/* ── Logout Button ── */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.875rem;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #5a6b57;
+  background: transparent;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+}
+
+.logout-btn .material-symbols-outlined {
+  font-size: 20px !important;
+  color: #a1a1aa; 
+  transition: color 0.2s ease;
+}
+
+/* Hover Effect - بيتحول لأحمر خفيف */
+.logout-btn:hover {
+  background: #fef2f2; 
+  color: #dc2626; 
+}
+
+.logout-btn:hover .material-symbols-outlined {
+  color: #dc2626;
+}

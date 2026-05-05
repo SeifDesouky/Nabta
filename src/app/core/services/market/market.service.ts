@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiServiceService } from '../API/api-service.service';
-import { ICreateProduct, IGetProductsResponse, IProduct } from '../../models/product.model';
+import { CreateReviewRequest, ICreateProduct, IGetProductsResponse, IProduct, IReview } from '../../models/product.model';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -41,4 +42,17 @@ export class MarketService {
   getMyProducts() {
     return this.api.get<IGetProductsResponse>('product/my_products');
   }
+
+  // POST /review (token)
+  createReview(payload: CreateReviewRequest): Observable<IReview> {
+    return this.api.post<IReview>(`/review`, payload);
+  }
+
+  // DELETE /review/:id (token)
+  deleteReview(id: string): Observable<string> {
+    return this.api.delete<string>(`/review/${id}`);
+  }
+  getRelatedProducts(slug: string) {
+  return this.api.get<IGetProductsResponse>(`product/related_products/${slug}`);
+}
 }

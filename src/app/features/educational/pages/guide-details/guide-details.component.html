@@ -1,38 +1,99 @@
 <div class="bg-[#f8f8f5] min-h-screen md:ml-[17.5rem]">
-  <aside class="h-screen w-[17.5rem] fixed left-0 top-0 hidden md:flex flex-col
-                bg-[#f3f3f3] border-r border-[#e4e4e4] z-40">
-    <div class="px-5 h-16 flex items-center border-b border-[#e4e4e4] flex-shrink-0">
-      <div class="flex items-center gap-2.5">
-        <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-primary-glow flex-shrink-0">
-          <span class="material-symbols-outlined text-white"
-                style="font-size:20px;font-variation-settings:'FILL' 1;">agriculture</span>
-        </div>
-        <h1 class="text-[15px] font-extrabold text-primary tracking-tight leading-none">NABTA</h1>
+<aside class="h-screen w-[17.5rem] fixed left-0 top-0 hidden md:flex flex-col
+              bg-[#f3f3f3] border-r border-[#e4e4e4] z-40">
+  <div class="px-5 h-16 pt-3 border-b border-[#e4e4e4] flex-shrink-0">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-primary-glow flex-shrink-0">
+        <span class="material-symbols-outlined text-white"
+              style="font-size:20px;font-variation-settings:'FILL' 1;">agriculture</span>
       </div>
+      <h1 class="text-[15px] font-extrabold text-primary tracking-tight leading-none">NABTA</h1>
     </div>
-    <div class="flex-1 overflow-y-auto px-3 pt-5 pb-6">
-      <p class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-[.12em] px-2 mb-3">Menu</p>
-      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
-                         text-[#5a6b57] hover:bg-white hover:text-primary hover:shadow-card transition-all mb-0.5">
-        <span class="material-symbols-outlined" style="font-size:20px;">dashboard</span>Dashboard
-      </a>
-      <div class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] bg-primary text-white
-                  shadow-primary-glow mb-0.5">
-        <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">school</span>
-        <span class="text-sm font-semibold">Educational Content</span>
-      </div>
-      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
-                         text-[#5a6b57] hover:bg-white hover:text-primary hover:shadow-card transition-all mb-0.5">
-        <span class="material-symbols-outlined" style="font-size:20px;">person</span>Profile
-      </a>
-      <div class="mx-1 mt-4 mb-4 border-t border-[#e0e0e0]"></div>
-      <p class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-[.12em] px-2 mb-3">Support</p>
-      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
-                         text-[#5a6b57] hover:bg-white hover:text-primary hover:shadow-card transition-all mb-0.5">
-        <span class="material-symbols-outlined" style="font-size:20px;">help_outline</span>Help Center
-      </a>
+  </div>
+
+  <div class="flex-1 overflow-y-auto min-h-0 px-3 pt-5 pb-6">
+    <p class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-[.12em] px-2 mb-3">Menu</p>
+
+    <a [routerLink]="[dashboardLink]" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;">dashboard</span>Dashboard
+    </a>
+    <a routerLink="/marketplace" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">storefront</span>Marketplace
+    </a>
+
+    <div #communityBtn
+     class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] bg-primary text-white
+            shadow-primary-glow mb-0.5 cursor-pointer select-none"
+     (mouseenter)="showCommunityFlyout(communityBtn)"
+     (mouseleave)="scheduleHideCommunityFlyout()">
+  <span class="material-symbols-outlined"
+        style="font-size:20px;font-variation-settings:'FILL' 1;">groups</span>
+  <span class="text-sm font-semibold">Community</span>
+  <span class="material-symbols-outlined ml-auto text-white/60"
+        style="font-size:15px;">chevron_right</span>
+</div>
+
+    <a routerLink="/educational" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;"></span>Educational Content
+    </a>
+    <a routerLink="/marketplace" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">storefront</span>Marketplace
+    </a>
+
+    <!-- AI Tools -->
+    <div #aiToolsBtn
+         class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5 cursor-pointer select-none"
+         (mouseenter)="showAiFlyout(aiToolsBtn)"
+         (mouseleave)="scheduleHideAiFlyout()">
+      <span class="material-symbols-outlined" style="font-size:20px;">psychology</span>
+      <span>AI Tools</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-400" style="font-size:15px;">chevron_right</span>
     </div>
-  </aside>
+
+    <a class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;">chat</span>Chats
+    </a>
+
+    <div class="mx-1 mt-4 mb-4 border-t border-[#e0e0e0]"></div>
+
+    <p class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-[.12em] px-2 mb-3">Community</p>
+
+    <a routerLink="/" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;">home</span>Home Feed
+    </a>
+    <a  class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;">trending_up</span>Trending Crops
+    </a>
+    <a  class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-semibold
+                       text-primary mb-0.5" style="background:rgba(13,99,27,0.08)">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">group_work</span>Local Groups
+    </a>
+    <a  class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;">psychology</span>Expert Q&A
+    </a>
+    <a  class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;">bookmark</span>Saved Posts
+    </a>
+  </div>
+
+  <!-- ── Logout Button (Pinned to Bottom) ── -->
+    <div class="mt-auto px-4 pb-6 pt-4 border-t border-[#e0e0e0]">
+      <button (click)="logout()" class="logout-btn">
+        <span class="material-symbols-outlined">logout</span>
+        <span>Log out</span>
+      </button>
+    </div>
+</aside>
   <!-- Header -->
   <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-[#e8e8e8]
                  flex items-center gap-4 px-6 md:px-8 h-16">

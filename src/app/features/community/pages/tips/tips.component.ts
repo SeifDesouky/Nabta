@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ExpertTipService, TipCategory } from '../../../../core/services/tips/tips.service';
 import { ExpertTip, CreateTipRequest } from '../../../../core/models/tips&tricks.model';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-tips',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule,FormsModule,RouterLink],
   templateUrl: './tips.component.html',
   styleUrl: './tips.component.css'
 })
@@ -42,7 +44,7 @@ export class TipsComponent {
   tipsFlyoutLeft = '0px';
   private _tipsHideTimer: any;
 
-  constructor(readonly tipService: ExpertTipService) {}
+  constructor(readonly tipService: ExpertTipService,readonly authService:AuthService) {}
 
   ngOnInit(): void {
     this.tipService.loadAllTips();
@@ -174,5 +176,8 @@ export class TipsComponent {
     this._tipsHideTimer && clearTimeout(this._tipsHideTimer);
     this.destroy$.next();
     this.destroy$.complete();
+  }
+   logout():void{
+    this.authService.logout()
   }
 }

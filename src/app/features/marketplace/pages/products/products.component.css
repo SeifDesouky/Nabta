@@ -42,7 +42,7 @@
   }
 
   /* ── Price slider ───────────────────────────── */
-  .price-slider {
+ .price-slider {
     -webkit-appearance: none;
     appearance: none;
     width: 100%;
@@ -72,33 +72,16 @@
   }
 
   /* ── Sidebar active pill ────────────────────── */
-  .nav-active {
-    background: #0d631b;
-    color: #ffffff;
-    box-shadow: 0 4px 18px rgba(13,99,27,.22);
-  }
-  .nav-item-base {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.625rem 0.75rem;
-    border-radius: 0.875rem;
-    transition: background .18s, color .18s, box-shadow .18s;
-    font-size: .875rem;
-    font-weight: 500;
-    color: #5a6b57;
-    text-decoration: none;
-  }
-  .nav-item-base:hover {
-    background: #ffffff;
-    color: #0d631b;
-    box-shadow: 0 2px 8px rgba(43,66,40,.08);
-  }
-  .nav-item-base .ms-icon {
-    font-size: 20px;
-    flex-shrink: 0;
-    transition: filter .18s;
-  }
-  .nav-item-base:hover .ms-icon {
-    filter: drop-shadow(0 0 6px rgba(13,99,27,.45));
-  }
+.nav-active {
+  background: var(--primary); color: #ffffff; box-shadow: 0 4px 18px rgba(13,99,27,.22);
+}
+.nav-item-base {
+  display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem;
+  border-radius: 0.875rem; transition: background .18s, color .18s, box-shadow .18s;
+  font-size: .875rem; font-weight: 500; color: #5a6b57; text-decoration: none;
+}
+.nav-item-base:hover {
+  background: #ffffff; color: var(--primary); box-shadow: 0 2px 8px rgba(43,66,40,.08);
+}
+.nav-item-base .ms-icon { font-size: 20px; flex-shrink: 0; transition: filter .18s; }
+.nav-item-base:hover .ms-icon { filter: drop-shadow(0 0 6px rgba(13,99,27,.45)); }

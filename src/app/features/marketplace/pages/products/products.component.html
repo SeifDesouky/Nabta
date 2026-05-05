@@ -26,7 +26,7 @@
 
       <!-- Dashboard -->
       <div class="mb-0.5" [class.hidden]="!navOpen">
-        <a href="#" class="nav-item-base flex items-center gap-3 px-3 py-2.5 rounded-[.875rem]
+        <a [routerLink]="dashboardLink" class="nav-item-base flex items-center gap-3 px-3 py-2.5 rounded-[.875rem]
                            text-sm font-medium text-[#5a6b57] hover:bg-white hover:text-primary transition-all">
           <span class="material-symbols-outlined" style="font-size:20px;">dashboard</span>
           Dashboard
@@ -34,30 +34,36 @@
       </div>
 
       <!-- Marketplace row (always visible) -->
-      <div class="flex items-center gap-1 mb-0.5">
-        <button (click)="navOpen = !navOpen"
-          class="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-xl
-                 hover:bg-primary/10 transition-all duration-200"
-          [attr.aria-expanded]="navOpen">
-          <span class="material-symbols-outlined text-primary transition-transform duration-300"
-            style="font-size:18px;"
-            [style.transform]="navOpen ? 'rotate(90deg)' : 'rotate(0deg)'">chevron_right</span>
-        </button>
-        <a routerLink="/market" class="flex-1 bg-primary text-white flex items-center gap-3 px-3 py-2.5 rounded-[.875rem]
-                           shadow-primary-glow hover:brightness-95 transition-all duration-200">
-          <span class="material-symbols-outlined flex-shrink-0"
-            style="font-size:20px;font-variation-settings:'FILL' 1;">storefront</span>
-          <span class="text-sm font-semibold">Marketplace</span>
-        </a>
-      </div>
+ <div class="flex items-center gap-1 mb-0.5">
+          <button (click)="navOpen = !navOpen"
+            class="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-xl hover:bg-primary/10 transition-all duration-200">
+            <span class="material-symbols-outlined text-primary transition-transform duration-300"
+              style="font-size:18px;" [style.transform]="navOpen ? 'rotate(90deg)' : 'rotate(0deg)'">chevron_right</span>
+          </button>
+          <a routerLink="/marketplace" class="flex-1 bg-primary text-white flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] shadow-primary-glow hover:brightness-95 transition-all">
+            <span class="material-symbols-outlined flex-shrink-0" style="font-size:20px;font-variation-settings:'FILL' 1;">storefront</span>
+            <span class="text-sm font-semibold">Marketplace</span>
+          </a>
+        </div>
+
+            <a routerLink="/educational" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;"></span>Educational Content
+    </a>
+    <a routerLink="/marketplace" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] text-sm font-medium
+                       text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-0.5">
+      <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1;">storefront</span>Marketplace
+    </a>
 
       <!-- Community · AI Tools · Chats -->
-      <div *ngIf="navOpen" class="flex flex-col gap-0.5 pt-0.5">
-        <a routerLink="/community" class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem]
-                           text-sm font-medium text-[#5a6b57] hover:bg-white hover:text-primary transition-all">
-          <span class="material-symbols-outlined" style="font-size:20px;">groups</span>
-          Community
-        </a>
+      <div routerLink="/community" #communityBtn
+               class="flex items-center gap-3 px-3 py-2.5 rounded-[.875rem] cursor-pointer select-none text-sm font-medium text-[#5a6b57] hover:bg-white hover:text-primary transition-all"
+               (mouseenter)="showCommunityFlyout(communityBtn)"
+               (mouseleave)="scheduleHideCommunityFlyout()">
+            <span class="material-symbols-outlined" style="font-size:20px;">groups</span>
+            <span>Community</span>
+            <span class="material-symbols-outlined ml-auto text-zinc-400" style="font-size:15px;">chevron_right</span>
+          </div>
 
         <!-- AI Tools — hover flyout (positioned by Angular via JS like the original) -->
         <div
@@ -173,7 +179,6 @@
       </div>
 
     </div>
-  </div>
 </aside>
 
 
@@ -422,6 +427,29 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════════
+       COMMUNITY FLYOUT 🔥
+  ══════════════════════════════════════════════════════ -->
+  <div class="fixed z-[600] w-56 bg-white rounded-3xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.13)] border border-[#eaeaea] transition-all duration-200"
+       *ngIf="communityFlyoutOpen"
+       [style.top]="communityFlyoutTop" [style.left]="communityFlyoutLeft"
+       (mouseenter)="keepCommunityFlyout()" (mouseleave)="scheduleHideCommunityFlyout()">
+    <div class="py-1.5">
+      <a routerLink="/community/tips" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 cursor-pointer group">
+        <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-primary" style="font-size:15px;">lightbulb</span>
+        </div>
+        <span class="text-sm font-medium text-zinc-600 group-hover:text-primary transition-colors">Tips & Tricks</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 cursor-pointer group">
+        <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-primary" style="font-size:15px;">psychology</span>
+        </div>
+        <span class="text-sm font-medium text-zinc-600 group-hover:text-primary transition-colors">Expert Q&A</span>
+      </a>
+    </div>
+  </div>
+
 
 <!-- ── Mobile Bottom Nav ── -->
 <nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-[#e8e8e8]
@@ -447,5 +475,6 @@
     <span class="text-[10px] font-medium">Chats</span>
   </a>
 </nav>
+
 </div>
 <!-- Add navOpen property to the component class -->

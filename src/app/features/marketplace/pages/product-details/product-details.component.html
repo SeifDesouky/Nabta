@@ -172,6 +172,115 @@
           <span class="ml-auto material-symbols-outlined text-zinc-300" style="font-size:18px;">verified</span>
         </div>
 
+        <!-- ══ Reviews Section ══ -->
+<div class="space-y-6 mt-8">
+
+  <!-- Rating Summary -->
+<!-- Rating Summary -->
+      <div *ngIf="product.ratingCount > 0"
+           class="flex items-center gap-4 p-4 bg-white border border-border-color rounded-2xl shadow-card">
+        <div class="text-center">
+          <p class="text-4xl font-extrabold text-text-main">{{ product.avgRating | number:'1.1-1' }}</p>
+          <div class="flex items-center gap-0.5 mt-1 justify-center">
+            
+            <!-- ⬇️ السطر اللي تم تعديله هنا ⬇️ -->
+            <span *ngFor="let s of [1,2,3,4,5]"
+                  class="material-symbols-outlined text-amber-500"
+                  style="font-size:16px;"
+                  [style.font-variation-settings]="s <= product.avgRating ? '\'FILL\' 1' : '\'FILL\' 0'">
+              star
+            </span>
+
+          </div>
+          <p class="text-xs text-zinc-400 mt-1">{{ product.ratingCount }} reviews</p>
+        </div>
+      </div>
+
+  <!-- Write Review -->
+  <div class="bg-white border border-border-color rounded-2xl p-6 shadow-card space-y-4">
+    <h3 class="font-bold text-text-main font-headline">Write a Review</h3>
+
+    <!-- Success -->
+    <div *ngIf="reviewSuccess"
+         class="flex items-center gap-2 px-4 py-2.5 bg-primary/10 border border-primary/20
+                rounded-xl text-primary text-sm font-bold">
+      <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;">
+        check_circle
+      </span>
+      Review submitted successfully!
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="reviewError"
+         class="flex items-center gap-2 px-4 py-2.5 bg-red-50 border border-red-200
+                rounded-xl text-red-600 text-sm font-semibold">
+      <span class="material-symbols-outlined" style="font-size:18px;">error_outline</span>
+      {{ reviewError }}
+    </div>
+
+    <!-- Stars -->
+    <div class="flex items-center gap-1" (mouseleave)="clearHover()">
+      <span *ngFor="let s of [1,2,3,4,5]"
+            class="material-symbols-outlined text-amber-400 cursor-pointer transition-all"
+            style="font-size:28px;"
+            [style.font-variation-settings]="getStarFill(s)"
+            (mouseenter)="hoverStar(s)"
+            (click)="setRating(s)">
+        star
+      </span>
+      <span *ngIf="userRating" class="ml-2 text-xs text-zinc-400 font-semibold">
+        {{ userRating }}/5
+      </span>
+    </div>
+
+    <!-- Comment -->
+    <textarea [(ngModel)]="userComment"
+              placeholder="Share your experience with this product..."
+              rows="3"
+              class="w-full bg-[#f8f8f5] border border-border-color rounded-xl px-4 py-3 text-sm
+                     text-text-main placeholder:text-zinc-400 resize-none outline-none
+                     focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all">
+    </textarea>
+
+    <button (click)="submitReview()"
+            [disabled]="!userRating || submittingReview"
+            class="w-full py-3 bg-primary text-white rounded-xl font-bold text-sm
+                   shadow-primary-glow hover:brightness-110 transition-all
+                   disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+      <span *ngIf="submittingReview" class="material-symbols-outlined animate-spin" style="font-size:16px;">
+        progress_activity
+      </span>
+      <span *ngIf="!submittingReview" class="material-symbols-outlined" style="font-size:16px;">
+        rate_review
+      </span>
+      {{ submittingReview ? 'Submitting...' : 'Submit Review' }}
+    </button>
+  </div>
+</div>
+
+<!-- ══ Related Products ══ -->
+<div *ngIf="relatedProducts.length > 0" class="mt-12">
+  <h2 class="text-2xl font-extrabold font-headline text-text-main mb-6">Related Products</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div *ngFor="let related of relatedProducts"
+         [routerLink]="['/marketplace/product', related.slug]"
+         class="flex items-center gap-4 p-4 bg-white border border-border-color rounded-2xl
+                shadow-card hover:shadow-soft cursor-pointer transition-all hover:-translate-y-0.5">
+      <div class="w-16 h-16 rounded-xl overflow-hidden bg-background-light border border-border-color flex-shrink-0">
+        <img [src]="related.imageUrl" [alt]="related.productName"
+             class="w-full h-full object-cover"
+             onerror="this.src='assets/placeholder.png'" />
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="font-bold text-sm text-text-main truncate">{{ related.productName }}</p>
+        <p class="text-xs text-zinc-400 mt-0.5">{{ related.farmer?.name }}</p>
+        <p class="text-primary font-bold text-sm mt-1">${{ related.price | number:'1.2-2' }}</p>
+      </div>
+      <span class="material-symbols-outlined text-zinc-300" style="font-size:18px;">chevron_right</span>
+    </div>
+  </div>
+</div>
+
       </div>
     </div>
   </div>

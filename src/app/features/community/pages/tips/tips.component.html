@@ -32,7 +32,7 @@
          (mouseenter)="showTipsFlyout(communityBtn)"
          (mouseleave)="scheduleHideTipsFlyout()">
       <span class="material-symbols-outlined" style="font-size:20px;">groups</span>
-      <span>Community</span>
+      <span routerLink="/community">Community</span>
       <span class="material-symbols-outlined ml-auto text-zinc-400" style="font-size:15px;">chevron_right</span>
     </div>
 
@@ -67,6 +67,12 @@
       <span class="material-symbols-outlined" style="font-size:20px;">help_outline</span>Help Center
     </a>
   </div>
+  <div class="mt-auto px-4 pb-6 pt-4 border-t border-[#e0e0e0]">
+      <button (click)="logout()" class="logout-btn">
+        <span class="material-symbols-outlined">logout</span>
+        <span>Log out</span>
+      </button>
+    </div>
 </aside>
 
 <!-- ══ COMMUNITY SUB-MENU FLYOUT ══ -->
@@ -80,7 +86,8 @@
      (mouseenter)="keepTipsFlyout()"
      (mouseleave)="scheduleHideTipsFlyout()">
   <div class="py-1.5">
-    <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
+    <a routerLink="/community" 
+    class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group">
       <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
         <span class="material-symbols-outlined text-primary"
               style="font-size:15px;font-variation-settings:'FILL' 1;">home</span>
@@ -198,7 +205,7 @@
     </div>
 
     <!-- ── Compose Card ── -->
-    <section class="bg-surface-container-lowest rounded-2xl border border-outline-variant/10
+    <section *ngIf="authService.getUserRole()==='expert'" class="bg-surface-container-lowest rounded-2xl border border-outline-variant/10
                     shadow-card p-6 space-y-4">
 
       <!-- Author -->

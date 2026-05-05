@@ -20,13 +20,13 @@ export class AuthService {
     const user = res.user;
     localStorage.setItem('token', res.token);
     localStorage.setItem('role', user.role);
-
+    
     if (user.role === 'admin') {
       this.router.navigate(['/admin/users']);
     } else if (user.role === 'farmer') {
-      this.router.navigate(['/marketplace']);
+      this.router.navigate(['/farmer']);
     } else if (user.role === 'expert') {
-      this.router.navigate(['/marketplace']);
+      this.router.navigate(['/expert']);
     } else if (user.role === 'buyer') {
       this.router.navigate(['/marketplace']);
     } else {
@@ -41,7 +41,7 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
   }
 
   isLoggedin(): boolean {

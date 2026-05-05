@@ -1,0 +1,294 @@
+<main class="page-main" (keydown)="onKeydown($event)" tabindex="-1">
+
+  <!-- ══ Post Detail Modal ══ -->
+  <div class="modal-overlay" [class.modal-visible]="svc.selectedPost"
+       (click)="$event.target === $event.currentTarget && closePost()">
+    <div class="modal-card" *ngIf="svc.selectedPost as post">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-author">
+          <div class="avatar" [class.avatar-expert]="post.author.role === 'expert'">
+            {{ getInitials(post.author.name) }}
+          </div>
+          <div>
+            <p class="modal-author-name">{{ post.author.name }}</p>
+            <div class="flex-row gap-sm">
+              <span class="role-badge"
+                    [style.background]="getRoleBadge(post.author.role).bg"
+                    [style.color]="getRoleBadge(post.author.role).color">
+                {{ getRoleBadge(post.author.role).label }}
+              </span>
+              <span class="time-text">{{ timeAgo(post.createdAt) }}</span>
+            </div>
+          </div>
+        </div>
+        <button class="icon-btn" (click)="closePost()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <h3 class="post-title-lg">{{ post.title }}</h3>
+        <p class="post-content-full">{{ post.content }}</p>
+
+        <!-- Tags -->
+        <div class="tags-row" *ngIf="post.tags?.length">
+          <span class="tag-pill" *ngFor="let tag of post.tags">{{ tag }}</span>
+        </div>
+
+        <!-- Post actions -->
+        <div class="post-actions-row">
+          <button class="action-btn" [class.action-liked]="post.isLiked"
+                  (click)="toggleLike(post._id, $event)">
+            <span class="material-symbols-outlined" [class.ms-fill]="post.isLiked">favorite</span>
+            {{ post.likesCount }}
+          </button>
+          <button class="action-btn">
+            <span class="material-symbols-outlined">comment</span>
+            {{ post.commentCount ?? 0 }} comments
+          </button>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="comments-section">
+          <h4 class="comments-title">
+            Responses
+            <span class="comments-count">{{ post.comments?.length ?? 0 }}</span>
+          </h4>
+
+          <!-- Loading -->
+          <div *ngIf="post.commentsLoading" class="comments-loading">
+            <div class="sk-line sk-w80"></div>
+            <div class="sk-line sk-w60"></div>
+            <div class="sk-line sk-w70"></div>
+          </div>
+
+          <!-- Empty -->
+          <div *ngIf="!post.commentsLoading && !post.comments?.length" class="comments-empty">
+            <span class="material-symbols-outlined">forum</span>
+            <p>No responses yet. Be the first expert to reply!</p>
+          </div>
+
+          <!-- Comment list -->
+          <div class="comment-list" *ngIf="!post.commentsLoading && post.comments?.length">
+            <div class="comment-item" *ngFor="let c of post.comments">
+              <div class="comment-avatar"
+                   [class.comment-avatar-expert]="c.isExpertReply || c.author.role === 'expert'">
+                {{ getInitials(c.author.name) }}
+              </div>
+              <div class="comment-body">
+                <div class="comment-meta">
+                  <span class="comment-author">{{ c.author.name }}</span>
+                  <span class="expert-tag" *ngIf="c.isExpertReply || c.author.role === 'expert'">
+                    <span class="material-symbols-outlined ms-fill">verified</span>Expert
+                  </span>
+                  <span class="comment-time">{{ timeAgo(c.createdAt) }}</span>
+                  <button class="comment-delete-btn" (click)="deleteComment(c._id, post._id, $event)">
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </div>
+                <p class="comment-content">{{ c.content }}</p>
+
+                <!-- Replies -->
+                <div class="reply-item" *ngFor="let reply of c.replies">
+                  <div class="reply-avatar"
+                       [class.reply-avatar-expert]="reply.isExpertReply || reply.author.role === 'expert'">
+                    {{ getInitials(reply.author.name) }}
+                  </div>
+                  <div class="comment-body">
+                    <div class="comment-meta">
+                      <span class="comment-author">{{ reply.author.name }}</span>
+                      <span class="expert-tag" *ngIf="reply.isExpertReply || reply.author.role === 'expert'">
+                        <span class="material-symbols-outlined ms-fill">verified</span>Expert
+                      </span>
+                      <span class="comment-time">{{ timeAgo(reply.createdAt) }}</span>
+                    </div>
+                    <p class="comment-content">{{ reply.content }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reply Input -->
+          <div class="reply-input-wrap">
+            <div class="reply-avatar-sm expert-avatar">
+              <span class="material-symbols-outlined ms-fill">person</span>
+            </div>
+            <div class="reply-input-row">
+              <textarea
+                class="reply-textarea"
+                placeholder="Write your expert reply…"
+                rows="2"
+                [formControl]="getReplyControl(post._id)"
+                (keydown.control.enter)="submitReply(post._id)">
+              </textarea>
+              <button class="reply-submit-btn"
+                      (click)="submitReply(post._id)"
+                      [disabled]="svc.submitting || !getReplyControl(post._id).value?.trim()">
+                <span class="material-symbols-outlined ms-fill"
+                      *ngIf="!svc.submitting">send</span>
+                <span class="spinner" *ngIf="svc.submitting"></span>
+                Reply
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Page Header ══ -->
+  <header class="page-header fade-up">
+    <div>
+      <h1 class="page-title">Consultations</h1>
+      <p class="page-sub">Answer farmer questions and provide expert guidance.</p>
+    </div>
+    <div class="search-wrap">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input class="search-input"
+             placeholder="Search questions…"
+             [formControl]="searchControl" />
+    </div>
+  </header>
+
+  <!-- ══ Stats Row ══ -->
+  <div class="stats-row fade-up d1">
+    <div class="stat-pill">
+      <span class="material-symbols-outlined stat-pill-icon">forum</span>
+      <span class="stat-pill-val">{{ svc.posts.length }}</span>
+      <span class="stat-pill-label">Total Questions</span>
+    </div>
+    <div class="stat-pill">
+      <span class="material-symbols-outlined stat-pill-icon pending-icon">pending_actions</span>
+      <span class="stat-pill-val pending-val">
+        {{ svc.posts | unansweredCount }}
+      </span>
+      <span class="stat-pill-label">Unanswered</span>
+    </div>
+    <div class="stat-pill">
+      <span class="material-symbols-outlined stat-pill-icon answered-icon">check_circle</span>
+      <span class="stat-pill-val answered-val">
+        {{ svc.posts.length - (svc.posts | unansweredCount) }}
+      </span>
+      <span class="stat-pill-label">Answered</span>
+    </div>
+  </div>
+
+  <!-- ══ Loading ══ -->
+  <div class="skeleton-grid" *ngIf="svc.loading">
+    <div class="skeleton-post" *ngFor="let i of [1,2,3,4,5]">
+      <div class="sk-row">
+        <div class="sk-avatar"></div>
+        <div class="sk-lines">
+          <div class="sk-line sk-w50"></div>
+          <div class="sk-line sk-w35"></div>
+        </div>
+      </div>
+      <div class="sk-line sk-w80 sk-mt"></div>
+      <div class="sk-line sk-w60"></div>
+    </div>
+  </div>
+
+  <!-- ══ Posts List ══ -->
+  <ng-container *ngIf="!svc.loading">
+
+    <!-- Empty -->
+    <div class="empty-state" *ngIf="svc.filteredPosts.length === 0">
+      <span class="material-symbols-outlined empty-icon">forum</span>
+      <p class="empty-title">No consultations found</p>
+      <p class="empty-sub">
+        {{ svc.searchQuery ? 'Try a different search.' : 'Farmer questions will appear here.' }}
+      </p>
+    </div>
+
+    <!-- Post Cards -->
+    <div class="posts-list fade-up d2">
+      <div class="post-card"
+           *ngFor="let post of svc.filteredPosts; trackBy: trackByPost"
+           (click)="openPost(post)">
+
+        <!-- Card Header -->
+        <div class="card-header">
+          <div class="post-author-row">
+            <div class="avatar" [class.avatar-expert]="post.author.role === 'expert'">
+              {{ getInitials(post.author.name) }}
+            </div>
+            <div>
+              <p class="author-name">{{ post.author.name }}</p>
+              <div class="flex-row gap-sm">
+                <span class="role-badge"
+                      [style.background]="getRoleBadge(post.author.role).bg"
+                      [style.color]="getRoleBadge(post.author.role).color">
+                  {{ getRoleBadge(post.author.role).label }}
+                </span>
+                <span class="time-text">{{ timeAgo(post.createdAt) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Unanswered badge -->
+          <span class="unanswered-badge" *ngIf="!post.commentCount || post.commentCount === 0">
+            Awaiting reply
+          </span>
+        </div>
+
+        <!-- Content -->
+        <h3 class="post-title">{{ post.title }}</h3>
+        <p class="post-excerpt">{{ post.content }}</p>
+
+        <!-- Tags -->
+        <div class="tags-row" *ngIf="post.tags?.length">
+          <span class="tag-pill" *ngFor="let tag of post.tags">{{ tag }}</span>
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer" (click)="$event.stopPropagation()">
+          <button class="action-btn" [class.action-liked]="post.isLiked"
+                  (click)="toggleLike(post._id, $event)">
+            <span class="material-symbols-outlined" [class.ms-fill]="post.isLiked">favorite</span>
+            {{ post.likesCount }}
+          </button>
+
+          <button class="action-btn" (click)="toggleComments(post._id)">
+            <span class="material-symbols-outlined">comment</span>
+            {{ post.commentCount ?? 0 }}
+          </button>
+
+          <button class="reply-quick-btn" (click)="openPost(post)">
+            <span class="material-symbols-outlined ms-fill">reply</span>
+            Reply
+          </button>
+        </div>
+
+        <!-- Inline comments preview (collapsed) -->
+        <div class="inline-comments" *ngIf="post.showComments">
+          <div *ngIf="post.commentsLoading" class="comments-loading">
+            <div class="sk-line sk-w70"></div>
+            <div class="sk-line sk-w50"></div>
+          </div>
+          <div class="comment-item" *ngFor="let c of post.comments?.slice(0,3)">
+            <div class="comment-avatar sm-avatar"
+                 [class.comment-avatar-expert]="c.isExpertReply || c.author.role === 'expert'">
+              {{ getInitials(c.author.name) }}
+            </div>
+            <div class="comment-body">
+              <div class="comment-meta">
+                <span class="comment-author">{{ c.author.name }}</span>
+                <span class="expert-tag" *ngIf="c.isExpertReply || c.author.role === 'expert'">
+                  <span class="material-symbols-outlined ms-fill" style="font-size:10px;">verified</span>Expert
+                </span>
+              </div>
+              <p class="comment-content">{{ c.content }}</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </ng-container>
+
+</main>

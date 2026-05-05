@@ -23,7 +23,11 @@ interface SortOption {
   templateUrl: './products.component.html',
 })
 export class ProductsComponent implements OnInit, OnDestroy, OnChanges {
+  currentUserRole: string = localStorage.getItem('role') || 'farmer'; 
 
+  get dashboardLink(): string {
+    return this.currentUserRole === 'expert' ? '/expert/dashboard' : '/farmer/dashboard';
+  }
   // ── Data ─────────────────────────────────────────────
   products: IProduct[] = [];
   loading  = true;
@@ -40,8 +44,13 @@ export class ProductsComponent implements OnInit, OnDestroy, OnChanges {
   aiFlyoutOpen = false;
   aiFlyoutTop  = '0px';
   aiFlyoutLeft = '0px';
-
   private _hideTimer: ReturnType<typeof setTimeout> | null = null;
+
+  communityFlyoutOpen = false;
+  communityFlyoutTop  = '0px';
+  communityFlyoutLeft = '0px';
+  private _communityTimer: any;
+
 
   // ── Sort ──────────────────────────────────────────────
   sortOptions: SortOption[] = [
@@ -55,7 +64,7 @@ export class ProductsComponent implements OnInit, OnDestroy, OnChanges {
   // ── Filters ───────────────────────────────────────────
   categories       = ['Grains & Seeds', 'Fertilizers', 'Tools & Equipment', 'Organic Produce'];
   selectedCategory = 'Grains & Seeds';
-
+  searchQuery      = '';
   priceMax      = 1000;
   selectedPrice = 500;
   locationQuery = '';
@@ -66,6 +75,7 @@ export class ProductsComponent implements OnInit, OnDestroy, OnChanges {
   // ── Debounce subjects ─────────────────────────────────
   // Price slider fires on every pixel → debounce 400ms before hitting the API
   private _priceSubject    = new Subject<number>();
+  private _searchSubject   = new Subject<string>();
   // Location input fires on every keystroke → debounce 500ms
   private _locationSubject = new Subject<string>();
   private _subs: Subscription[] = [];
@@ -74,6 +84,14 @@ export class ProductsComponent implements OnInit, OnDestroy, OnChanges {
 
   // ── Lifecycle ─────────────────────────────────────────
   ngOnInit(): void {
+// Search debounce (500ms)
+    this._subs.push(
+      this._searchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(val => {
+        this.searchQuery = val;
+        this.currentPage = 1;
+        this.loadProducts();
+      })
+    );
     // Price debounce
     this._subs.push(
       this._priceSubject.pipe(
@@ -101,7 +119,7 @@ export class ProductsComponent implements OnInit, OnDestroy, OnChanges {
     this.loadProducts();
   }
 
-  @Input() filters: any;
+  // @Input() filters: any;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['filters'] && !changes['filters'].firstChange) {
@@ -110,9 +128,10 @@ export class ProductsComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  ngOnDestroy(): void {
+ ngOnDestroy(): void {
     this._subs.forEach(s => s.unsubscribe());
     if (this._hideTimer) clearTimeout(this._hideTimer);
+    if (this._communityTimer) clearTimeout(this._communityTimer);
   }
 
   // ── API call ──────────────────────────────────────────
@@ -128,14 +147,14 @@ export class ProductsComponent implements OnInit, OnDestroy, OnChanges {
       order:  this.selectedSort.order,
     };
 
+    if (this.searchQuery.trim())       params['search']   = this.searchQuery.trim();
     if (this.selectedCategory)         params['category'] = this.selectedCategory;
     if (this.selectedPrice < this.priceMax) params['maxPrice'] = this.selectedPrice;
-    if (this.selectedRating)            params['rating']   = this.selectedRating;
-    if (this.locationQuery.trim())      params['location'] = this.locationQuery.trim();
-
-    this.marketService.getAllProducts(params).subscribe({
+    if (this.selectedRating)           params['rating']   = this.selectedRating;
+    if (this.locationQuery.trim())     params['location'] = this.locationQuery.trim();
+    
+this.marketService.getAllProducts(params).subscribe({
       next: (res: any) => {
-        // Support paginatedResult middleware shape OR plain array
         const data       = res.result ?? res.data ?? res;
         this.products    = Array.isArray(data) ? data : [];
         this.totalPages  = res.totalPages  ?? res.pages       ?? 1;
@@ -151,6 +170,10 @@ export class ProductsComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
+  onSearchChange(val: string): void {
+    this.searchQuery = val;
+    this._searchSubject.next(val);
+  }
   // ── Sort ──────────────────────────────────────────────
   selectSort(opt: SortOption): void {
     this.selectedSort = opt;
@@ -251,6 +274,17 @@ export class ProductsComponent implements OnInit, OnDestroy, OnChanges {
   scheduleHideAiFlyout(): void {
     this._hideTimer = setTimeout(() => { this.aiFlyoutOpen = false; }, 130);
   }
+
+  // ── Community Flyout ──────────────────────────────────
+  showCommunityFlyout(el: HTMLElement): void {
+    if (this._communityTimer) clearTimeout(this._communityTimer);
+    const rect              = el.getBoundingClientRect();
+    this.communityFlyoutTop  = rect.top  + 'px';
+    this.communityFlyoutLeft = (rect.right + 10) + 'px';
+    this.communityFlyoutOpen = true;
+  }
+  keepCommunityFlyout(): void { if (this._communityTimer) clearTimeout(this._communityTimer); }
+  scheduleHideCommunityFlyout(): void { this._communityTimer = setTimeout(() => { this.communityFlyoutOpen = false; }, 130); }
 
   // ── Helpers ───────────────────────────────────────────
   getStarFill(s: number, r: number): string {

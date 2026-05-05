@@ -7,6 +7,7 @@ import { CommentService } from '../../../../core/services/comment/comment.servic
 import { InteractionService } from '../../../../core/services/interaction/interaction.service';
 import { Post, CreatePostRequest } from '../../../../core/models/post.model';
 import { Comment, CreateCommentRequest } from '../../../../core/models/comment.model';
+import { AuthService } from '../../../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-community-feed',
@@ -15,6 +16,13 @@ import { Comment, CreateCommentRequest } from '../../../../core/models/comment.m
   templateUrl: './community.component.html',
 })
 export class CommunityFeedComponent implements OnInit {
+  
+  currentUserRole: string = localStorage.getItem('role') || 'farmer'; 
+
+  get dashboardLink(): string {
+    return this.currentUserRole === 'expert' ? '/expert/dashboard' : '/farmer/dashboard';
+  }
+
   posts: Post[]    = [];
   loading          = true;
   error            = '';
@@ -72,7 +80,8 @@ scheduleHideCommunityFlyout(): void {
   constructor(
     private postService: PostService,
     private commentService: CommentService,
-    private interactionService: InteractionService
+    private interactionService: InteractionService,
+    private authService:AuthService
   ) {}
 
   ngOnInit(): void {
@@ -213,5 +222,8 @@ getTotalCommentCount(postId: string): number {
 
   ngOnDestroy(): void {
     if (this._hideTimer) clearTimeout(this._hideTimer);
+  }
+  logout():void{
+    this.authService.logout()
   }
 }

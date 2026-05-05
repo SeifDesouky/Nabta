@@ -15,6 +15,13 @@ export interface IProduct {
   bulkAvailable: boolean;
   bulkQuantity?: number;
   bulkPrice?: number;
+
+  avgRating: number;
+  ratingCount: number;
+  description?: string;
+  category?: string;
+  features?: string[];
+
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
@@ -35,3 +42,18 @@ export interface ICreateProduct {
 export type IGetProductsResponse = IProduct[];
 
 export type IGetProductResponse = IProduct;
+
+export interface IReview {
+  _id: string;
+  user: { _id: string; name: string };
+  product: string;
+  comment?: string;
+  rating: number;
+  createdAt: string;
+}
+
+export interface CreateReviewRequest {
+  product: string;
+  rating: number;
+  comment?: string;
+}

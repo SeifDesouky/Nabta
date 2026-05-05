@@ -24,7 +24,8 @@ export const routes: Routes = [
 
       // }
       {path:'community',loadChildren: () => import('./features/community/community.routes').then(m => m.communityRoutes)},
-      {path:'educational',loadChildren: () => import('./features/educational/educational.routes').then(m => m.educationalRoutes)}
+      {path:'educational',loadChildren: () => import('./features/educational/educational.routes').then(m => m.educationalRoutes)},
+      {path:'farmer',loadChildren: () => import('./features/farmer/farmer.routes').then(m => m.FARMER_ROUTES)}
 
     ]
   },

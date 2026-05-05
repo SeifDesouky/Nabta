@@ -29,3 +29,4 @@ export interface UpdatePostRequest {
   content?: string;
   tags?: string[];
 }
+

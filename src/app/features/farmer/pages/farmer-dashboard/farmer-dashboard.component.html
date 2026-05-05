@@ -1,0 +1,465 @@
+<!-- ══════════════════════════════════════════════════
+     FARMER DASHBOARD PAGE (main content only — layout wraps this)
+══════════════════════════════════════════════════ -->
+<div class="dashboard-page">
+
+  <!-- ── Loading Skeleton ── -->
+  <ng-container *ngIf="svc.loading$ | async">
+    <div class="skeleton-wrap">
+      <div class="skeleton hero-skel"></div>
+      <div class="skeleton-grid">
+        <div class="skeleton stat-skel" *ngFor="let i of [1,2,3,4]"></div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ── Page content ── -->
+  <ng-container *ngIf="!(svc.loading$ | async)">
+
+    <!-- ── Hero Banner ── -->
+    <section class="hero-banner fade-up">
+      <img
+        alt="Farm field"
+        class="hero-bg-img"
+        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8BtXplhbwf8IOs0zVWx27CjX5ZhKSHT1XRF3X9RipfF4j_DRofP6kbi0GJt9OWLpKIrHnBDg2BT9duw4sl6X_bTZE98qTQzeSUSb003OMNiwURwhxZnA125BX6P7IiElr7_5Rp0udBea91hxloiLAd4HnUVU57VgS4_E4xeCeDhvptNWua3rKhOYoDscTOa2wvsjBev19h8_QKYBRz3Aaj2PFZBPYvaO75dBN6YlAJ7VMkHnqkNxugPj28KhFIAYelaIA7lJTrQI"
+      />
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="material-symbols-outlined ms-fill" style="font-size:12px;">wb_sunny</span>
+          Good morning
+        </div>
+        <h2 class="hero-title">
+          Welcome back, {{ firstName }}!
+        </h2>
+        <p class="hero-sub">
+          Here's your farm overview. Conditions are optimal for your crops today.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── 4 Stat Cards ── -->
+    <section class="stats-grid fade-up d1">
+
+      <!-- Soil Moisture -->
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon-wrap" style="background:rgba(13,99,27,0.10)">
+            <span class="material-symbols-outlined ms-fill text-primary" style="font-size:18px;">opacity</span>
+          </div>
+          <span class="stat-badge primary-badge">+2% vs yesterday</span>
+        </div>
+        <p class="stat-label">Soil Moisture</p>
+        <h3 class="stat-value">72%</h3>
+      </div>
+
+      <!-- Weather -->
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon-wrap" style="background:#ffdbcf">
+            <span class="material-symbols-outlined ms-fill" style="font-size:18px;color:#603f33;">sunny</span>
+          </div>
+          <ng-container *ngIf="svc.weather$ | async as w; else weatherFallback">
+            <span class="stat-badge earth-badge">{{ w.current.condition.text }}</span>
+          </ng-container>
+          <ng-template #weatherFallback>
+            <span class="stat-badge earth-badge">Sunny</span>
+          </ng-template>
+        </div>
+        <p class="stat-label">Weather</p>
+        <h3 class="stat-value">
+          <ng-container *ngIf="svc.weather$ | async as w; else tempFallback">
+            {{ w.current.temp_c }}°C
+          </ng-container>
+          <ng-template #tempFallback>24°C</ng-template>
+        </h3>
+      </div>
+
+      <!-- Active Crops -->
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon-wrap" style="background:rgba(13,99,27,0.10)">
+            <span class="material-symbols-outlined ms-fill text-primary" style="font-size:18px;">potted_plant</span>
+          </div>
+          <span class="stat-badge neutral-badge">Active</span>
+        </div>
+        <p class="stat-label">Active Crops</p>
+        <h3 class="stat-value">{{ svc.activeCropCount$ | async }}</h3>
+      </div>
+
+      <!-- Market Price -->
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon-wrap" style="background:#ffdbca">
+            <span class="material-symbols-outlined ms-fill" style="font-size:18px;color:#773200;">trending_up</span>
+          </div>
+          <span class="stat-badge orange-badge">+5% Wheat</span>
+        </div>
+        <p class="stat-label">Market Price</p>
+        <h3 class="stat-value">$210<span class="stat-unit">/ton</span></h3>
+      </div>
+
+    </section>
+
+    <!-- ── Main 2-col grid ── -->
+    <div class="main-grid">
+
+      <!-- LEFT 8 cols -->
+      <div class="left-col">
+
+        <!-- ── My Crops ── -->
+        <section class="nabta-card fade-up d2" style="overflow:visible;">
+          <div class="section-header">
+            <div>
+              <div class="ai-badge">
+                <span class="material-symbols-outlined ms-fill" style="font-size:12px;">auto_awesome</span>
+                AI Insight
+              </div>
+              <h3 class="section-title">My Crops</h3>
+              <p class="section-sub">
+                Monitoring {{ svc.activeCropCount$ | async }} active crop sectors today.
+              </p>
+            </div>
+            <button class="view-all-btn">
+              View All
+              <span class="material-symbols-outlined" style="font-size:15px;">arrow_forward</span>
+            </button>
+          </div>
+
+          <!-- Crops Loading -->
+          <ng-container *ngIf="svc.cropLoading$ | async">
+            <div class="crops-scroll">
+              <div class="crop-card skeleton-crop" *ngFor="let i of [1,2,3]"></div>
+            </div>
+          </ng-container>
+
+          <!-- Crops List -->
+          <div class="crops-scroll" *ngIf="!(svc.cropLoading$ | async)">
+
+            <ng-container *ngIf="(svc.cropSchedules$ | async)?.length; else nocrops">
+              <!-- 🆕 ضفنا الـ click لفتح المودال -->
+              <div class="crop-card" *ngFor="let schedule of svc.cropSchedules$ | async" 
+                   (click)="svc.openScheduleModal(schedule)" style="cursor: pointer;">
+                   
+                <div class="crop-card-top">
+                  <div class="crop-icon-wrap" style="background: rgba(13,99,27,0.1);">
+                    <span class="material-symbols-outlined ms-fill" style="color: #0d631b; font-size:24px;">eco</span>
+                  </div>
+                  <span class="crop-status-badge" style="background: rgba(13,99,27,0.10); color: #0d631b;">
+                    Day {{ schedule.currentDay }}
+                  </span>
+                </div>
+                
+                <h4 class="crop-name" style="text-transform: capitalize;">{{ schedule.cropName }}</h4>
+                <p class="crop-date">Planted: {{ schedule.plantingDate }}</p>
+                
+                <div class="crop-health">
+                  <div class="health-row">
+                    <span>Harvest Progress</span>
+                    <span>{{ schedule.harvest.progress }}%</span>
+                  </div>
+                  <div class="health-bar-track">
+                    <div class="health-bar-fill"
+                         [style.width.%]="schedule.harvest.progress"
+                         [style.background]="svc.getHealthColor(schedule.harvest.progress)">
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="crop-next-task">
+                  <span class="material-symbols-outlined ms-fill" style="font-size:18px;" 
+                        [style.color]="getTaskColor(schedule.nextTask.type)">
+                    {{ getTaskIcon(schedule.nextTask.type) }}
+                  </span>
+                  <div>
+                    <p class="next-task-label">Next Action: {{ formatTaskName(schedule.nextTask.type) }}</p>
+                    <p class="next-task-value" [style.color]="schedule.nextTask.inDays === 0 ? '#d32f2f' : '#6c7c66'">
+                      {{ schedule.nextTask.inDays === 0 ? 'Due Today!' : 'In ' + schedule.nextTask.inDays + ' Days' }}
+                    </p>
+                  </div>
+                </div>
+                
+              </div>
+            </ng-container>
+
+            <ng-template #nocrops>
+              <div class="empty-crops">
+                <span class="material-symbols-outlined" style="font-size:40px;color:#bfcaba;">eco</span>
+                <p>No crops yet. Add your first crop!</p>
+              </div>
+            </ng-template>
+
+          </div>
+        </section>
+
+        <!-- ── Recent Activity (Notifications) ── -->
+        <section class="nabta-card overflow-hidden fade-up d3">
+          <div class="table-header">
+            <h3 class="section-title">Recent Activity</h3>
+            <button class="view-all-btn">View All</button>
+          </div>
+          <div class="table-wrap">
+            <table class="activity-table">
+              <thead>
+                <tr>
+                  <th>Activity</th>
+                  <th>Category</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngIf="(svc.notifications$ | async)?.length; else nonotifs">
+                  <tr *ngFor="let n of svc.notifications$ | async" (click)="markRead(n._id)" [class.unread-row]="!n.isRead">
+                    <td>
+                      <div class="activity-item">
+                        <div class="activity-icon-wrap" [style.background]="getNotifIconBg(n.type)">
+                          <span class="material-symbols-outlined" style="font-size:18px;" [style.color]="getNotifIconColor(n.type)">
+                            {{ getNotifIcon(n.type) }}
+                          </span>
+                        </div>
+                        <span class="activity-label">{{ n.title }}</span>
+                        <span *ngIf="!n.isRead" class="unread-dot"></span>
+                      </div>
+                    </td>
+                    <td class="table-sub">{{ n.type }}</td>
+                    <td class="table-sub">{{ svc.timeAgo(n.createdAt) }}</td>
+                    <td>
+                      <span class="status-badge"
+                            [style.background]="n.isRead ? '#eeeeee' : 'rgba(13,99,27,0.10)'"
+                            [style.color]="n.isRead ? '#40493d' : '#0d631b'">
+                        {{ n.isRead ? 'Read' : 'New' }}
+                      </span>
+                    </td>
+                  </tr>
+                </ng-container>
+                <ng-template #nonotifs>
+                  <!-- Fallback static rows -->
+                  <tr>
+                    <td>
+                      <div class="activity-item">
+                        <div class="activity-icon-wrap" style="background:#ffdbcf">
+                          <span class="material-symbols-outlined" style="font-size:18px;color:#603f33;">shopping_cart</span>
+                        </div>
+                        <span class="activity-label">Wheat Order #4521</span>
+                      </div>
+                    </td>
+                    <td class="table-sub">Marketplace</td>
+                    <td class="table-sub">2 mins ago</td>
+                    <td><span class="status-badge" style="background:rgba(13,99,27,0.10);color:#0d631b;">Completed</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="activity-item">
+                        <div class="activity-icon-wrap" style="background:rgba(13,99,27,0.10)">
+                          <span class="material-symbols-outlined" style="font-size:18px;color:#0d631b;">forum</span>
+                        </div>
+                        <span class="activity-label">Pest Control Discussion</span>
+                      </div>
+                    </td>
+                    <td class="table-sub">Community</td>
+                    <td class="table-sub">1 hour ago</td>
+                    <td><span class="status-badge" style="background:#eeeeee;color:#40493d;">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="activity-item">
+                        <div class="activity-icon-wrap" style="background:#ffdbca">
+                          <span class="material-symbols-outlined" style="font-size:18px;color:#773200;">bolt</span>
+                        </div>
+                        <span class="activity-label">Soil Analysis Complete</span>
+                      </div>
+                    </td>
+                    <td class="table-sub">AI Tools</td>
+                    <td class="table-sub">Yesterday</td>
+                    <td><span class="status-badge" style="background:rgba(13,99,27,0.10);color:#0d631b;">Completed</span></td>
+                  </tr>
+                </ng-template>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div><!-- /left col -->
+
+      <!-- RIGHT 4 cols -->
+      <div class="right-col">
+
+        <!-- Quick Actions -->
+        <section class="fade-up d4">
+          <h3 class="section-title" style="margin-bottom:1rem;">Quick Actions</h3>
+          <div class="quick-actions-list">
+
+            <button class="quick-action" (click)="openAddCrop()">
+              <span class="qa-icon material-symbols-outlined" style="font-size:20px;">add_circle</span>
+              <div>
+                <p class="qa-label">Add New Crop</p>
+                <p class="qa-sub">Register new seed batch</p>
+              </div>
+            </button>
+
+          </div>
+        </section>
+
+        <!-- Active Task + Weather Alert -->
+        <section class="nabta-card right-tasks fade-up d5">
+          <p class="right-section-label">Active Task</p>
+
+          <div class="task-box">
+            <div class="task-box-row">
+              <div>
+                <p class="task-name">Watering Cycle 2</p>
+                <p class="task-time">Scheduled for 4:00 PM</p>
+              </div>
+              <span class="material-symbols-outlined ms-fill text-primary" style="font-size:20px;">schedule</span>
+            </div>
+            <div class="task-meta">
+              <span>Duration: 45 min</span>
+              <span class="task-priority">Priority: High</span>
+            </div>
+          </div>
+
+          <!-- Weather Alerts from API -->
+          <ng-container *ngIf="(svc.weatherAlerts$ | async)?.length; else staticAlert">
+            <div class="storm-alert" *ngFor="let alert of svc.weatherAlerts$ | async">
+              <span class="material-symbols-outlined ms-fill" style="font-size:18px;color:#8e3d00;flex-shrink:0;margin-top:2px;">storm</span>
+              <div>
+                <p class="storm-title">Weather Alert</p>
+                <p class="storm-body">{{ alert }}</p>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-template #staticAlert>
+            <div class="storm-alert">
+              <span class="material-symbols-outlined ms-fill" style="font-size:18px;color:#8e3d00;flex-shrink:0;margin-top:2px;">storm</span>
+              <div>
+                <p class="storm-title">Upcoming Storm Alert</p>
+                <p class="storm-body">Expected heavy rainfall in North Sector tomorrow. Check drainage systems.</p>
+              </div>
+            </div>
+          </ng-template>
+        </section>
+
+        <!-- AI Soil Insight -->
+        <section class="ai-soil-card fade-up d6">
+          <div class="ai-soil-content">
+            <h3 class="ai-soil-title">AI Soil<br/>Insight Report</h3>
+
+            <!-- Seasonal Analysis from API -->
+            <ng-container *ngIf="svc.seasonal$ | async as s">
+              <p class="ai-soil-body">{{ s.recommendation }}</p>
+              <p class="ai-soil-risk" *ngIf="s.risk">⚠ Risk: {{ s.risk }}</p>
+            </ng-container>
+            <ng-container *ngIf="!(svc.seasonal$ | async)">
+              <p class="ai-soil-body">Nitrogen levels in Sector B are trending 12% higher than average. Recommend adjusting fertilizer mix for the next cycle.</p>
+            </ng-container>
+
+            <ul class="ai-soil-list">
+              <li>
+                <span class="material-symbols-outlined ms-fill" style="font-size:15px;color:#88d982;">check_circle</span>
+                PH Balance: 6.8 (Ideal)
+              </li>
+              <li>
+                <span class="material-symbols-outlined ms-fill" style="font-size:15px;color:#88d982;">check_circle</span>
+                Moisture: 42% (Stable)
+              </li>
+            </ul>
+          </div>
+          <div class="ai-soil-footer">
+            <button class="ai-soil-btn">
+              View Full Report
+              <span class="material-symbols-outlined" style="font-size:14px;">arrow_forward</span>
+            </button>
+          </div>
+          <div class="ai-soil-glow"></div>
+        </section>
+
+      </div><!-- /right col -->
+
+    </div><!-- /main-grid -->
+
+  </ng-container><!-- /not loading -->
+
+</div>
+
+<!-- ── Schedule Details Modal ── -->
+<div class="modal-backdrop" *ngIf="svc.scheduleModalOpen$ | async" (click)="svc.closeScheduleModal()">
+  <div class="modal-content schedule-modal" (click)="$event.stopPropagation()">
+    
+    <ng-container *ngIf="svc.selectedSchedule$ | async as selected">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div>
+          <h3 style="text-transform: capitalize; margin: 0; color: #40493d;">{{ selected.cropName }} Schedule</h3>
+          <p style="margin: 0; font-size: 13px; color: #6c7c66;">Planted on {{ selected.plantingDate }} (Day {{ selected.currentDay }})</p>
+        </div>
+        <button class="close-btn" (click)="svc.closeScheduleModal()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <div class="schedule-grid">
+          
+          <!-- Irrigation Card -->
+          <div class="schedule-item-card">
+            <div class="s-icon" style="background: #e1f5fe; color: #0288d1;">
+              <span class="material-symbols-outlined ms-fill">water_drop</span>
+            </div>
+            <div class="s-info">
+              <h4>Irrigation</h4>
+              <p>Every {{ selected.irrigation.every }} days</p>
+              <span class="badge" [class.urgent]="selected.irrigation.nextInDays === 0">
+                {{ selected.irrigation.nextInDays === 0 ? 'Due Today' : 'Next in ' + selected.irrigation.nextInDays + ' days' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Fertilization Card -->
+          <div class="schedule-item-card">
+            <div class="s-icon" style="background: #f3e5f5; color: #8e24aa;">
+              <span class="material-symbols-outlined ms-fill">science</span>
+            </div>
+            <div class="s-info">
+              <h4>Fertilization</h4>
+              <p>Every {{ selected.fertilization.every }} days</p>
+              <span class="badge" [class.urgent]="selected.fertilization.nextInDays === 0">
+                {{ selected.fertilization.nextInDays === 0 ? 'Due Today' : 'Next in ' + selected.fertilization.nextInDays + ' days' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Harvest Card -->
+          <div class="schedule-item-card">
+            <div class="s-icon" style="background: #fff3e0; color: #e65100;">
+              <span class="material-symbols-outlined ms-fill">agriculture</span>
+            </div>
+            <div class="s-info">
+              <h4>Harvest Time</h4>
+              <p>Ready after {{ selected.harvest.afterDays }} days</p>
+              <span class="badge">Remaining: {{ selected.harvest.remainingDays }} days</span>
+            </div>
+          </div>
+
+        </div>
+        
+        <!-- Progress -->
+        <div class="modal-progress-wrap">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <strong style="font-size: 14px; color: #40493d;">Overall Progress</strong>
+            <strong style="font-size: 14px; color: #0d631b;">{{ selected.harvest.progress }}%</strong>
+          </div>
+          <div class="health-bar-track" style="height: 10px; border-radius: 5px;">
+            <div class="health-bar-fill" [style.width.%]="selected.harvest.progress" [style.background]="svc.getHealthColor(selected.harvest.progress)"></div>
+          </div>
+        </div>
+
+      </div>
+    </ng-container>
+
+  </div>
+</div>
+<!-- ── Add Crop Modal ── -->
+<app-add-crop-modal></app-add-crop-modal>

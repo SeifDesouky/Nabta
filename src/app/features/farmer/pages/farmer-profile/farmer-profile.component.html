@@ -1,0 +1,217 @@
+<main class="page-main">
+
+  <!-- نقرأ القيم مرة واحدة هنا عشان الـ async ميضربش -->
+  <ng-container *ngIf="{ 
+    loading: svc.loading$ | async, 
+    user: svc.user$ | async, 
+    profile: svc.profile$ | async, 
+    crops: svc.crops$ | async 
+  } as data">
+
+    <!-- ══ Loading State ══ -->
+    <div *ngIf="data.loading" class="loading-state p-8">
+      <div class="animate-pulse flex flex-col gap-6">
+        <div class="h-48 bg-[#e8e8e8] rounded-2xl w-full"></div>
+        <div class="flex gap-4">
+          <div class="h-32 bg-[#e8e8e8] rounded-2xl w-1/4" *ngFor="let i of [1,2,3,4]"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ المحتوى الأساسي (لما التحميل يخلص واليوزر يكون موجود) ══ -->
+    <ng-container *ngIf="!data.loading && data.user">
+
+      <!-- ══ Hero Profile Card ══ -->
+      <section class="hero-card fade-up">
+        <div class="hero-blur"></div>
+
+        <!-- Avatar -->
+        <div class="avatar-wrap">
+          <div class="avatar-ring">
+            <div class="avatar-initials">{{ getInitials(data.user.name) }}</div>
+          </div>
+          <div *ngIf="data.user.isVerified" class="verified-badge">
+            <span class="material-symbols-outlined ms-fill">verified</span>
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="hero-info">
+          <h3 class="hero-name">{{ data.user.name }}</h3>
+          <span class="expert-status-badge" style="background:#e6f4ea; color:#137333;">
+            Verified Farmer
+          </span>
+          <p class="hero-email">{{ data.user.email }}</p>
+
+          <!-- Farm Pills -->
+          <div class="expertise-row" *ngIf="data.profile">
+            <span class="expertise-pill" *ngIf="data.profile.region">📍 {{ data.profile.region }}</span>
+            <span class="expertise-pill" *ngIf="data.profile.climate">🌤️ {{ data.profile.climate }}</span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="hero-actions">
+          <button class="btn-primary-action">
+            <span class="material-symbols-outlined">edit</span>
+            Edit Profile
+          </button>
+        </div>
+      </section>
+
+      <!-- ══ Quick Stats ══ -->
+      <div class="quick-stats fade-up d1">
+        <div class="quick-stat">
+          <span class="material-symbols-outlined quick-stat-icon" style="background:#e6f4ea; color:#137333;">eco</span>
+          <div>
+            <p class="quick-stat-val">{{ data.crops?.length || 0 }}</p>
+            <p class="quick-stat-label">Total Crops</p>
+          </div>
+        </div>
+        <div class="quick-stat">
+          <span class="material-symbols-outlined quick-stat-icon" style="background:#e1f5fe; color:#0288d1;">location_on</span>
+          <div>
+            <p class="quick-stat-val text-sm mt-1">{{ data.profile?.region || 'N/A' }}</p>
+            <p class="quick-stat-label">Region</p>
+          </div>
+        </div>
+        <div class="quick-stat">
+          <span class="material-symbols-outlined quick-stat-icon" style="background:#fff3e0; color:#e65100;">thermostat</span>
+          <div>
+            <p class="quick-stat-val text-sm mt-1">{{ data.profile?.climate || 'N/A' }}</p>
+            <p class="quick-stat-label">Climate</p>
+          </div>
+        </div>
+        <div class="quick-stat">
+          <span class="material-symbols-outlined quick-stat-icon" style="background:#f3e5f5; color:#8e24aa;">calendar_today</span>
+          <div>
+            <p class="quick-stat-val">{{ timeAgo(data.user.createdAt) }}</p>
+            <p class="quick-stat-label">Joined</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ Tabs ══ -->
+      <div class="tabs-row fade-up d2">
+        <button *ngFor="let tab of tabs" class="tab-btn" [class.tab-active]="isTab(tab.value)" (click)="setTab(tab.value)">
+          <span class="material-symbols-outlined">{{ tab.icon }}</span>
+          {{ tab.label }}
+        </button>
+      </div>
+
+      <!-- ══ Main Grid ══ -->
+      <div class="main-grid fade-up d3">
+
+        <!-- ── Left Col ── -->
+        <div class="left-col">
+
+          <!-- ── TAB: Personal Info ── -->
+          <ng-container *ngIf="isTab('info')">
+            
+            <!-- Personal Information -->
+            <div class="section-card">
+              <div class="section-header">
+                <div class="section-icon-wrap" style="background:rgba(13,99,27,0.1)">
+                  <span class="material-symbols-outlined" style="color:#0d631b;">person</span>
+                </div>
+                <h4 class="section-title">Personal Information</h4>
+              </div>
+              <div class="info-grid">
+                <div class="info-field">
+                  <label class="field-label">Full Name</label>
+                  <div class="field-value">{{ data.user.name }}</div>
+                </div>
+                <div class="info-field">
+                  <label class="field-label">Email Address</label>
+                  <div class="field-value">{{ data.user.email }}</div>
+                </div>
+                <div class="info-field">
+                  <label class="field-label">Phone Number</label>
+                  <div class="field-value">{{ data.user.phone || 'Not Provided' }}</div>
+                </div>
+                <div class="info-field">
+                  <label class="field-label">Account Status</label>
+                  <div class="field-value capitalize">{{ data.user.status }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Farm Details -->
+            <div class="section-card" *ngIf="data.profile">
+              <div class="section-header">
+                <div class="section-icon-wrap" style="background:rgba(142,61,0,0.1)">
+                  <span class="material-symbols-outlined" style="color:#8e3d00;">landscape</span>
+                </div>
+                <h4 class="section-title">Farm Details</h4>
+              </div>
+              <div class="info-grid">
+                <div class="info-field">
+                  <label class="field-label">Region</label>
+                  <div class="field-value">{{ data.profile.region || '—' }}</div>
+                </div>
+                <div class="info-field">
+                  <label class="field-label">Climate</label>
+                  <div class="field-value">{{ data.profile.climate || '—' }}</div>
+                </div>
+                <div class="info-field md-full">
+                  <label class="field-label">Soil Type</label>
+                  <div class="field-value capitalize">{{ data.profile.soilType || '—' }}</div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- ── TAB: My Crops ── -->
+          <ng-container *ngIf="isTab('crops')">
+            <ng-container *ngIf="data.crops">
+              <div *ngIf="data.crops.length === 0" class="empty-state">
+                <span class="material-symbols-outlined empty-icon">eco</span>
+                <p class="empty-title">No crops yet</p>
+                <p class="empty-sub">Add crops from your dashboard to track them here.</p>
+              </div>
+
+              <div class="post-card" *ngFor="let crop of data.crops">
+                <div class="post-header">
+                  <h4 class="post-title capitalize">{{ crop.cropName }}</h4>
+                  <span class="status-pill" [ngClass]="{'bg-green-100 text-green-700': crop.status === 'harvested', 'bg-blue-100 text-blue-700': crop.status === 'planted'}">
+                    {{ crop.status | titlecase }}
+                  </span>
+                </div>
+                
+                <div class="flex gap-4 mt-3">
+                  <div class="info-field flex-1">
+                    <label class="field-label">Planted On</label>
+                    <div class="field-value">{{ crop.plantingDate | date:'mediumDate' }}</div>
+                  </div>
+                  <div class="info-field flex-1">
+                    <label class="field-label">Area Size</label>
+                    <div class="field-value">{{ crop.areaSize }} Feddan</div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+
+        </div>
+
+        <!-- ── Right Col (Activity) ── -->
+        <div class="right-col">
+          <div class="section-card">
+            <h4 class="section-title mb-4">Recent Activity</h4>
+            <div class="flex items-start gap-3 mb-4">
+              <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-primary text-sm">person_add</span>
+              </div>
+              <div>
+                <p class="text-sm text-text-main font-medium">Joined Nabta Platform</p>
+                <p class="text-xs text-zinc-400">{{ timeAgo(data.user.createdAt) }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </ng-container>
+  </ng-container>
+</main>
