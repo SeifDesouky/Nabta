@@ -1,5 +1,5 @@
 <!-- ══════════════════════════════════════════════════
-     FARMER DASHBOARD PAGE (main content only — layout wraps this)
+     FARMER DASHBOARD PAGE
 ══════════════════════════════════════════════════ -->
 <div class="dashboard-page">
 
@@ -13,35 +13,25 @@
     </div>
   </ng-container>
 
-  <!-- ── Page content ── -->
   <ng-container *ngIf="!(svc.loading$ | async)">
 
     <!-- ── Hero Banner ── -->
     <section class="hero-banner fade-up">
-      <img
-        alt="Farm field"
-        class="hero-bg-img"
-        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8BtXplhbwf8IOs0zVWx27CjX5ZhKSHT1XRF3X9RipfF4j_DRofP6kbi0GJt9OWLpKIrHnBDg2BT9duw4sl6X_bTZE98qTQzeSUSb003OMNiwURwhxZnA125BX6P7IiElr7_5Rp0udBea91hxloiLAd4HnUVU57VgS4_E4xeCeDhvptNWua3rKhOYoDscTOa2wvsjBev19h8_QKYBRz3Aaj2PFZBPYvaO75dBN6YlAJ7VMkHnqkNxugPj28KhFIAYelaIA7lJTrQI"
-      />
+      <img alt="Farm field" class="hero-bg-img"
+        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8BtXplhbwf8IOs0zVWx27CjX5ZhKSHT1XRF3X9RipfF4j_DRofP6kbi0GJt9OWLpKIrHnBDg2BT9duw4sl6X_bTZE98qTQzeSUSb003OMNiwURwhxZnA125BX6P7IiElr7_5Rp0udBea91hxloiLAd4HnUVU57VgS4_E4xeCeDhvptNWua3rKhOYoDscTOa2wvsjBev19h8_QKYBRz3Aaj2PFZBPYvaO75dBN6YlAJ7VMkHnqkNxugPj28KhFIAYelaIA7lJTrQI"/>
       <div class="hero-overlay"></div>
       <div class="hero-content">
         <div class="hero-badge">
           <span class="material-symbols-outlined ms-fill" style="font-size:12px;">wb_sunny</span>
           Good morning
         </div>
-        <h2 class="hero-title">
-          Welcome back, {{ firstName }}!
-        </h2>
-        <p class="hero-sub">
-          Here's your farm overview. Conditions are optimal for your crops today.
-        </p>
+        <h2 class="hero-title">Welcome back, {{ firstName }}!</h2>
+        <p class="hero-sub">Here's your farm overview. Conditions are optimal for your crops today.</p>
       </div>
     </section>
 
     <!-- ── 4 Stat Cards ── -->
     <section class="stats-grid fade-up d1">
-
-      <!-- Soil Moisture -->
       <div class="stat-card">
         <div class="stat-card-top">
           <div class="stat-icon-wrap" style="background:rgba(13,99,27,0.10)">
@@ -52,8 +42,6 @@
         <p class="stat-label">Soil Moisture</p>
         <h3 class="stat-value">72%</h3>
       </div>
-
-      <!-- Weather -->
       <div class="stat-card">
         <div class="stat-card-top">
           <div class="stat-icon-wrap" style="background:#ffdbcf">
@@ -62,20 +50,14 @@
           <ng-container *ngIf="svc.weather$ | async as w; else weatherFallback">
             <span class="stat-badge earth-badge">{{ w.current.condition.text }}</span>
           </ng-container>
-          <ng-template #weatherFallback>
-            <span class="stat-badge earth-badge">Sunny</span>
-          </ng-template>
+          <ng-template #weatherFallback><span class="stat-badge earth-badge">Sunny</span></ng-template>
         </div>
         <p class="stat-label">Weather</p>
         <h3 class="stat-value">
-          <ng-container *ngIf="svc.weather$ | async as w; else tempFallback">
-            {{ w.current.temp_c }}°C
-          </ng-container>
+          <ng-container *ngIf="svc.weather$ | async as w; else tempFallback">{{ w.current.temp_c }}°C</ng-container>
           <ng-template #tempFallback>24°C</ng-template>
         </h3>
       </div>
-
-      <!-- Active Crops -->
       <div class="stat-card">
         <div class="stat-card-top">
           <div class="stat-icon-wrap" style="background:rgba(13,99,27,0.10)">
@@ -86,8 +68,6 @@
         <p class="stat-label">Active Crops</p>
         <h3 class="stat-value">{{ svc.activeCropCount$ | async }}</h3>
       </div>
-
-      <!-- Market Price -->
       <div class="stat-card">
         <div class="stat-card-top">
           <div class="stat-icon-wrap" style="background:#ffdbca">
@@ -98,79 +78,53 @@
         <p class="stat-label">Market Price</p>
         <h3 class="stat-value">$210<span class="stat-unit">/ton</span></h3>
       </div>
-
     </section>
 
     <!-- ── Main 2-col grid ── -->
     <div class="main-grid">
 
-      <!-- LEFT 8 cols -->
+      <!-- LEFT col -->
       <div class="left-col">
 
-        <!-- ── My Crops ── -->
+        <!-- My Crops -->
         <section class="nabta-card fade-up d2" style="overflow:visible;">
           <div class="section-header">
             <div>
               <div class="ai-badge">
-                <span class="material-symbols-outlined ms-fill" style="font-size:12px;">auto_awesome</span>
-                AI Insight
+                <span class="material-symbols-outlined ms-fill" style="font-size:12px;">auto_awesome</span>AI Insight
               </div>
               <h3 class="section-title">My Crops</h3>
-              <p class="section-sub">
-                Monitoring {{ svc.activeCropCount$ | async }} active crop sectors today.
-              </p>
+              <p class="section-sub">Monitoring {{ svc.activeCropCount$ | async }} active crop sectors today.</p>
             </div>
-            <button class="view-all-btn">
-              View All
-              <span class="material-symbols-outlined" style="font-size:15px;">arrow_forward</span>
-            </button>
+            <button class="view-all-btn">View All <span class="material-symbols-outlined" style="font-size:15px;">arrow_forward</span></button>
           </div>
 
-          <!-- Crops Loading -->
           <ng-container *ngIf="svc.cropLoading$ | async">
             <div class="crops-scroll">
               <div class="crop-card skeleton-crop" *ngFor="let i of [1,2,3]"></div>
             </div>
           </ng-container>
 
-          <!-- Crops List -->
           <div class="crops-scroll" *ngIf="!(svc.cropLoading$ | async)">
-
             <ng-container *ngIf="(svc.cropSchedules$ | async)?.length; else nocrops">
-              <!-- 🆕 ضفنا الـ click لفتح المودال -->
-              <div class="crop-card" *ngFor="let schedule of svc.cropSchedules$ | async" 
-                   (click)="svc.openScheduleModal(schedule)" style="cursor: pointer;">
-                   
+              <div class="crop-card" *ngFor="let schedule of svc.cropSchedules$ | async"
+                   (click)="svc.openScheduleModal(schedule)" style="cursor:pointer;">
                 <div class="crop-card-top">
-                  <div class="crop-icon-wrap" style="background: rgba(13,99,27,0.1);">
-                    <span class="material-symbols-outlined ms-fill" style="color: #0d631b; font-size:24px;">eco</span>
+                  <div class="crop-icon-wrap" style="background:rgba(13,99,27,0.1);">
+                    <span class="material-symbols-outlined ms-fill" style="color:#0d631b;font-size:24px;">eco</span>
                   </div>
-                  <span class="crop-status-badge" style="background: rgba(13,99,27,0.10); color: #0d631b;">
-                    Day {{ schedule.currentDay }}
-                  </span>
+                  <span class="crop-status-badge" style="background:rgba(13,99,27,0.10);color:#0d631b;">Day {{ schedule.currentDay }}</span>
                 </div>
-                
-                <h4 class="crop-name" style="text-transform: capitalize;">{{ schedule.cropName }}</h4>
+                <h4 class="crop-name" style="text-transform:capitalize;">{{ schedule.cropName }}</h4>
                 <p class="crop-date">Planted: {{ schedule.plantingDate }}</p>
-                
                 <div class="crop-health">
-                  <div class="health-row">
-                    <span>Harvest Progress</span>
-                    <span>{{ schedule.harvest.progress }}%</span>
-                  </div>
+                  <div class="health-row"><span>Harvest Progress</span><span>{{ schedule.harvest.progress }}%</span></div>
                   <div class="health-bar-track">
-                    <div class="health-bar-fill"
-                         [style.width.%]="schedule.harvest.progress"
-                         [style.background]="svc.getHealthColor(schedule.harvest.progress)">
-                    </div>
+                    <div class="health-bar-fill" [style.width.%]="schedule.harvest.progress" [style.background]="svc.getHealthColor(schedule.harvest.progress)"></div>
                   </div>
                 </div>
-                
                 <div class="crop-next-task">
-                  <span class="material-symbols-outlined ms-fill" style="font-size:18px;" 
-                        [style.color]="getTaskColor(schedule.nextTask.type)">
-                    {{ getTaskIcon(schedule.nextTask.type) }}
-                  </span>
+                  <span class="material-symbols-outlined ms-fill" style="font-size:18px;" [style.color]="getTaskColor(schedule.nextTask.type)">{{ getTaskIcon(schedule.nextTask.type) }}</span>
                   <div>
                     <p class="next-task-label">Next Action: {{ formatTaskName(schedule.nextTask.type) }}</p>
                     <p class="next-task-value" [style.color]="schedule.nextTask.inDays === 0 ? '#d32f2f' : '#6c7c66'">
@@ -178,21 +132,18 @@
                     </p>
                   </div>
                 </div>
-                
               </div>
             </ng-container>
-
             <ng-template #nocrops>
               <div class="empty-crops">
                 <span class="material-symbols-outlined" style="font-size:40px;color:#bfcaba;">eco</span>
                 <p>No crops yet. Add your first crop!</p>
               </div>
             </ng-template>
-
           </div>
         </section>
 
-        <!-- ── Recent Activity (Notifications) ── -->
+        <!-- Recent Activity -->
         <section class="nabta-card overflow-hidden fade-up d3">
           <div class="table-header">
             <h3 class="section-title">Recent Activity</h3>
@@ -200,23 +151,14 @@
           </div>
           <div class="table-wrap">
             <table class="activity-table">
-              <thead>
-                <tr>
-                  <th>Activity</th>
-                  <th>Category</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
+              <thead><tr><th>Activity</th><th>Category</th><th>Date</th><th>Status</th></tr></thead>
               <tbody>
                 <ng-container *ngIf="(svc.notifications$ | async)?.length; else nonotifs">
                   <tr *ngFor="let n of svc.notifications$ | async" (click)="markRead(n._id)" [class.unread-row]="!n.isRead">
                     <td>
                       <div class="activity-item">
                         <div class="activity-icon-wrap" [style.background]="getNotifIconBg(n.type)">
-                          <span class="material-symbols-outlined" style="font-size:18px;" [style.color]="getNotifIconColor(n.type)">
-                            {{ getNotifIcon(n.type) }}
-                          </span>
+                          <span class="material-symbols-outlined" style="font-size:18px;" [style.color]="getNotifIconColor(n.type)">{{ getNotifIcon(n.type) }}</span>
                         </div>
                         <span class="activity-label">{{ n.title }}</span>
                         <span *ngIf="!n.isRead" class="unread-dot"></span>
@@ -226,52 +168,17 @@
                     <td class="table-sub">{{ svc.timeAgo(n.createdAt) }}</td>
                     <td>
                       <span class="status-badge"
-                            [style.background]="n.isRead ? '#eeeeee' : 'rgba(13,99,27,0.10)'"
-                            [style.color]="n.isRead ? '#40493d' : '#0d631b'">
+                        [style.background]="n.isRead ? '#eeeeee' : 'rgba(13,99,27,0.10)'"
+                        [style.color]="n.isRead ? '#40493d' : '#0d631b'">
                         {{ n.isRead ? 'Read' : 'New' }}
                       </span>
                     </td>
                   </tr>
                 </ng-container>
                 <ng-template #nonotifs>
-                  <!-- Fallback static rows -->
                   <tr>
-                    <td>
-                      <div class="activity-item">
-                        <div class="activity-icon-wrap" style="background:#ffdbcf">
-                          <span class="material-symbols-outlined" style="font-size:18px;color:#603f33;">shopping_cart</span>
-                        </div>
-                        <span class="activity-label">Wheat Order #4521</span>
-                      </div>
-                    </td>
-                    <td class="table-sub">Marketplace</td>
-                    <td class="table-sub">2 mins ago</td>
-                    <td><span class="status-badge" style="background:rgba(13,99,27,0.10);color:#0d631b;">Completed</span></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="activity-item">
-                        <div class="activity-icon-wrap" style="background:rgba(13,99,27,0.10)">
-                          <span class="material-symbols-outlined" style="font-size:18px;color:#0d631b;">forum</span>
-                        </div>
-                        <span class="activity-label">Pest Control Discussion</span>
-                      </div>
-                    </td>
-                    <td class="table-sub">Community</td>
-                    <td class="table-sub">1 hour ago</td>
-                    <td><span class="status-badge" style="background:#eeeeee;color:#40493d;">Active</span></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="activity-item">
-                        <div class="activity-icon-wrap" style="background:#ffdbca">
-                          <span class="material-symbols-outlined" style="font-size:18px;color:#773200;">bolt</span>
-                        </div>
-                        <span class="activity-label">Soil Analysis Complete</span>
-                      </div>
-                    </td>
-                    <td class="table-sub">AI Tools</td>
-                    <td class="table-sub">Yesterday</td>
+                    <td><div class="activity-item"><div class="activity-icon-wrap" style="background:#ffdbcf"><span class="material-symbols-outlined" style="font-size:18px;color:#603f33;">shopping_cart</span></div><span class="activity-label">Wheat Order #4521</span></div></td>
+                    <td class="table-sub">Marketplace</td><td class="table-sub">2 mins ago</td>
                     <td><span class="status-badge" style="background:rgba(13,99,27,0.10);color:#0d631b;">Completed</span></td>
                   </tr>
                 </ng-template>
@@ -280,9 +187,170 @@
           </div>
         </section>
 
+        <!-- ══════════════════════════════════════════════════════
+             🆕 PRODUCT & ORDER MANAGEMENT PANEL
+        ══════════════════════════════════════════════════════ -->
+        <section class="nabta-card overflow-hidden fade-up d3">
+
+          <!-- Panel Tabs -->
+          <div class="pm-tabs">
+            <button class="pm-tab" [class.pm-tab-active]="marketTab === 'products'" (click)="switchTab('products')">
+              <span class="material-symbols-outlined" style="font-size:16px;">inventory_2</span>
+              My Products
+              <span class="pm-count">{{ (mktSvc.myProducts$ | async)?.length ?? 0 }}</span>
+            </button>
+            <button class="pm-tab" [class.pm-tab-active]="marketTab === 'orders'" (click)="switchTab('orders')">
+              <span class="material-symbols-outlined" style="font-size:16px;">receipt_long</span>
+              Incoming Orders
+              <span class="pm-count pm-count-orange">{{ (mktSvc.myOrders$ | async)?.length ?? 0 }}</span>
+            </button>
+          </div>
+
+          <!-- ── PRODUCTS TAB ── -->
+          <ng-container *ngIf="marketTab === 'products'">
+
+            <!-- Toolbar -->
+            <div class="pm-toolbar">
+              <p class="pm-toolbar-title">Your listed products</p>
+              <button class="pm-add-btn" (click)="openAddProduct()">
+                <span class="material-symbols-outlined" style="font-size:16px;">add</span>
+                Add Product
+              </button>
+            </div>
+
+            <!-- Loading -->
+            <div *ngIf="mktSvc.productsLoading$ | async" class="pm-loading">
+              <span class="material-symbols-outlined text-zinc-300 animate-spin" style="font-size:28px;">progress_activity</span>
+            </div>
+
+            <!-- Empty -->
+            <div *ngIf="!(mktSvc.productsLoading$ | async) && (mktSvc.myProducts$ | async)?.length === 0" class="pm-empty">
+              <span class="material-symbols-outlined" style="font-size:44px;color:#bfcaba;">inventory_2</span>
+              <p>No products listed yet.</p>
+              <button class="pm-add-btn" (click)="openAddProduct()">List your first product</button>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="pm-products-grid" *ngIf="!(mktSvc.productsLoading$ | async) && (mktSvc.myProducts$ | async)?.length">
+              <div class="pm-product-card" *ngFor="let p of mktSvc.myProducts$ | async" [class.pm-deleted]="p.isDeleted">
+
+                <div class="pm-product-img-wrap">
+                  <img *ngIf="p.imageUrl" [src]="p.imageUrl" [alt]="p.productName" class="pm-product-img"/>
+                  <div *ngIf="!p.imageUrl" class="pm-product-img-placeholder">
+                    <span class="material-symbols-outlined" style="font-size:28px;color:#bfcaba;">image</span>
+                  </div>
+                  <span class="pm-deleted-badge" *ngIf="p.isDeleted">Inactive</span>
+                </div>
+
+                <div class="pm-product-info">
+                  <p class="pm-product-name">{{ p.productName }}</p>
+                  <p class="pm-product-meta">{{ p.category ?? '—' }}</p>
+                  <div class="pm-product-row">
+                    <span class="pm-price">${{ p.price }}</span>
+                    <span class="pm-stock">Stock: {{ p.stock }}</span>
+                  </div>
+                  <div class="pm-product-row" style="margin-top:.5rem;">
+                    <span class="pm-rating">
+                      <span class="material-symbols-outlined ms-fill" style="font-size:13px;color:#f59e0b;">star</span>
+                      {{ p.avgRating | number:'1.1-1' }} ({{ p.ratingCount }})
+                    </span>
+                    <button class="pm-toggle-btn"
+                      [style.color]="p.isDeleted ? '#0d631b' : '#d32f2f'"
+                      (click)="toggleProduct(p._id)">
+                      <span class="material-symbols-outlined" style="font-size:14px;">{{ p.isDeleted ? 'visibility' : 'visibility_off' }}</span>
+                      {{ p.isDeleted ? 'Activate' : 'Deactivate' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- ── ORDERS TAB ── -->
+          <ng-container *ngIf="marketTab === 'orders'">
+
+            <div class="pm-toolbar">
+              <p class="pm-toolbar-title">Orders containing your products</p>
+              <button class="pm-refresh-btn" (click)="mktSvc.loadMyOrders()">
+                <span class="material-symbols-outlined" style="font-size:15px;">refresh</span>
+                Refresh
+              </button>
+            </div>
+
+            <!-- Loading -->
+            <div *ngIf="mktSvc.ordersLoading$ | async" class="pm-loading">
+              <span class="material-symbols-outlined text-zinc-300 animate-spin" style="font-size:28px;">progress_activity</span>
+            </div>
+
+            <!-- Empty -->
+            <div *ngIf="!(mktSvc.ordersLoading$ | async) && (mktSvc.myOrders$ | async)?.length === 0" class="pm-empty">
+              <span class="material-symbols-outlined" style="font-size:44px;color:#bfcaba;">receipt_long</span>
+              <p>No incoming orders yet.</p>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="table-wrap" *ngIf="!(mktSvc.ordersLoading$ | async) && (mktSvc.myOrders$ | async)?.length">
+              <table class="activity-table">
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let order of mktSvc.myOrders$ | async">
+                    <td>
+                      <div style="display:flex;flex-direction:column;gap:2px;">
+                        <span style="font-weight:700;font-size:12px;color:#2b4228;">#{{ order._id.slice(-6).toUpperCase() }}</span>
+                        <span style="font-size:11px;color:#6c7c66;">{{ order.shippingAddress }}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="pm-order-items">
+                        <div *ngFor="let item of order.items" class="pm-order-item-chip">
+                          <img *ngIf="item.imageUrl" [src]="item.imageUrl" style="width:20px;height:20px;border-radius:4px;object-fit:cover;"/>
+                          <span>{{ item.quantity }}×</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span style="font-weight:700;color:#0d631b;">${{ order.totalPrice }}</span></td>
+                    <td class="table-sub">{{ svc.timeAgo(order.createdAt) }}</td>
+                    <td>
+                      <span class="status-badge"
+                        [style.background]="mktSvc.getStatusConfig(order.status).bg"
+                        [style.color]="mktSvc.getStatusConfig(order.status).color">
+                        {{ mktSvc.getStatusConfig(order.status).label }}
+                      </span>
+                    </td>
+                    <td>
+                      <!-- Only show action if order is pending or shipped -->
+                      <select *ngIf="order.status === 'pending' || order.status === 'shipped'"
+                        class="pm-status-select"
+                        [value]="order.status"
+                        (change)="updateOrderStatus(order._id, $event)">
+                        <option value="pending">Pending</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="rejected">Reject</option>
+                      </select>
+                      <span *ngIf="order.status !== 'pending' && order.status !== 'shipped'"
+                        style="font-size:11px;color:#bfcaba;">—</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-container>
+
+        </section>
+        <!-- ══ END PRODUCT & ORDER MANAGEMENT ══ -->
+
       </div><!-- /left col -->
 
-      <!-- RIGHT 4 cols -->
+      <!-- RIGHT col -->
       <div class="right-col">
 
         <!-- Quick Actions -->
@@ -298,13 +366,39 @@
               </div>
             </button>
 
+            <!-- 🆕 Add Product -->
+            <button class="quick-action" (click)="openAddProduct()">
+              <span class="qa-icon material-symbols-outlined" style="font-size:20px;background:#fff3e0;color:#e65100;">add_shopping_cart</span>
+              <div>
+                <p class="qa-label">Add New Product</p>
+                <p class="qa-sub">List product on marketplace</p>
+              </div>
+            </button>
+
+            <!-- 🆕 My Products shortcut -->
+            <button class="quick-action" (click)="switchTab('products'); scrollToMarket()">
+              <span class="qa-icon material-symbols-outlined" style="font-size:20px;background:#e8f5e9;color:#2e7d32;">inventory_2</span>
+              <div>
+                <p class="qa-label">My Products</p>
+                <p class="qa-sub">View &amp; manage your listings</p>
+              </div>
+            </button>
+
+            <!-- 🆕 Incoming Orders shortcut -->
+            <button class="quick-action" (click)="switchTab('orders'); scrollToMarket()">
+              <span class="qa-icon material-symbols-outlined" style="font-size:20px;background:#fce4ec;color:#c62828;">receipt_long</span>
+              <div>
+                <p class="qa-label">Incoming Orders</p>
+                <p class="qa-sub">Check &amp; update order status</p>
+              </div>
+            </button>
+
           </div>
         </section>
 
         <!-- Active Task + Weather Alert -->
         <section class="nabta-card right-tasks fade-up d5">
           <p class="right-section-label">Active Task</p>
-
           <div class="task-box">
             <div class="task-box-row">
               <div>
@@ -319,24 +413,16 @@
             </div>
           </div>
 
-          <!-- Weather Alerts from API -->
           <ng-container *ngIf="(svc.weatherAlerts$ | async)?.length; else staticAlert">
             <div class="storm-alert" *ngFor="let alert of svc.weatherAlerts$ | async">
               <span class="material-symbols-outlined ms-fill" style="font-size:18px;color:#8e3d00;flex-shrink:0;margin-top:2px;">storm</span>
-              <div>
-                <p class="storm-title">Weather Alert</p>
-                <p class="storm-body">{{ alert }}</p>
-              </div>
+              <div><p class="storm-title">Weather Alert</p><p class="storm-body">{{ alert }}</p></div>
             </div>
           </ng-container>
-
           <ng-template #staticAlert>
             <div class="storm-alert">
               <span class="material-symbols-outlined ms-fill" style="font-size:18px;color:#8e3d00;flex-shrink:0;margin-top:2px;">storm</span>
-              <div>
-                <p class="storm-title">Upcoming Storm Alert</p>
-                <p class="storm-body">Expected heavy rainfall in North Sector tomorrow. Check drainage systems.</p>
-              </div>
+              <div><p class="storm-title">Upcoming Storm Alert</p><p class="storm-body">Expected heavy rainfall in North Sector tomorrow. Check drainage systems.</p></div>
             </div>
           </ng-template>
         </section>
@@ -345,32 +431,20 @@
         <section class="ai-soil-card fade-up d6">
           <div class="ai-soil-content">
             <h3 class="ai-soil-title">AI Soil<br/>Insight Report</h3>
-
-            <!-- Seasonal Analysis from API -->
             <ng-container *ngIf="svc.seasonal$ | async as s">
               <p class="ai-soil-body">{{ s.recommendation }}</p>
               <p class="ai-soil-risk" *ngIf="s.risk">⚠ Risk: {{ s.risk }}</p>
             </ng-container>
             <ng-container *ngIf="!(svc.seasonal$ | async)">
-              <p class="ai-soil-body">Nitrogen levels in Sector B are trending 12% higher than average. Recommend adjusting fertilizer mix for the next cycle.</p>
+              <p class="ai-soil-body">Nitrogen levels in Sector B are trending 12% higher than average.</p>
             </ng-container>
-
             <ul class="ai-soil-list">
-              <li>
-                <span class="material-symbols-outlined ms-fill" style="font-size:15px;color:#88d982;">check_circle</span>
-                PH Balance: 6.8 (Ideal)
-              </li>
-              <li>
-                <span class="material-symbols-outlined ms-fill" style="font-size:15px;color:#88d982;">check_circle</span>
-                Moisture: 42% (Stable)
-              </li>
+              <li><span class="material-symbols-outlined ms-fill" style="font-size:15px;color:#88d982;">check_circle</span>PH Balance: 6.8 (Ideal)</li>
+              <li><span class="material-symbols-outlined ms-fill" style="font-size:15px;color:#88d982;">check_circle</span>Moisture: 42% (Stable)</li>
             </ul>
           </div>
           <div class="ai-soil-footer">
-            <button class="ai-soil-btn">
-              View Full Report
-              <span class="material-symbols-outlined" style="font-size:14px;">arrow_forward</span>
-            </button>
+            <button class="ai-soil-btn">View Full Report <span class="material-symbols-outlined" style="font-size:14px;">arrow_forward</span></button>
           </div>
           <div class="ai-soil-glow"></div>
         </section>
@@ -379,87 +453,164 @@
 
     </div><!-- /main-grid -->
 
-  </ng-container><!-- /not loading -->
-
+  </ng-container>
 </div>
 
-<!-- ── Schedule Details Modal ── -->
+<!-- ── Schedule Modal ── -->
 <div class="modal-backdrop" *ngIf="svc.scheduleModalOpen$ | async" (click)="svc.closeScheduleModal()">
   <div class="modal-content schedule-modal" (click)="$event.stopPropagation()">
-    
     <ng-container *ngIf="svc.selectedSchedule$ | async as selected">
-      <!-- Modal Header -->
       <div class="modal-header">
         <div>
-          <h3 style="text-transform: capitalize; margin: 0; color: #40493d;">{{ selected.cropName }} Schedule</h3>
-          <p style="margin: 0; font-size: 13px; color: #6c7c66;">Planted on {{ selected.plantingDate }} (Day {{ selected.currentDay }})</p>
+          <h3 style="text-transform:capitalize;margin:0;color:#40493d;">{{ selected.cropName }} Schedule</h3>
+          <p style="margin:0;font-size:13px;color:#6c7c66;">Planted on {{ selected.plantingDate }} (Day {{ selected.currentDay }})</p>
         </div>
-        <button class="close-btn" (click)="svc.closeScheduleModal()">
-          <span class="material-symbols-outlined">close</span>
-        </button>
+        <button class="close-btn" (click)="svc.closeScheduleModal()"><span class="material-symbols-outlined">close</span></button>
       </div>
-
-      <!-- Modal Body -->
       <div class="modal-body">
         <div class="schedule-grid">
-          
-          <!-- Irrigation Card -->
           <div class="schedule-item-card">
-            <div class="s-icon" style="background: #e1f5fe; color: #0288d1;">
-              <span class="material-symbols-outlined ms-fill">water_drop</span>
-            </div>
+            <div class="s-icon" style="background:#e1f5fe;color:#0288d1;"><span class="material-symbols-outlined ms-fill">water_drop</span></div>
             <div class="s-info">
-              <h4>Irrigation</h4>
-              <p>Every {{ selected.irrigation.every }} days</p>
-              <span class="badge" [class.urgent]="selected.irrigation.nextInDays === 0">
-                {{ selected.irrigation.nextInDays === 0 ? 'Due Today' : 'Next in ' + selected.irrigation.nextInDays + ' days' }}
-              </span>
+              <h4>Irrigation</h4><p>Every {{ selected.irrigation.every }} days</p>
+              <span class="badge" [class.urgent]="selected.irrigation.nextInDays === 0">{{ selected.irrigation.nextInDays === 0 ? 'Due Today' : 'Next in ' + selected.irrigation.nextInDays + ' days' }}</span>
             </div>
           </div>
-
-          <!-- Fertilization Card -->
           <div class="schedule-item-card">
-            <div class="s-icon" style="background: #f3e5f5; color: #8e24aa;">
-              <span class="material-symbols-outlined ms-fill">science</span>
-            </div>
+            <div class="s-icon" style="background:#f3e5f5;color:#8e24aa;"><span class="material-symbols-outlined ms-fill">science</span></div>
             <div class="s-info">
-              <h4>Fertilization</h4>
-              <p>Every {{ selected.fertilization.every }} days</p>
-              <span class="badge" [class.urgent]="selected.fertilization.nextInDays === 0">
-                {{ selected.fertilization.nextInDays === 0 ? 'Due Today' : 'Next in ' + selected.fertilization.nextInDays + ' days' }}
-              </span>
+              <h4>Fertilization</h4><p>Every {{ selected.fertilization.every }} days</p>
+              <span class="badge" [class.urgent]="selected.fertilization.nextInDays === 0">{{ selected.fertilization.nextInDays === 0 ? 'Due Today' : 'Next in ' + selected.fertilization.nextInDays + ' days' }}</span>
             </div>
           </div>
-
-          <!-- Harvest Card -->
           <div class="schedule-item-card">
-            <div class="s-icon" style="background: #fff3e0; color: #e65100;">
-              <span class="material-symbols-outlined ms-fill">agriculture</span>
-            </div>
+            <div class="s-icon" style="background:#fff3e0;color:#e65100;"><span class="material-symbols-outlined ms-fill">agriculture</span></div>
             <div class="s-info">
-              <h4>Harvest Time</h4>
-              <p>Ready after {{ selected.harvest.afterDays }} days</p>
+              <h4>Harvest Time</h4><p>Ready after {{ selected.harvest.afterDays }} days</p>
               <span class="badge">Remaining: {{ selected.harvest.remainingDays }} days</span>
             </div>
           </div>
-
         </div>
-        
-        <!-- Progress -->
         <div class="modal-progress-wrap">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-            <strong style="font-size: 14px; color: #40493d;">Overall Progress</strong>
-            <strong style="font-size: 14px; color: #0d631b;">{{ selected.harvest.progress }}%</strong>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+            <strong style="font-size:14px;color:#40493d;">Overall Progress</strong>
+            <strong style="font-size:14px;color:#0d631b;">{{ selected.harvest.progress }}%</strong>
           </div>
-          <div class="health-bar-track" style="height: 10px; border-radius: 5px;">
+          <div class="health-bar-track" style="height:10px;border-radius:5px;">
             <div class="health-bar-fill" [style.width.%]="selected.harvest.progress" [style.background]="svc.getHealthColor(selected.harvest.progress)"></div>
           </div>
         </div>
-
       </div>
     </ng-container>
-
   </div>
 </div>
+
+<!-- ══════════════════════════════════════════════════
+     🆕 ADD PRODUCT MODAL
+══════════════════════════════════════════════════ -->
+<div class="modal-backdrop" *ngIf="addProductOpen" (click)="closeAddProduct()">
+  <div class="modal-content" style="max-width:520px;" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div>
+        <h3 style="margin:0;color:#40493d;">Add New Product</h3>
+        <p style="margin:0;font-size:13px;color:#6c7c66;">List a product on the marketplace</p>
+      </div>
+      <button class="close-btn" (click)="closeAddProduct()"><span class="material-symbols-outlined">close</span></button>
+    </div>
+
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:1rem;">
+
+      <!-- Product Name -->
+      <div class="ap-field">
+        <label class="ap-label">Product Name *</label>
+        <input class="ap-input" type="text" placeholder="e.g. Organic Wheat" [(ngModel)]="newProduct.productName"/>
+      </div>
+
+      <!-- Price & Stock row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+        <div class="ap-field">
+          <label class="ap-label">Price ($) *</label>
+          <input class="ap-input" type="number" placeholder="0.00" [(ngModel)]="newProduct.price" min="0"/>
+        </div>
+        <div class="ap-field">
+          <label class="ap-label">Stock (units) *</label>
+          <input class="ap-input" type="number" placeholder="0" [(ngModel)]="newProduct.stock" min="0"/>
+        </div>
+      </div>
+
+      <!-- Category -->
+      <div class="ap-field">
+        <label class="ap-label">Category</label>
+        <select class="ap-input" [(ngModel)]="newProduct.category">
+          <option value="">Select category</option>
+          <option>Grains & Seeds</option>
+          <option>Fertilizers</option>
+          <option>Tools & Equipment</option>
+          <option>Organic Produce</option>
+        </select>
+      </div>
+
+      <!-- Description -->
+      <div class="ap-field">
+        <label class="ap-label">Description</label>
+        <textarea class="ap-input" rows="3" placeholder="Describe your product..." [(ngModel)]="newProduct.description" style="resize:vertical;"></textarea>
+      </div>
+
+      <!-- Bulk toggle -->
+      <div class="ap-toggle-row">
+        <label class="ap-toggle-label">
+          <input type="checkbox" [(ngModel)]="newProduct.bulkAvailable" style="accent-color:#0d631b;"/>
+          Bulk pricing available
+        </label>
+      </div>
+
+      <!-- Bulk fields (conditional) -->
+      <div *ngIf="newProduct.bulkAvailable" style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+        <div class="ap-field">
+          <label class="ap-label">Bulk Min Qty</label>
+          <input class="ap-input" type="number" placeholder="e.g. 100" [(ngModel)]="newProduct.bulkQuantity" min="1"/>
+        </div>
+        <div class="ap-field">
+          <label class="ap-label">Bulk Price ($)</label>
+          <input class="ap-input" type="number" placeholder="0.00" [(ngModel)]="newProduct.bulkPrice" min="0"/>
+        </div>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="ap-field">
+        <label class="ap-label">Product Image *</label>
+        <label class="ap-upload-zone" [class.ap-upload-has-file]="productImgPreview">
+          <input type="file" accept="image/*" style="display:none;" (change)="onProductImage($event)" #imgInput/>
+          <ng-container *ngIf="!productImgPreview">
+            <span class="material-symbols-outlined" style="font-size:32px;color:#bfcaba;">cloud_upload</span>
+            <p style="margin:4px 0 0;font-size:12px;color:#6c7c66;">Click to upload image</p>
+          </ng-container>
+          <ng-container *ngIf="productImgPreview">
+            <img [src]="productImgPreview" style="max-height:120px;border-radius:8px;object-fit:contain;"/>
+            <p style="margin:4px 0 0;font-size:11px;color:#6c7c66;">Click to change</p>
+          </ng-container>
+          <span style="position:absolute;inset:0;cursor:pointer;" (click)="imgInput.click()"></span>
+        </label>
+      </div>
+
+      <!-- Error -->
+      <p *ngIf="addProductError" style="font-size:12px;color:#d32f2f;margin:0;">{{ addProductError }}</p>
+
+      <!-- Actions -->
+      <div style="display:flex;gap:.75rem;justify-content:flex-end;padding-top:.5rem;">
+        <button class="pm-refresh-btn" (click)="closeAddProduct()">Cancel</button>
+        <button class="pm-add-btn" (click)="submitAddProduct()" [disabled]="mktSvc.addLoading$ | async">
+          <span *ngIf="!(mktSvc.addLoading$ | async)">
+            <span class="material-symbols-outlined" style="font-size:15px;">check</span> List Product
+          </span>
+          <span *ngIf="mktSvc.addLoading$ | async" class="material-symbols-outlined animate-spin" style="font-size:16px;">progress_activity</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- ── Add Crop Modal ── -->
 <app-add-crop-modal></app-add-crop-modal>

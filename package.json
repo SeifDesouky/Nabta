@@ -30,6 +30,7 @@
     "@angular/compiler-cli": "^18.2.0",
     "@tailwindcss/container-queries": "^0.1.1",
     "@types/jasmine": "~5.1.0",
+    "@types/socket.io-client": "^1.4.36",
     "autoprefixer": "^10.5.0",
     "jasmine-core": "~5.2.0",
     "karma": "~6.4.0",

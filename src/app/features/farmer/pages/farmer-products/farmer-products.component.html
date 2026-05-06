@@ -1,0 +1,454 @@
+<!-- farmer-products.component.html -->
+<div class="fp-page">
+
+  <!-- ══ Page Header ══ -->
+  <div class="fp-page-header fade-up">
+    <div>
+      <div class="fp-breadcrumb">
+        <span class="material-symbols-outlined" style="font-size:14px;">home</span>
+        <span>Dashboard</span>
+        <span class="material-symbols-outlined" style="font-size:12px;color:#bfcaba;">chevron_right</span>
+        <span class="fp-breadcrumb-active">My Store</span>
+      </div>
+      <h1 class="fp-page-title">My Store</h1>
+      <p class="fp-page-sub">Manage your products and incoming orders</p>
+    </div>
+    <button class="fp-primary-btn" (click)="openAddProduct()">
+      <span class="material-symbols-outlined" style="font-size:18px;">add</span>
+      Add Product
+    </button>
+  </div>
+
+  <!-- ══ Stats Row ══ -->
+  <div class="fp-stats-row fade-up d1">
+
+    <div class="fp-stat-chip">
+      <div class="fp-stat-icon" style="background:rgba(13,99,27,0.10);">
+        <span class="material-symbols-outlined ms-fill text-primary" style="font-size:18px;">inventory_2</span>
+      </div>
+      <div>
+        <p class="fp-stat-num">{{ (mktSvc.myProducts$ | async)?.length ?? 0 }}</p>
+        <p class="fp-stat-label">Total Products</p>
+      </div>
+    </div>
+
+    <div class="fp-stat-chip">
+      <div class="fp-stat-icon" style="background:rgba(142,61,0,0.08);">
+        <span class="material-symbols-outlined ms-fill" style="font-size:18px;color:#8e3d00;">receipt_long</span>
+      </div>
+      <div>
+        <p class="fp-stat-num">{{ (mktSvc.myOrders$ | async)?.length ?? 0 }}</p>
+        <p class="fp-stat-label">Incoming Orders</p>
+      </div>
+    </div>
+
+    <div class="fp-stat-chip">
+      <div class="fp-stat-icon" style="background:rgba(255,160,0,0.10);">
+        <span class="material-symbols-outlined ms-fill" style="font-size:18px;color:#b36b00;">pending</span>
+      </div>
+      <div>
+        <p class="fp-stat-num">{{ pendingOrdersCount }}</p>
+        <p class="fp-stat-label">Pending Orders</p>
+      </div>
+    </div>
+
+    <div class="fp-stat-chip">
+      <div class="fp-stat-icon" style="background:rgba(13,99,27,0.10);">
+        <span class="material-symbols-outlined ms-fill text-primary" style="font-size:18px;">payments</span>
+      </div>
+      <div>
+        <p class="fp-stat-num">${{ totalRevenue | number:'1.0-0' }}</p>
+        <p class="fp-stat-label">Total Revenue</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ Tabs ══ -->
+  <div class="fp-tabs fade-up d2">
+    <button class="fp-tab" [class.fp-tab-active]="activeTab === 'products'" (click)="setTab('products')">
+      <span class="material-symbols-outlined" style="font-size:16px;">inventory_2</span>
+      Products
+    </button>
+    <button class="fp-tab" [class.fp-tab-active]="activeTab === 'orders'" (click)="setTab('orders')">
+      <span class="material-symbols-outlined" style="font-size:16px;">receipt_long</span>
+      Orders
+      <span class="fp-tab-badge" *ngIf="pendingOrdersCount > 0">{{ pendingOrdersCount }}</span>
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PRODUCTS TAB
+  ══════════════════════════════════════ -->
+  <ng-container *ngIf="activeTab === 'products'">
+
+    <!-- Toolbar -->
+    <div class="fp-toolbar fade-up d3">
+      <div class="fp-search-wrap">
+        <span class="material-symbols-outlined fp-search-icon">search</span>
+        <input class="fp-search" type="text" placeholder="Search products..."
+               [(ngModel)]="productSearch" (ngModelChange)="filterProducts()"/>
+      </div>
+      <div class="fp-filter-chips">
+        <button class="fp-chip" [class.fp-chip-active]="productFilter === 'all'"   (click)="productFilter='all';filterProducts()">All</button>
+        <button class="fp-chip" [class.fp-chip-active]="productFilter === 'active'"(click)="productFilter='active';filterProducts()">Active</button>
+        <button class="fp-chip" [class.fp-chip-active]="productFilter === 'inactive'" (click)="productFilter='inactive';filterProducts()">Inactive</button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="mktSvc.productsLoading$ | async" class="fp-loading">
+      <div class="fp-products-grid">
+        <div class="fp-product-skeleton" *ngFor="let i of [1,2,3,4,5,6]"></div>
+      </div>
+    </div>
+
+    <!-- Empty -->
+    <div *ngIf="!(mktSvc.productsLoading$ | async) && filteredProducts.length === 0" class="fp-empty fade-up">
+      <div class="fp-empty-icon"><span class="material-symbols-outlined" style="font-size:48px;color:#bfcaba;">inventory_2</span></div>
+      <h3>No products yet</h3>
+      <p>Start by listing your first product on the marketplace.</p>
+      <button class="fp-primary-btn" (click)="openAddProduct()">
+        <span class="material-symbols-outlined" style="font-size:16px;">add</span>
+        Add Your First Product
+      </button>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="fp-products-grid fade-up d3" *ngIf="!(mktSvc.productsLoading$ | async) && filteredProducts.length > 0">
+      <div class="fp-product-card" *ngFor="let p of filteredProducts" [class.fp-product-inactive]="p.isDeleted">
+
+        <!-- Image -->
+        <div class="fp-product-img-wrap">
+          <img *ngIf="p.imageUrl" [src]="p.imageUrl" [alt]="p.productName" class="fp-product-img"/>
+          <div *ngIf="!p.imageUrl" class="fp-product-img-placeholder">
+            <span class="material-symbols-outlined" style="font-size:36px;color:#c8d4c4;">image</span>
+          </div>
+          <!-- Status badge -->
+          <span class="fp-product-status-badge" [class.fp-badge-inactive]="p.isDeleted">
+            {{ p.isDeleted ? 'Inactive' : 'Active' }}
+          </span>
+          <!-- Bulk badge -->
+          <span *ngIf="p.bulkAvailable" class="fp-bulk-badge">Bulk</span>
+        </div>
+
+        <!-- Info -->
+        <div class="fp-product-body">
+          <div class="fp-product-category" *ngIf="p.category">{{ p.category }}</div>
+          <h4 class="fp-product-name">{{ p.productName }}</h4>
+          <p class="fp-product-desc" *ngIf="p.description">{{ p.description }}</p>
+
+          <div class="fp-product-meta-row">
+            <div>
+              <span class="fp-product-price">${{ p.price }}</span>
+              <span class="fp-product-unit"> / unit</span>
+            </div>
+            <div class="fp-product-rating" *ngIf="p.ratingCount > 0">
+              <span class="material-symbols-outlined ms-fill" style="font-size:13px;color:#f59e0b;">star</span>
+              {{ p.avgRating | number:'1.1-1' }}
+              <span style="color:#9ca3af;">({{ p.ratingCount }})</span>
+            </div>
+          </div>
+
+          <div class="fp-product-stock-row">
+            <div class="fp-stock-info">
+              <span class="material-symbols-outlined" style="font-size:14px;color:#6c7c66;">warehouse</span>
+              <span>Stock: <strong>{{ p.stock }}</strong></span>
+            </div>
+            <div class="fp-stock-info" *ngIf="p.bulkAvailable">
+              <span class="material-symbols-outlined" style="font-size:14px;color:#0d631b;">local_offer</span>
+              <span>Bulk: ${{ p.bulkPrice }} / {{ p.bulkQuantity }}+</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="fp-product-actions">
+          <button class="fp-action-btn fp-action-toggle"
+            [class.fp-action-activate]="p.isDeleted"
+            (click)="toggleProduct(p._id)">
+            <span class="material-symbols-outlined" style="font-size:15px;">{{ p.isDeleted ? 'visibility' : 'visibility_off' }}</span>
+            {{ p.isDeleted ? 'Activate' : 'Deactivate' }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </ng-container>
+
+  <!-- ══════════════════════════════════════
+       ORDERS TAB
+  ══════════════════════════════════════ -->
+  <ng-container *ngIf="activeTab === 'orders'">
+
+    <!-- Toolbar -->
+    <div class="fp-toolbar fade-up d3">
+      <div class="fp-search-wrap">
+        <span class="material-symbols-outlined fp-search-icon">search</span>
+        <input class="fp-search" type="text" placeholder="Search by order ID or address..."
+               [(ngModel)]="orderSearch" (ngModelChange)="filterOrders()"/>
+      </div>
+      <div class="fp-filter-chips">
+        <button class="fp-chip" [class.fp-chip-active]="orderFilter==='all'"      (click)="orderFilter='all';filterOrders()">All</button>
+        <button class="fp-chip" [class.fp-chip-active]="orderFilter==='pending'"  (click)="orderFilter='pending';filterOrders()">Pending</button>
+        <button class="fp-chip" [class.fp-chip-active]="orderFilter==='shipped'"  (click)="orderFilter='shipped';filterOrders()">Shipped</button>
+        <button class="fp-chip" [class.fp-chip-active]="orderFilter==='delivered'"(click)="orderFilter='delivered';filterOrders()">Delivered</button>
+        <button class="fp-chip" [class.fp-chip-active]="orderFilter==='rejected'" (click)="orderFilter='rejected';filterOrders()">Rejected</button>
+      </div>
+      <button class="fp-refresh-btn" (click)="mktSvc.loadMyOrders()">
+        <span class="material-symbols-outlined" style="font-size:15px;">refresh</span>
+        Refresh
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="mktSvc.ordersLoading$ | async" class="fp-loading">
+      <div class="fp-order-skeleton" *ngFor="let i of [1,2,3,4]"></div>
+    </div>
+
+    <!-- Empty -->
+    <div *ngIf="!(mktSvc.ordersLoading$ | async) && filteredOrders.length === 0" class="fp-empty fade-up">
+      <div class="fp-empty-icon"><span class="material-symbols-outlined" style="font-size:48px;color:#bfcaba;">receipt_long</span></div>
+      <h3>No orders found</h3>
+      <p>Orders for your products will appear here.</p>
+    </div>
+
+    <!-- Orders List -->
+    <div class="fp-orders-list fade-up d3" *ngIf="!(mktSvc.ordersLoading$ | async) && filteredOrders.length > 0">
+
+      <div class="fp-order-card" *ngFor="let order of filteredOrders">
+
+        <!-- Order Header -->
+        <div class="fp-order-header">
+          <div class="fp-order-id-wrap">
+            <span class="fp-order-id">#{{ order._id.slice(-8).toUpperCase() }}</span>
+            <span class="fp-order-time">{{ timeAgo(order.createdAt) }}</span>
+          </div>
+          <div class="fp-order-header-right">
+            <span class="fp-order-total">${{ order.totalPrice }}</span>
+            <span class="fp-status-badge"
+              [style.background]="mktSvc.getStatusConfig(order.status).bg"
+              [style.color]="mktSvc.getStatusConfig(order.status).color">
+              {{ mktSvc.getStatusConfig(order.status).label }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Order Body -->
+        <div class="fp-order-body">
+
+          <!-- Shipping -->
+          <div class="fp-order-shipping">
+            <span class="material-symbols-outlined" style="font-size:14px;color:#6c7c66;">location_on</span>
+            <span>{{ order.shippingAddress }}</span>
+          </div>
+
+          <!-- Items -->
+          <div class="fp-order-items-row">
+            <div class="fp-order-item" *ngFor="let item of order.items">
+              <img *ngIf="item.imageUrl" [src]="item.imageUrl" class="fp-item-img" [alt]="item.productId.productName"/>
+              <div class="fp-item-no-img" *ngIf="!item.imageUrl">
+                <span class="material-symbols-outlined" style="font-size:14px;color:#bfcaba;">image</span>
+              </div>
+              <div class="fp-item-info">
+                <span class="fp-item-name">{{ item.productId.productName  }}</span>
+                <span class="fp-item-qty">× {{ item.quantity }}</span>
+              </div>
+              <span class="fp-item-price">${{ item.price * item.quantity }}</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Order Footer — Status Action -->
+        <div class="fp-order-footer" *ngIf="order.status === 'pending' || order.status === 'shipped'">
+          <p class="fp-update-label">Update Status:</p>
+          <div class="fp-status-actions">
+            <button *ngIf="order.status === 'pending'"
+              class="fp-status-btn fp-btn-ship" (click)="changeStatus(order._id, 'shipped')">
+              <span class="material-symbols-outlined" style="font-size:14px;">local_shipping</span>
+              Mark as Shipped
+            </button>
+            <button *ngIf="order.status === 'shipped'"
+              class="fp-status-btn fp-btn-deliver" (click)="changeStatus(order._id, 'delivered')">
+              <span class="material-symbols-outlined" style="font-size:14px;">check_circle</span>
+              Mark as Delivered
+            </button>
+            <button *ngIf="order.status === 'pending'"
+              class="fp-status-btn fp-btn-reject" (click)="changeStatus(order._id, 'rejected')">
+              <span class="material-symbols-outlined" style="font-size:14px;">cancel</span>
+              Reject
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     ADD PRODUCT MODAL  — fixed to viewport, ignores sidebar
+══════════════════════════════════════════════════ -->
+<div class="fp-modal-overlay" *ngIf="addProductOpen" (click)="closeAddProduct()">
+  <div class="fp-modal" (click)="$event.stopPropagation()">
+
+    <!-- Modal Header -->
+    <div class="fp-modal-header">
+      <div class="fp-modal-title-wrap">
+        <div class="fp-modal-icon">
+          <span class="material-symbols-outlined ms-fill" style="font-size:20px;color:#0d631b;">add_shopping_cart</span>
+        </div>
+        <div>
+          <h2 class="fp-modal-title">Add New Product</h2>
+          <p class="fp-modal-sub">List a product on the marketplace</p>
+        </div>
+      </div>
+      <button class="fp-modal-close" (click)="closeAddProduct()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="fp-modal-body">
+
+      <!-- Product Name -->
+      <div class="fp-field">
+        <label class="fp-label">Product Name <span class="fp-required">*</span></label>
+        <input class="fp-input" type="text" placeholder="e.g. Organic Wheat Seeds"
+               [(ngModel)]="newProduct.productName" [class.fp-input-error]="fieldErr.name"/>
+        <p class="fp-field-err" *ngIf="fieldErr.name">Product name is required</p>
+      </div>
+
+      <!-- Price + Stock -->
+      <div class="fp-field-row">
+        <div class="fp-field">
+          <label class="fp-label">Price (USD) <span class="fp-required">*</span></label>
+          <div class="fp-input-prefix-wrap">
+            <span class="fp-input-prefix">$</span>
+            <input class="fp-input fp-input-prefixed" type="number" placeholder="0.00" min="0"
+                   [(ngModel)]="newProduct.price" [class.fp-input-error]="fieldErr.price"/>
+          </div>
+          <p class="fp-field-err" *ngIf="fieldErr.price">Enter a valid price</p>
+        </div>
+        <div class="fp-field">
+          <label class="fp-label">Stock (units) <span class="fp-required">*</span></label>
+          <input class="fp-input" type="number" placeholder="0" min="0"
+                 [(ngModel)]="newProduct.stock" [class.fp-input-error]="fieldErr.stock"/>
+          <p class="fp-field-err" *ngIf="fieldErr.stock">Enter a valid stock amount</p>
+        </div>
+      </div>
+
+      <!-- Category -->
+      <div class="fp-field">
+        <label class="fp-label">Category</label>
+        <div class="fp-select-wrap">
+          <select class="fp-input fp-select" [(ngModel)]="newProduct.category">
+            <option value="">Select category</option>
+            <option>Grains & Seeds</option>
+            <option>Fertilizers</option>
+            <option>Tools & Equipment</option>
+            <option>Organic Produce</option>
+          </select>
+          <span class="material-symbols-outlined fp-select-icon">expand_more</span>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="fp-field">
+        <label class="fp-label">Description</label>
+        <textarea class="fp-input fp-textarea" rows="3"
+                  placeholder="Describe your product, quality, origin..."
+                  [(ngModel)]="newProduct.description"></textarea>
+      </div>
+
+      <!-- Bulk Toggle -->
+      <div class="fp-bulk-toggle">
+        <label class="fp-toggle-label">
+          <div class="fp-toggle-switch" [class.fp-toggle-on]="newProduct.bulkAvailable"
+               (click)="newProduct.bulkAvailable = !newProduct.bulkAvailable">
+            <div class="fp-toggle-knob"></div>
+          </div>
+          <div>
+            <p style="margin:0;font-size:.875rem;font-weight:600;color:#2b4228;">Bulk pricing available</p>
+            <p style="margin:0;font-size:.6875rem;color:#6c7c66;">Offer discounts for large quantity orders</p>
+          </div>
+        </label>
+      </div>
+
+      <!-- Bulk Fields -->
+      <div class="fp-field-row" *ngIf="newProduct.bulkAvailable">
+        <div class="fp-field">
+          <label class="fp-label">Min. Bulk Quantity</label>
+          <input class="fp-input" type="number" placeholder="e.g. 100 units" min="1"
+                 [(ngModel)]="newProduct.bulkQuantity"/>
+        </div>
+        <div class="fp-field">
+          <label class="fp-label">Bulk Price (USD)</label>
+          <div class="fp-input-prefix-wrap">
+            <span class="fp-input-prefix">$</span>
+            <input class="fp-input fp-input-prefixed" type="number" placeholder="0.00" min="0"
+                   [(ngModel)]="newProduct.bulkPrice"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="fp-field">
+        <label class="fp-label">Product Image <span class="fp-required">*</span></label>
+        <label class="fp-upload" [class.fp-upload-filled]="productImgPreview" [class.fp-upload-error]="fieldErr.img">
+          <input type="file" accept="image/*" style="display:none;" (change)="onProductImage($event)" #imgFile/>
+
+          <!-- No image yet -->
+          <ng-container *ngIf="!productImgPreview">
+            <div class="fp-upload-inner">
+              <div class="fp-upload-circle">
+                <span class="material-symbols-outlined" style="font-size:28px;color:#0d631b;">cloud_upload</span>
+              </div>
+              <p class="fp-upload-text">Click to upload image</p>
+              <p class="fp-upload-hint">PNG, JPG, WEBP — max 5MB</p>
+            </div>
+          </ng-container>
+
+          <!-- Preview -->
+          <ng-container *ngIf="productImgPreview">
+            <img [src]="productImgPreview" class="fp-upload-preview"/>
+            <div class="fp-upload-change-overlay">
+              <span class="material-symbols-outlined" style="font-size:20px;">edit</span>
+              <span>Change image</span>
+            </div>
+          </ng-container>
+
+          <span style="position:absolute;inset:0;cursor:pointer;" (click)="imgFile.click(); $event.stopPropagation()"></span>
+        </label>
+        <p class="fp-field-err" *ngIf="fieldErr.img">Please upload a product image</p>
+      </div>
+
+      <!-- Global Error -->
+      <div class="fp-global-error" *ngIf="addProductError">
+        <span class="material-symbols-outlined" style="font-size:16px;">error_outline</span>
+        {{ addProductError }}
+      </div>
+
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="fp-modal-footer">
+      <button class="fp-cancel-btn" (click)="closeAddProduct()">Cancel</button>
+      <button class="fp-submit-btn" (click)="submitAddProduct()" [disabled]="mktSvc.addLoading$ | async">
+        <ng-container *ngIf="!(mktSvc.addLoading$ | async)">
+          <span class="material-symbols-outlined" style="font-size:16px;">check</span>
+          List Product
+        </ng-container>
+        <ng-container *ngIf="mktSvc.addLoading$ | async">
+          <span class="material-symbols-outlined fp-spin" style="font-size:18px;">progress_activity</span>
+          Listing...
+        </ng-container>
+      </button>
+    </div>
+
+  </div>
+</div>

@@ -14,6 +14,24 @@
             font-family: 'Inter', sans-serif;
             background: #f8f8f5;
         }
+          /* ── Nav collapse animation ─────────────────── */
+  #nav-above,
+  #nav-below {
+    max-height: 0;
+    overflow:   hidden;
+    opacity:    0;
+    transition: max-height .35s cubic-bezier(.4,0,.2,1),
+                opacity    .25s ease;
+  }
+  #nav-above.open,
+  #nav-below.open { opacity: 1; }
+
+  /* ── Arrow rotation ─────────────────────────── */
+  #nav-arrow {
+    transition: transform .35s cubic-bezier(.4,0,.2,1);
+    display: block;
+    line-height: 1;
+  }
 
         h1,
         h2,

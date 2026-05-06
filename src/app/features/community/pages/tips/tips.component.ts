@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -6,6 +6,8 @@ import { ExpertTipService, TipCategory } from '../../../../core/services/tips/ti
 import { ExpertTip, CreateTipRequest } from '../../../../core/models/tips&tricks.model';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { RouterLink } from '@angular/router';
+import { INotification } from '../../../../core/models/notifications.model';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 
 @Component({
   selector: 'app-tips',
@@ -15,6 +17,11 @@ import { RouterLink } from '@angular/router';
   styleUrl: './tips.component.css'
 })
 export class TipsComponent {
+notifications: INotification[] = [];
+    notifOpen: boolean = false;
+    notifLoading: boolean = false;
+    unreadCount: number = 0;
+    sortOpen: boolean = false;
 
   private destroy$ = new Subject<void>();
   private searchSubject = new Subject<string>();
@@ -44,7 +51,8 @@ export class TipsComponent {
   tipsFlyoutLeft = '0px';
   private _tipsHideTimer: any;
 
-  constructor(readonly tipService: ExpertTipService,readonly authService:AuthService) {}
+  constructor(readonly tipService: ExpertTipService,readonly authService:AuthService,private notifService:NotificationService ,
+    private eRef: ElementRef) {}
 
   ngOnInit(): void {
     this.tipService.loadAllTips();
@@ -55,6 +63,8 @@ export class TipsComponent {
       distinctUntilChanged(),
       takeUntil(this.destroy$)
     ).subscribe(q => this.tipService.setSearch(q));
+        this.loadUnreadCount();
+
   }
 
   // ── Computed ──────────────────────────────────────
@@ -170,6 +180,97 @@ export class TipsComponent {
   ];
 
   readonly seasons = ['Spring', 'Summer', 'Autumn', 'Winter', 'Year-round'];
+
+    @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.notifOpen && !this.eRef.nativeElement.contains(event.target)) {
+      this.notifOpen = false;
+    }
+    if (this.sortOpen && !this.eRef.nativeElement.contains(event.target)) {
+      this.sortOpen = false;
+    }
+  }
+
+    // ══════════════════════════════════════════════════════
+  //  NOTIFICATION METHODS
+  // ══════════════════════════════════════════════════════
+ 
+  /** Fetch unread count on page load (lightweight call) */
+  loadUnreadCount(): void {
+    this.notifService.getUnreadCount().subscribe({
+      next: (count) => (this.unreadCount = count),
+      error: (err)  => console.error('Could not fetch unread count', err),
+    });
+  }
+ 
+  /** Toggle dropdown — lazy-load notifications list on first open */
+  toggleNotifDropdown(): void {
+    this.notifOpen = !this.notifOpen;
+    if (this.notifOpen && this.notifications.length === 0) {
+      this.loadNotifications();
+    }
+  }
+ 
+  /** Fetch all notifications */
+  loadNotifications(): void {
+    this.notifLoading = true;
+    this.notifService.getAll().subscribe({
+      next: (list) => {
+        this.notifications = list;
+        this.notifLoading  = false;
+      },
+      error: (err) => {
+        console.error('Could not fetch notifications', err);
+        this.notifLoading = false;
+      },
+    });
+  }
+ 
+  /** Mark one notification as read and update the local state */
+  readNotif(n: INotification): void {
+    if (n.isRead) return;
+    this.notifService.markAsRead(n._id).subscribe({
+      next: () => {
+        n.isRead = true;
+        this.unreadCount = Math.max(0, this.unreadCount - 1);
+      },
+      error: (err) => console.error('Could not mark as read', err),
+    });
+  }
+ 
+  /** Icon helpers — map notification type to a Material Symbol */
+  getNotifIcon(type: string): string {
+    const map: Record<string, string> = {
+      order:   'shopping_bag',
+      payment: 'payments',
+      message: 'chat',
+      alert:   'warning',
+      system:  'info',
+    };
+    return map[type] ?? 'notifications';
+  }
+ 
+  getNotifIconBg(type: string): string {
+    const map: Record<string, string> = {
+      order:   'bg-blue-50',
+      payment: 'bg-emerald-50',
+      message: 'bg-violet-50',
+      alert:   'bg-amber-50',
+      system:  'bg-primary/10',
+    };
+    return map[type] ?? 'bg-primary/10';
+  }
+ 
+  getNotifIconColor(type: string): string {
+    const map: Record<string, string> = {
+      order:   'text-blue-500',
+      payment: 'text-emerald-500',
+      message: 'text-violet-500',
+      alert:   'text-amber-500',
+      system:  'text-primary',
+    };
+    return map[type] ?? 'text-primary';
+  }
 
   ngOnDestroy(): void {
     this._hideTimer && clearTimeout(this._hideTimer);

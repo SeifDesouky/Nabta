@@ -23,6 +23,12 @@ export const FARMER_ROUTES: Routes = [
           import('./pages/farmer-profile/farmer-profile.component')
             .then(m => m.FarmerProfileComponent),
       },
+      {
+        path: 'products',
+        loadComponent: () =>
+          import('./pages/farmer-products/farmer-products.component')
+            .then(m => m.FarmerProductsComponent),
+      },
       
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       ],
