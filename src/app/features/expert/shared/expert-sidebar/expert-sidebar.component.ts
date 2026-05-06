@@ -25,6 +25,7 @@ export class ExpertSidebarComponent {
     { label: 'Consultations',   icon: 'forum',      route: '/expert/consultations'  },
     { label: 'Educational',     icon: 'school',     route: '/educational'         },
     { label: 'Profile',         icon: 'person',     route: '/expert/profile'        },
+    { label: 'Chats',         icon: 'person',     route: '/community/chats'        },
   ];
  
   readonly supportNav: ExpertNavItem[] = [
