@@ -51,6 +51,12 @@ export const routes: Routes = [
     // canActivate: [adminGuard],          // add your auth guard here
   },
   {
+    path: 'expert',
+    loadChildren: () =>
+      import('./features/AI-Module/AI.routes').then((m) => m.AI_ROUTES)          // add your auth guard here
+    // canActivate: [adminGuard],          // add your auth guard here
+  },
+  {
   path: '**',
   loadComponent: () =>
     import('./features/not-found/not-found.component')
