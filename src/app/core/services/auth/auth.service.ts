@@ -14,9 +14,8 @@ export class AuthService {
     return this.api.post<ILoginResponse>('user/login', data);
   }
 
-  // ✅ السبب: شيلنا isExpertApproved من الفرونت لأن الباك بقى هو اللي بيرفض الـ expert
-  // لو مش معتمد — بيرجع 401 ورسالة واضحة، الفرونت يعرضها في الـ error handler
   handleAuth(res: ILoginResponse) {
+    
     const user = res.user;
     localStorage.setItem('token', res.token);
     localStorage.setItem('role', user.role);

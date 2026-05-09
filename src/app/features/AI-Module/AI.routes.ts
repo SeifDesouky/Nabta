@@ -7,5 +7,6 @@ export const AI_ROUTES: Routes = [
   {
     path:'chatbot',component:AiChatbotComponent
   }
+  
 ];
 

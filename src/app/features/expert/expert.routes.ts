@@ -1,8 +1,6 @@
 import { Routes } from '@angular/router';
 import { ExpertLayoutComponent } from './expert-layout/exper-layout.component';
 
-// Expert layout wraps all expert pages (sidebar + header)
-// import { ExpertLayoutComponent } from './expert-layout/expert-layout.component';
 
 export const EXPERT_ROUTES: Routes = [
   {
