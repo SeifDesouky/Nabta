@@ -508,107 +508,154 @@
 <!-- ══════════════════════════════════════════════════
      🆕 ADD PRODUCT MODAL
 ══════════════════════════════════════════════════ -->
-<div class="modal-backdrop" *ngIf="addProductOpen" (click)="closeAddProduct()">
-  <div class="modal-content" style="max-width:520px;" (click)="$event.stopPropagation()">
+<!-- ══════════════════════════════════════════════════
+     ADD PRODUCT MODAL
+══════════════════════════════════════════════════ -->
+<div class="fp-modal-overlay" *ngIf="addProductOpen" (click)="closeAddProduct()">
+  <div class="fp-modal" (click)="$event.stopPropagation()">
 
-    <div class="modal-header">
-      <div>
-        <h3 style="margin:0;color:#40493d;">Add New Product</h3>
-        <p style="margin:0;font-size:13px;color:#6c7c66;">List a product on the marketplace</p>
+    <!-- Modal Header -->
+    <div class="fp-modal-header">
+      <div class="fp-modal-title-wrap">
+        <div class="fp-modal-icon">
+          <span class="material-symbols-outlined ms-fill" style="font-size:20px;color:#0d631b;">add_shopping_cart</span>
+        </div>
+        <div>
+          <h2 class="fp-modal-title">Add New Product</h2>
+          <p class="fp-modal-sub">List a product on the marketplace</p>
+        </div>
       </div>
-      <button class="close-btn" (click)="closeAddProduct()"><span class="material-symbols-outlined">close</span></button>
+      <button class="fp-modal-close" (click)="closeAddProduct()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
     </div>
 
-    <div class="modal-body" style="display:flex;flex-direction:column;gap:1rem;">
+    <!-- Modal Body -->
+    <div class="fp-modal-body">
 
-      <!-- Product Name -->
-      <div class="ap-field">
-        <label class="ap-label">Product Name *</label>
-        <input class="ap-input" type="text" placeholder="e.g. Organic Wheat" [(ngModel)]="newProduct.productName"/>
+      <div class="fp-field">
+        <label class="fp-label">Product Name <span class="fp-required">*</span></label>
+        <input class="fp-input" type="text" placeholder="e.g. Organic Wheat Seeds"
+               [(ngModel)]="newProduct.productName"/>
       </div>
 
-      <!-- Price & Stock row -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
-        <div class="ap-field">
-          <label class="ap-label">Price ($) *</label>
-          <input class="ap-input" type="number" placeholder="0.00" [(ngModel)]="newProduct.price" min="0"/>
+      <div class="fp-field-row">
+        <div class="fp-field">
+          <label class="fp-label">Price (USD) <span class="fp-required">*</span></label>
+          <div class="fp-input-prefix-wrap">
+            <span class="fp-input-prefix">$</span>
+            <input class="fp-input fp-input-prefixed" type="number" placeholder="0.00" min="0"
+                   [(ngModel)]="newProduct.price"/>
+          </div>
         </div>
-        <div class="ap-field">
-          <label class="ap-label">Stock (units) *</label>
-          <input class="ap-input" type="number" placeholder="0" [(ngModel)]="newProduct.stock" min="0"/>
+        <div class="fp-field">
+          <label class="fp-label">Stock (units) <span class="fp-required">*</span></label>
+          <input class="fp-input" type="number" placeholder="0" min="0"
+                 [(ngModel)]="newProduct.stock"/>
         </div>
       </div>
 
-      <!-- Category -->
-      <div class="ap-field">
-        <label class="ap-label">Category</label>
-        <select class="ap-input" [(ngModel)]="newProduct.category">
-          <option value="">Select category</option>
-          <option>Grains & Seeds</option>
-          <option>Fertilizers</option>
-          <option>Tools & Equipment</option>
-          <option>Organic Produce</option>
-        </select>
+      <div class="fp-field">
+        <label class="fp-label">Category</label>
+        <div class="fp-select-wrap">
+          <select class="fp-input fp-select" [(ngModel)]="newProduct.category">
+            <option value="">Select category</option>
+            <option>Grains & Seeds</option>
+            <option>Fertilizers</option>
+            <option>Tools & Equipment</option>
+            <option>Organic Produce</option>
+          </select>
+          <span class="material-symbols-outlined fp-select-icon">expand_more</span>
+        </div>
       </div>
 
-      <!-- Description -->
-      <div class="ap-field">
-        <label class="ap-label">Description</label>
-        <textarea class="ap-input" rows="3" placeholder="Describe your product..." [(ngModel)]="newProduct.description" style="resize:vertical;"></textarea>
+      <div class="fp-field">
+        <label class="fp-label">Description</label>
+        <textarea class="fp-input fp-textarea" rows="3"
+                  placeholder="Describe your product, quality, origin..."
+                  [(ngModel)]="newProduct.description"></textarea>
       </div>
 
-      <!-- Bulk toggle -->
-      <div class="ap-toggle-row">
-        <label class="ap-toggle-label">
-          <input type="checkbox" [(ngModel)]="newProduct.bulkAvailable" style="accent-color:#0d631b;"/>
-          Bulk pricing available
+      <div class="fp-bulk-toggle">
+        <label class="fp-toggle-label">
+          <div class="fp-toggle-switch" [class.fp-toggle-on]="newProduct.bulkAvailable"
+               (click)="newProduct.bulkAvailable = !newProduct.bulkAvailable">
+            <div class="fp-toggle-knob"></div>
+          </div>
+          <div>
+            <p style="margin:0;font-size:.875rem;font-weight:600;color:#2b4228;">Bulk pricing available</p>
+            <p style="margin:0;font-size:.6875rem;color:#6c7c66;">Offer discounts for large quantity orders</p>
+          </div>
         </label>
       </div>
 
-      <!-- Bulk fields (conditional) -->
-      <div *ngIf="newProduct.bulkAvailable" style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
-        <div class="ap-field">
-          <label class="ap-label">Bulk Min Qty</label>
-          <input class="ap-input" type="number" placeholder="e.g. 100" [(ngModel)]="newProduct.bulkQuantity" min="1"/>
+      <div class="fp-field-row" *ngIf="newProduct.bulkAvailable">
+        <div class="fp-field">
+          <label class="fp-label">Min. Bulk Quantity</label>
+          <input class="fp-input" type="number" placeholder="e.g. 100 units" min="1"
+                 [(ngModel)]="newProduct.bulkQuantity"/>
         </div>
-        <div class="ap-field">
-          <label class="ap-label">Bulk Price ($)</label>
-          <input class="ap-input" type="number" placeholder="0.00" [(ngModel)]="newProduct.bulkPrice" min="0"/>
+        <div class="fp-field">
+          <label class="fp-label">Bulk Price (USD)</label>
+          <div class="fp-input-prefix-wrap">
+            <span class="fp-input-prefix">$</span>
+            <input class="fp-input fp-input-prefixed" type="number" placeholder="0.00" min="0"
+                   [(ngModel)]="newProduct.bulkPrice"/>
+          </div>
         </div>
       </div>
 
-      <!-- Image Upload -->
-      <div class="ap-field">
-        <label class="ap-label">Product Image *</label>
-        <label class="ap-upload-zone" [class.ap-upload-has-file]="productImgPreview">
-          <input type="file" accept="image/*" style="display:none;" (change)="onProductImage($event)" #imgInput/>
+      <div class="fp-field">
+        <label class="fp-label">Product Image <span class="fp-required">*</span></label>
+        <label class="fp-upload" [class.fp-upload-filled]="productImgPreview">
+          <input type="file" accept="image/*" style="display:none;"
+                 (change)="onProductImage($event)" #imgFile/>
+
           <ng-container *ngIf="!productImgPreview">
-            <span class="material-symbols-outlined" style="font-size:32px;color:#bfcaba;">cloud_upload</span>
-            <p style="margin:4px 0 0;font-size:12px;color:#6c7c66;">Click to upload image</p>
+            <div class="fp-upload-inner">
+              <div class="fp-upload-circle">
+                <span class="material-symbols-outlined" style="font-size:28px;color:#0d631b;">cloud_upload</span>
+              </div>
+              <p class="fp-upload-text">Click to upload image</p>
+              <p class="fp-upload-hint">PNG, JPG, WEBP — max 5MB</p>
+            </div>
           </ng-container>
+
           <ng-container *ngIf="productImgPreview">
-            <img [src]="productImgPreview" style="max-height:120px;border-radius:8px;object-fit:contain;"/>
-            <p style="margin:4px 0 0;font-size:11px;color:#6c7c66;">Click to change</p>
+            <img [src]="productImgPreview" class="fp-upload-preview"/>
+            <div class="fp-upload-change-overlay">
+              <span class="material-symbols-outlined" style="font-size:20px;">edit</span>
+              <span>Change image</span>
+            </div>
           </ng-container>
-          <span style="position:absolute;inset:0;cursor:pointer;" (click)="imgInput.click()"></span>
+
+          <span style="position:absolute;inset:0;cursor:pointer;"
+                (click)="imgFile.click(); $event.stopPropagation()"></span>
         </label>
       </div>
 
-      <!-- Error -->
-      <p *ngIf="addProductError" style="font-size:12px;color:#d32f2f;margin:0;">{{ addProductError }}</p>
-
-      <!-- Actions -->
-      <div style="display:flex;gap:.75rem;justify-content:flex-end;padding-top:.5rem;">
-        <button class="pm-refresh-btn" (click)="closeAddProduct()">Cancel</button>
-        <button class="pm-add-btn" (click)="submitAddProduct()" [disabled]="mktSvc.addLoading$ | async">
-          <span *ngIf="!(mktSvc.addLoading$ | async)">
-            <span class="material-symbols-outlined" style="font-size:15px;">check</span> List Product
-          </span>
-          <span *ngIf="mktSvc.addLoading$ | async" class="material-symbols-outlined animate-spin" style="font-size:16px;">progress_activity</span>
-        </button>
+      <div class="fp-global-error" *ngIf="addProductError">
+        <span class="material-symbols-outlined" style="font-size:16px;">error_outline</span>
+        {{ addProductError }}
       </div>
 
     </div>
+
+    <!-- Modal Footer -->
+    <div class="fp-modal-footer">
+      <button class="fp-cancel-btn" (click)="closeAddProduct()">Cancel</button>
+      <button class="fp-submit-btn" (click)="submitAddProduct()" [disabled]="mktSvc.addLoading$ | async">
+        <ng-container *ngIf="!(mktSvc.addLoading$ | async)">
+          <span class="material-symbols-outlined" style="font-size:16px;">check</span>
+          List Product
+        </ng-container>
+        <ng-container *ngIf="mktSvc.addLoading$ | async">
+          <span class="material-symbols-outlined fp-spin" style="font-size:18px;">progress_activity</span>
+          Listing...
+        </ng-container>
+      </button>
+    </div>
+
   </div>
 </div>
 

@@ -169,7 +169,7 @@
   cursor: pointer;
 }
 
-.flyout-item:hover { background: #f0fdf4; }
+.flyout-item:hover { background: var(--primary); }
 .flyout-item:hover .flyout-label { color: var(--primary); }
 .flyout-item:hover .flyout-arrow { color: var(--primary); }
 

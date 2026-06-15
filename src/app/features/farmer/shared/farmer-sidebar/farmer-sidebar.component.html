@@ -173,6 +173,7 @@
 </aside>
 
 <!-- ══ AI FLYOUT ══ -->
+<!-- ══ AI FLYOUT ══ -->
 <div class="fixed z-[600] w-56 bg-white rounded-3xl overflow-hidden
             shadow-[0_8px_32px_rgba(0,0,0,0.13)] border border-[#eaeaea] transition-all duration-200"
      [style.top]="aiFlyoutTop"
@@ -183,30 +184,31 @@
      (mouseenter)="keepAiFlyout()"
      (mouseleave)="scheduleHideAiFlyout()">
   <div class="py-1.5">
-    <a routerLink="/ai/chatbot" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group cursor-pointer">
-      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
-        <span class="material-symbols-outlined text-primary" style="font-size:15px;font-variation-settings:'FILL' 1;">smart_toy</span>
+    <a routerLink="/ai/chatbot" class="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--primary)] transition-colors group cursor-pointer">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-white/15 transition-colors">
+        <span class="material-symbols-outlined text-primary group-hover:text-white" style="font-size:15px;font-variation-settings:'FILL' 1;">smart_toy</span>
       </div>
-      <span class="text-sm font-medium text-zinc-600 group-hover:text-primary">ChatBot</span>
-      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary" style="font-size:14px;">arrow_forward</span>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-white">ChatBot</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-white" style="font-size:14px;">arrow_forward</span>
     </a>
-    <a routerLink="/ai/yield" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group cursor-pointer">
-      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
-        <span class="material-symbols-outlined text-primary" style="font-size:15px;">monitoring</span>
+    <a routerLink="/ai/yield" class="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--primary)] transition-colors group cursor-pointer">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-white/15 transition-colors">
+        <span class="material-symbols-outlined text-primary group-hover:text-white" style="font-size:15px;">monitoring</span>
       </div>
-      <span class="text-sm font-medium text-zinc-600 group-hover:text-primary">Yield Expectations</span>
-      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary" style="font-size:14px;">arrow_forward</span>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-white">Yield Expectations</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-white" style="font-size:14px;">arrow_forward</span>
     </a>
-    <a routerLink="/ai/crop-recommendation" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group cursor-pointer">
-      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
-        <span class="material-symbols-outlined text-primary" style="font-size:15px;">yard</span>
+    <a routerLink="/ai/crop-recommendation" class="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--primary)] transition-colors group cursor-pointer">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-white/15 transition-colors">
+        <span class="material-symbols-outlined text-primary group-hover:text-white" style="font-size:15px;">yard</span>
       </div>
-      <span class="text-sm font-medium text-zinc-600 group-hover:text-primary">Crop Recommendation</span>
-      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary" style="font-size:14px;">arrow_forward</span>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-white">Crop Recommendation</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-white" style="font-size:14px;">arrow_forward</span>
     </a>
   </div>
 </div>
 
+<!-- ══ COMMUNITY FLYOUT ══ -->
 <!-- ══ COMMUNITY FLYOUT ══ -->
 <div class="fixed z-[600] w-56 bg-white rounded-3xl overflow-hidden
             shadow-[0_8px_32px_rgba(0,0,0,0.13)] border border-[#eaeaea] transition-all duration-200"
@@ -218,41 +220,66 @@
      (mouseenter)="keepCommunityFlyout()"
      (mouseleave)="scheduleHideCommunityFlyout()">
   <div class="py-1.5">
-    <a routerLink="/community" class="flex items-center gap-3 px-4 py-2.5 bg-primary/5 transition-colors group cursor-pointer">
-      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-        <span class="material-symbols-outlined text-primary" style="font-size:15px;font-variation-settings:'FILL' 1;">home</span>
+    <a routerLink="/community" class="flex items-center gap-3 px-4 py-2.5 bg-primary/5 hover:bg-[var(--primary)] transition-colors group cursor-pointer">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-white/15 transition-colors">
+        <span class="material-symbols-outlined text-primary group-hover:text-white" style="font-size:15px;font-variation-settings:'FILL' 1;">home</span>
       </div>
-      <span class="text-sm font-semibold text-primary">Community Feed</span>
-      <span class="material-symbols-outlined ml-auto text-primary" style="font-size:14px;font-variation-settings:'FILL' 1;">check_circle</span>
+      <span class="text-sm font-semibold text-primary group-hover:text-white">Community Feed</span>
+      <span class="material-symbols-outlined ml-auto text-primary group-hover:text-white" style="font-size:14px;font-variation-settings:'FILL' 1;">check_circle</span>
     </a>
-    <a routerLink="/community/tips" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group cursor-pointer">
-      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-        <span class="material-symbols-outlined text-primary" style="font-size:15px;font-variation-settings:'FILL' 1;">lightbulb</span>
+    <a routerLink="/community/tips" class="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--primary)] transition-colors group cursor-pointer">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-white/15 transition-colors">
+        <span class="material-symbols-outlined text-primary group-hover:text-white" style="font-size:15px;font-variation-settings:'FILL' 1;">lightbulb</span>
       </div>
-      <span class="text-sm font-medium text-zinc-600 group-hover:text-primary">Tips & Tricks</span>
-      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary" style="font-size:14px;">arrow_forward</span>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-white">Tips & Tricks</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-white" style="font-size:14px;">arrow_forward</span>
     </a>
-    <a routerLink="/community/chats" class="flex items-center gap-3 px-4 py-2.5 hover:bg-green-50 transition-colors group cursor-pointer">
-      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-        <span class="material-symbols-outlined text-primary" style="font-size:15px;">chat</span>
+    <a routerLink="/community/chats" class="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--primary)] transition-colors group cursor-pointer">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-white/15 transition-colors">
+        <span class="material-symbols-outlined text-primary group-hover:text-white" style="font-size:15px;">chat</span>
       </div>
-      <span class="text-sm font-medium text-zinc-600 group-hover:text-primary">Chats</span>
-      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-primary" style="font-size:14px;">arrow_forward</span>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-white">Chats</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-white" style="font-size:14px;">arrow_forward</span>
     </a>
   </div>
 </div>
 
 
-<div
-  class="fixed z-[600] w-56 bg-white rounded-3xl overflow-hidden
-         shadow-[0_8px_32px_rgba(0,0,0,0.13)] border border-[#eaeaea]"
-  [style.top]="marketFlyoutTop"
-  [style.left]="marketFlyoutLeft"
-  [style.opacity]="marketFlyoutOpen ? '1' : '0'"
-  [style.pointer-events]="marketFlyoutOpen ? 'auto' : 'none'"
-  (mouseenter)="keepMarketFlyout()"
-  (mouseleave)="scheduleHideMarketFlyout()">
-
-  <!-- items هنا -->
-
+<!-- ══ MARKETPLACE FLYOUT ══ -->
+<!-- ══ MARKETPLACE FLYOUT ══ -->
+<div class="fixed z-[600] w-56 bg-white rounded-3xl overflow-hidden
+            shadow-[0_8px_32px_rgba(0,0,0,0.13)] border border-[#eaeaea] transition-all duration-200"
+     [style.top]="marketFlyoutTop"
+     [style.left]="marketFlyoutLeft"
+     [style.opacity]="marketFlyoutOpen ? '1' : '0'"
+     [style.pointer-events]="marketFlyoutOpen ? 'auto' : 'none'"
+     [style.transform]="marketFlyoutOpen ? 'translateX(0)' : 'translateX(-8px)'"
+     (mouseenter)="keepMarketFlyout()"
+     (mouseleave)="scheduleHideMarketFlyout()">
+  <div class="py-1.5">
+    <a routerLink="/marketplace" routerLinkActive="bg-primary/5" [routerLinkActiveOptions]="{exact: true}"
+       class="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--primary)] transition-colors group cursor-pointer">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-white/15 transition-colors">
+        <span class="material-symbols-outlined text-primary group-hover:text-white" style="font-size:15px;font-variation-settings:'FILL' 1;">storefront</span>
+      </div>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-white">Marketplace</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-white" style="font-size:14px;">arrow_forward</span>
+    </a>
+    <a routerLink="/marketplace/my-orders" routerLinkActive="bg-primary/5"
+       class="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--primary)] transition-colors group cursor-pointer">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-white/15 transition-colors">
+        <span class="material-symbols-outlined text-primary group-hover:text-white" style="font-size:15px;">receipt_long</span>
+      </div>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-white">My Orders</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-white" style="font-size:14px;">arrow_forward</span>
+    </a>
+    <a routerLink="/farmer/products" routerLinkActive="bg-primary/5"
+       class="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--primary)] transition-colors group cursor-pointer">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-white/15 transition-colors">
+        <span class="material-symbols-outlined text-primary group-hover:text-white" style="font-size:15px;">inventory_2</span>
+      </div>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-white">My Products</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-white" style="font-size:14px;">arrow_forward</span>
+    </a>
+  </div>
 </div>

@@ -10,6 +10,7 @@ import { MarketService } from '../../../../core/services/market/market.service';
 import { Router, RouterLink } from '@angular/router';
 import { INotification } from '../../../../core/models/notifications.model';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
+import { FarmerProfileService } from '../../../../core/services/farmer/farmer-profile/farmer-profile.service';
 
 interface SortOption {
   label: string;
@@ -26,7 +27,10 @@ interface SortOption {
 })
 export class ProductsComponent implements OnInit, OnDestroy, OnChanges {
    currentUserRole: string = localStorage.getItem('role') || 'farmer';
- 
+ currentUserName: string = '';
+currentUserEmail: string = '';
+currentUserAvatar: string = '';
+
   get dashboardLink(): string {
     return this.currentUserRole === 'expert' ? '/expert/dashboard' : '/farmer/dashboard';
   }
@@ -89,11 +93,27 @@ export class ProductsComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private marketService: MarketService,
     private notifService:NotificationService ,
-    private eRef: ElementRef
+    private eRef: ElementRef,
+    private router: Router,
+     private farmerProfileService: FarmerProfileService 
   ) {}
  
   // ── Lifecycle ─────────────────────────────────────────
   ngOnInit(): void {
+  this.currentUserName  = localStorage.getItem('name')   || 'User';
+  this.currentUserEmail = localStorage.getItem('email')  || '';
+  this.currentUserAvatar = localStorage.getItem('avatar') || '';
+  this.farmerProfileService.loadProfile();
+  
+  this._subs.push(
+    this.farmerProfileService.user$.subscribe(user => {
+      if (user) {
+        this.currentUserName   = user.name  ?? '';
+        this.currentUserEmail  = user.email ?? '';
+        this.currentUserAvatar = user.avatar ?? user.profileImage ?? '';
+      }
+    })
+  );
     // Search debounce
     this._subs.push(
       this._searchSubject.pipe(debounceTime(500), distinctUntilChanged()).subscribe(val => {
@@ -122,6 +142,9 @@ export class ProductsComponent implements OnInit, OnDestroy, OnChanges {
     this.loadProducts();
     this.loadUnreadCount();
   }
+  goToProfile(): void {
+  this.router.navigate([`/${this.currentUserRole}/profile`]);
+}
  
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['filters'] && !changes['filters'].firstChange) {

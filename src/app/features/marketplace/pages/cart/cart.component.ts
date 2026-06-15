@@ -3,7 +3,9 @@ import { Cart, CartItem } from '../../../../core/models/cart.model';
 import { Subject, takeUntil } from 'rxjs';
 import { CartService } from '../../../../core/services/cart/cart.service';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
+import { FarmerProfileService } from '../../../../core/services/farmer/farmer-profile/farmer-profile.service';
+import { NotificationService } from '../../../../core/services/notification/notification.service';
 
 @Component({
   selector: 'app-cart',
@@ -15,13 +17,19 @@ import { RouterLink } from "@angular/router";
 export class CartComponent {
 cart: Cart | null = null;
   loading = false;
-
+currentUserName   = '';
+  currentUserAvatar = '';
+  currentUserRole   = localStorage.getItem('role') || 'farmer';
+  unreadCount       = 0;
   // map من productId → الـ quantity اللي اليوزر بيعدلها locally
   quantityInputs: Record<string, number> = {};
 
   private destroy$ = new Subject<void>();
 
-  constructor(private cartService: CartService) {}
+  constructor(private cartService: CartService,
+    private farmerProfileService: FarmerProfileService,
+    private notifService: NotificationService,
+    private router: Router) {}
 
   ngOnInit(): void {
     this.fetchCart();
@@ -34,8 +42,24 @@ cart: Cart | null = null;
           this.quantityInputs[item.productId] = item.quantity;
         });
       });
-  }
 
+      this.farmerProfileService.loadProfile();
+    this.farmerProfileService.user$.pipe(takeUntil(this.destroy$)).subscribe(user => {
+      if (user) {
+        this.currentUserName   = user.name  ?? '';
+        this.currentUserAvatar = user.avatar ?? user.profileImage ?? '';
+      }
+    });
+
+    // Unread notifications count
+    this.notifService.getUnreadCount().subscribe({
+      next: count => (this.unreadCount = count),
+      error: err  => console.error(err),
+    });
+  }
+goToProfile(): void {
+    this.router.navigate([`/${this.currentUserRole}/profile`]);
+  }
   fetchCart(): void {
     this.loading = true;
     this.cartService.loadCart().subscribe({
