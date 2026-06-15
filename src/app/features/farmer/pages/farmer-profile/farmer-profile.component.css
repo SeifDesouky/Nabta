@@ -117,3 +117,43 @@
   .info-grid { grid-template-columns: 1fr; }
   .info-field.md-full { grid-column: span 1; }
 }
+/* ── Modal ── */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100;
+}
+.modal-box {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: #fff; border-radius: 20px; width: 90%; max-width: 540px;
+  z-index: 101; box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  max-height: 90vh; overflow-y: auto;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+}
+.modal-title-row { display: flex; align-items: center; gap: 0.75rem; }
+.modal-close {
+  background: none; border: none; cursor: pointer; color: var(--text-sub);
+  display: flex; align-items: center; padding: 4px; border-radius: 8px;
+}
+.modal-close:hover { background: #f3f3f3; }
+.modal-body { padding: 1.5rem; }
+.modal-section-label {
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  color: var(--text-sub); margin: 0 0 0.75rem 0;
+}
+.edit-input {
+  width: 100%; box-sizing: border-box; border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 10px 14px; font-size: 0.9rem; font-family: inherit;
+  color: var(--text-main); background: #f9f9f9; outline: none; transition: 0.2s;
+}
+.edit-input:focus { border-color: var(--primary); background: #fff; }
+.modal-actions {
+  display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: flex-end;
+}
+.btn-cancel {
+  background: #f3f3f3; color: var(--text-sub); border: none; padding: 10px 20px;
+  border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;
+}
+.btn-cancel:hover { background: #e8e8e8; }
+.btn-primary-action:disabled { opacity: 0.6; cursor: not-allowed; }

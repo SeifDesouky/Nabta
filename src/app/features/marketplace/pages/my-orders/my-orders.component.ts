@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { OrderService } from '../../../../core/services/order/order.service';
 import { Order } from '../../../../core/models/order.model';
+import { FarmerSidebarComponent } from "../../../farmer/shared/farmer-sidebar/farmer-sidebar.component";
 
 @Component({
   selector: 'app-my-orders',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FarmerSidebarComponent],
   templateUrl: './my-orders.component.html',
   styleUrl: './my-orders.component.css'
 })

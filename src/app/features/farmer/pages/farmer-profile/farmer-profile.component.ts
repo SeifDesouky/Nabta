@@ -26,4 +26,12 @@ readonly svc = inject(FarmerProfileService);
   
   isTab(tab: FarmerProfileTab) { return this.svc.activeTab === tab; }
   setTab(tab: FarmerProfileTab) { this.svc.setTab(tab); }
+  openEdit() { this.svc.openEditModal(); }
+closeEdit() { this.svc.closeEditModal(); }
+
+saveEdit(form: {
+  name: string; phone: string; region: string; climate: string; soilType: string
+}) {
+  this.svc.updateProfile(form);
+}
 }

@@ -1,0 +1,273 @@
+<!-- ════════════════════════════════════════════════════════════════
+     yield-prediction.component.html  (updated)
+     • Dynamic crop select from /plants API
+     • Chart rendered below results via <app-yield-chart>
+════════════════════════════════════════════════════════════════ -->
+
+<!-- Page title -->
+<div class="mb-8 fade-up">
+  <div class="inline-flex items-center gap-1.5 text-[0.6rem] font-black tracking-[0.12em] uppercase
+              text-[#6c7c66] font-headline mb-3 bg-[#e8ebe4] px-3 py-1 rounded-full border border-[#d4dace]">
+    <span class="material-symbols-outlined ms-fill text-[#8fad89]" style="font-size:12px;">flag</span>
+    Egypt Region
+  </div>
+  <h1 class="text-2xl font-extrabold tracking-tight text-primary">Yield Prediction Model</h1>
+  <p class="text-sm text-text-sub mt-1 max-w-lg">
+    Optimized for Egypt's unique agricultural landscape. Leverage our AI-driven model to forecast
+    your seasonal production based on crop type and area.
+  </p>
+</div>
+
+<!-- Two-column layout: Form | Results -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
+
+  <!-- ╔══════════════ LEFT: Form ══════════════╗ -->
+  <div class="fade-up d1">
+    <div class="bg-white border border-[#e8ebe4] rounded-[1.5rem] p-7 shadow-[0_2px_16px_rgba(43,66,40,0.06)]">
+
+      <!-- Section badge -->
+      <div class="inline-flex items-center gap-1 text-[0.6rem] font-black tracking-[0.12em] uppercase
+                  text-primary font-headline mb-5 bg-primary/10 px-3 py-1 rounded-full">
+        <span class="material-symbols-outlined ms-fill" style="font-size:13px;">tune</span>
+        Input Parameters
+      </div>
+
+      <!-- ── Crop Select ─────────────────────────────── -->
+      <div class="mb-4">
+        <label class="block text-[0.7rem] font-bold tracking-[0.04em] text-[#5a6b57] mb-1.5 font-headline uppercase">
+          Select Crop
+        </label>
+
+        <!-- Loading skeleton -->
+        <div *ngIf="plantsLoading"
+             class="w-full h-10 bg-[#f0f2ee] rounded-[1rem] animate-pulse"></div>
+
+        <!-- Error state -->
+        <div *ngIf="!plantsLoading && plantsError"
+             class="text-xs text-[#ba1a1a] bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">
+          {{ plantsError }}
+        </div>
+
+        <!-- Dynamic select — populated from /plants API -->
+        <div *ngIf="!plantsLoading && !plantsError" class="relative">
+          <select id="crop-select"
+            [(ngModel)]="selectedCrop"
+            class="w-full bg-white border border-[#e2e5dd] rounded-[1rem] px-3 py-2.5 text-sm
+                   text-[#1a1c1c] font-sans appearance-none cursor-pointer transition-colors duration-200
+                   focus:border-primary focus:ring-0 focus:border-[1.5px]
+                   focus:shadow-[0_0_0_3px_rgba(13,99,27,0.09)] focus:outline-none">
+            <option value="" disabled>Choose a crop... ({{ plantsList.length }} available)</option>
+            <option *ngFor="let plant of plantsList" [value]="plant">{{ plant }}</option>
+          </select>
+          <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2
+                       pointer-events-none text-[#8fad89]" style="font-size:18px;">expand_more</span>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="border-t border-[#f0f2ee] my-5"></div>
+
+      <!-- ── Year + Area ────────────────────────────── -->
+      <div class="grid grid-cols-2 gap-3 mb-6">
+
+        <!-- Projected Year -->
+        <div>
+          <label class="block text-[0.7rem] font-bold tracking-[0.04em] text-[#5a6b57] mb-1.5 font-headline uppercase">
+            Projected Year
+          </label>
+          <div class="relative flex items-center">
+            <input type="number" id="proj-year"
+              [(ngModel)]="projectedYear"
+              [min]="2024" [max]="2035"
+              class="w-full bg-white border border-[#e2e5dd] rounded-[1rem] px-3 pr-10 py-2.5 text-sm
+                     text-[#1a1c1c] font-sans appearance-none transition-colors duration-200
+                     focus:border-primary focus:ring-0 focus:border-[1.5px]
+                     focus:shadow-[0_0_0_3px_rgba(13,99,27,0.09)] focus:outline-none"/>
+            <span class="material-symbols-outlined absolute right-3 text-[#8fad89] pointer-events-none"
+                  style="font-size:17px;">calendar_today</span>
+          </div>
+        </div>
+
+        <!-- Cultivation Area -->
+        <div>
+          <label class="block text-[0.7rem] font-bold tracking-[0.04em] text-[#5a6b57] mb-1.5 font-headline uppercase">
+            Area (Feddan)
+          </label>
+          <div class="relative flex items-center">
+            <input type="number" id="area"
+              [(ngModel)]="areaFeddan"
+              placeholder="e.g. 10"
+              [min]="0.5" [step]="0.5"
+              class="w-full bg-white border border-[#e2e5dd] rounded-[1rem] px-3 pr-10 py-2.5 text-sm
+                     text-[#1a1c1c] font-sans appearance-none transition-colors duration-200
+                     focus:border-primary focus:ring-0 focus:border-[1.5px]
+                     focus:shadow-[0_0_0_3px_rgba(13,99,27,0.09)] focus:outline-none
+                     placeholder:text-[#b5c2af]"/>
+            <span class="material-symbols-outlined absolute right-3 text-[#8fad89] pointer-events-none"
+                  style="font-size:17px;">grid_on</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- API error -->
+      <div *ngIf="errorMessage"
+           class="mb-4 flex items-center gap-2 text-xs text-[#ba1a1a] bg-red-50
+                  border border-red-200 rounded-xl px-4 py-3">
+        <span class="material-symbols-outlined ms-fill" style="font-size:16px;">error</span>
+        {{ errorMessage }}
+      </div>
+
+      <!-- CTA -->
+      <button (click)="onGenerateForecast()"
+        [disabled]="isLoading || plantsLoading"
+        class="w-full flex items-center justify-center gap-2.5 bg-primary text-white rounded-[0.875rem]
+               py-3 px-6 text-[0.9375rem] font-extrabold font-headline transition duration-200
+               shadow-[0_4px_18px_rgba(13,99,27,0.22)] hover:bg-[#0a5217]
+               hover:shadow-[0_6px_24px_rgba(13,99,27,0.30)] active:scale-[0.99]
+               disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100">
+        <!-- Spinner -->
+        <svg *ngIf="isLoading" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+          <circle class="opacity-30" cx="12" cy="12" r="10" stroke="white" stroke-width="3"/>
+          <path class="opacity-90" fill="white" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+        </svg>
+        <ng-container *ngIf="!isLoading">
+          <span class="material-symbols-outlined ms-fill" style="font-size:20px;">bar_chart_4_bars</span>
+          Generate Forecast
+        </ng-container>
+        <span *ngIf="isLoading">Calculating...</span>
+      </button>
+
+    </div>
+  </div>
+  <!-- ╚══════════════ /LEFT ══════════════╝ -->
+
+
+  <!-- ╔══════════════ RIGHT: Results ══════════════╗ -->
+  <div class="flex flex-col gap-4 fade-up d2">
+
+    <!-- Farm image card -->
+    <div class="relative rounded-[1.5rem] overflow-hidden" style="aspect-ratio:16/7;">
+      <img [src]="currentFarmImg" [alt]="currentFarmLabel"
+           class="w-full h-full object-cover block transition-all duration-700"/>
+      <div class="absolute inset-0 bg-gradient-to-t from-[rgba(20,40,18,0.72)] to-transparent"></div>
+      <div class="absolute bottom-5 left-6">
+        <p class="text-white font-extrabold text-lg font-headline leading-tight">{{ currentFarmLabel }}</p>
+        <p class="text-white/70 text-sm mt-0.5">Data-driven farming for a better future.</p>
+      </div>
+      <!-- Status badge -->
+      <div class="absolute top-4 right-4">
+        <span class="inline-flex items-center gap-2 bg-black/30 backdrop-blur-sm border border-white/20
+                     text-white text-[0.6rem] font-extrabold uppercase tracking-[0.1em] font-headline
+                     px-3 py-1.5 rounded-full">
+          <span class="w-[7px] h-[7px] rounded-full animate-pulse"
+                [class.bg-[#a3f69c]]="!isLoading"
+                [class.bg-yellow-300]="isLoading"></span>
+          {{ forecastStatusLabel }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="flex gap-4">
+
+      <!-- Yield per Feddan -->
+      <div class="bg-white border border-[#e2e5dd] rounded-[1.25rem] p-5 shadow-card flex-1
+                  hover:shadow-[0_6px_24px_rgba(43,66,40,0.11)] hover:border-[#c8e6c9] transition-all duration-200">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined ms-fill text-primary" style="font-size:20px;">energy_savings_leaf</span>
+          </div>
+          <span class="text-[0.65rem] font-bold text-[#8fad89] uppercase tracking-wider font-headline bg-primary/5 px-2 py-0.5 rounded-full">Per Unit</span>
+        </div>
+        <p class="text-xs font-bold text-text-sub uppercase tracking-wide font-headline mb-1">Yield per Feddan</p>
+        <div class="flex items-baseline gap-1.5 mt-2">
+          <p class="text-2xl font-extrabold font-headline text-text-main">{{ yieldPerFeddan }}</p>
+          <span class="text-sm font-bold text-primary">Ton</span>
+        </div>
+        <p class="text-[10px] text-text-sub mt-1">
+          <ng-container *ngIf="forecastReady">Based on {{ response?.last_historical_year }} data</ng-container>
+          <ng-container *ngIf="!forecastReady">Enter parameters to generate</ng-container>
+        </p>
+      </div>
+
+      <!-- Total Production -->
+      <div class="bg-white border border-[#e2e5dd] rounded-[1.25rem] p-5 shadow-card flex-1
+                  hover:shadow-[0_6px_24px_rgba(43,66,40,0.11)] hover:border-[#c8e6c9] transition-all duration-200">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl bg-earth/10 flex items-center justify-center">
+            <span class="material-symbols-outlined ms-fill text-earth" style="font-size:20px;">inventory_2</span>
+          </div>
+          <span class="text-[0.65rem] font-bold text-earth/70 uppercase tracking-wider font-headline bg-earth/5 px-2 py-0.5 rounded-full border border-earth/15">Total</span>
+        </div>
+        <p class="text-xs font-bold text-text-sub uppercase tracking-wide font-headline mb-1">Your Total Production</p>
+        <div class="flex items-baseline gap-1.5 mt-2">
+          <p class="text-2xl font-extrabold font-headline text-text-main">{{ totalProduction }}</p>
+          <span class="text-sm font-bold text-earth">Ton</span>
+        </div>
+        <p class="text-[10px] text-text-sub mt-1">
+          <ng-container *ngIf="forecastReady && areaFeddan">Across {{ areaFeddan }} feddan</ng-container>
+          <ng-container *ngIf="!forecastReady">Across all area entered</ng-container>
+        </p>
+      </div>
+
+    </div>
+
+    <!-- National forecast summary card (appears after API response) -->
+    <div *ngIf="forecastReady && response"
+         class="bg-white border border-[#e2e5dd] rounded-[1.25rem] p-5 flex gap-3 items-start">
+      <div class="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+        <span class="material-symbols-outlined ms-fill text-primary" style="font-size:18px;">public</span>
+      </div>
+      <div class="flex-1">
+        <p class="text-sm font-bold text-text-main font-headline mb-2">
+          National Forecast — {{ response.plant_name }} {{ response.end_year }}
+        </p>
+        <div class="flex gap-6 flex-wrap">
+          <div>
+            <p class="text-[10px] text-text-sub uppercase tracking-wide font-headline">Forecast</p>
+            <p class="text-lg font-extrabold font-headline text-primary">
+              {{ forecastTon }} <span class="text-xs font-bold">Ton</span>
+            </p>
+          </div>
+          <div>
+            <p class="text-[10px] text-text-sub uppercase tracking-wide font-headline">Historical Total</p>
+            <p class="text-lg font-extrabold font-headline text-earth">
+              {{ (response.historical_total_ton / 1_000_000).toFixed(1) }}M <span class="text-xs font-bold">Ton</span>
+            </p>
+          </div>
+          <div>
+            <p class="text-[10px] text-text-sub uppercase tracking-wide font-headline">Period</p>
+            <p class="text-base font-extrabold font-headline text-text-main">
+              {{ response.start_year }} – {{ response.last_historical_year }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- About card -->
+    <div class="bg-white border border-[#e2e5dd] rounded-[1.25rem] p-5 flex gap-3 items-start fade-up d3">
+      <div class="w-9 h-9 bg-[#fff3e0] rounded-xl flex items-center justify-center flex-shrink-0">
+        <span class="material-symbols-outlined ms-fill text-earth" style="font-size:18px;">info</span>
+      </div>
+      <div>
+        <p class="text-sm font-bold text-text-main font-headline mb-0.5">About the Model</p>
+        <p class="text-xs text-text-sub leading-relaxed">
+          Estimations are based on historical data from the Ministry of Agriculture and Land Reclamation.
+          Actual results may vary due to weather conditions and pest control measures.
+        </p>
+      </div>
+    </div>
+
+  </div>
+  <!-- ╚══════════════ /RIGHT ══════════════╝ -->
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     CHART — full width, appears below grid after forecast
+══════════════════════════════════════════════════════ -->
+<div *ngIf="forecastReady && response" class="mt-8 fade-up">
+  <app-yield-chart [data]="response" />
+</div>

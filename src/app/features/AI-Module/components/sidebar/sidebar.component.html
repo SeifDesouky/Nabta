@@ -1,0 +1,145 @@
+<!-- ════════════════════════════════════════════════════════════════
+     sidebar.component.html  (FIXED)
+     — Width via [style.width] so it's not pruned by Tailwind JIT
+     — Emits collapseChange on toggle
+════════════════════════════════════════════════════════════════ -->
+
+<aside
+  class="h-screen fixed left-0 top-0 hidden md:flex flex-col z-40
+         bg-[#f3f3f3] border-r border-[#e4e4e4] overflow-hidden transition-all duration-300"
+  [style.width]="collapsed ? '4.5rem' : '17.5rem'">
+
+  <!-- ── Logo ──────────────────────────────────────────── -->
+  <div class="h-16 border-b border-[#e4e4e4] flex items-center gap-2.5 flex-shrink-0 overflow-hidden px-3">
+    <a [routerLink]="dashboardLink"
+       class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center flex-shrink-0
+              shadow-[0_4px_18px_rgba(13,99,27,0.22)]">
+      <span class="material-symbols-outlined text-white"
+            style="font-size:20px;font-variation-settings:'FILL' 1;">agriculture</span>
+    </a>
+
+    <!-- Title — hide when collapsed -->
+    <div class="flex-1 overflow-hidden transition-all duration-300"
+         [style.opacity]="collapsed ? '0' : '1'"
+         [style.width]="collapsed ? '0' : 'auto'">
+      <h1 class="text-[15px] font-extrabold text-primary tracking-tight leading-none whitespace-nowrap">NABTA</h1>
+      <p class="text-[10px] text-text-sub leading-none mt-0.5 whitespace-nowrap">AI Tools</p>
+    </div>
+
+    <!-- Collapse toggle -->
+    <button (click)="toggleCollapse()"
+      class="flex-shrink-0 w-7 h-7 rounded-full bg-white border border-[#e4e4e4]
+             flex items-center justify-center text-[#8fad89] hover:text-primary
+             hover:border-primary/30 transition-colors shadow-sm ml-auto">
+      <span class="material-symbols-outlined" style="font-size:16px;">
+        {{ collapsed ? 'chevron_right' : 'chevron_left' }}
+      </span>
+    </button>
+  </div>
+
+  <!-- ── Scrollable body ───────────────────────────────── -->
+  <div class="flex-1 overflow-y-auto min-h-0 px-3 pt-5 pb-6">
+
+    <!-- Back to dashboard -->
+    <a [routerLink]="dashboardLink"
+       class="flex items-center gap-3 px-3 py-2.5 rounded-[0.875rem] text-sm font-medium
+              text-[#5a6b57] hover:bg-white hover:text-primary transition-all mb-4
+              overflow-hidden whitespace-nowrap">
+      <span class="material-symbols-outlined flex-shrink-0" style="font-size:18px;">arrow_back</span>
+      <span class="transition-all duration-300 overflow-hidden"
+            [style.max-width]="collapsed ? '0' : '200px'"
+            [style.opacity]="collapsed ? '0' : '1'">
+        Back to Dashboard
+      </span>
+    </a>
+
+    <!-- Section label -->
+    <p class="text-[9px] font-extrabold text-zinc-400 uppercase tracking-[.12em] px-2 mb-3
+              overflow-hidden whitespace-nowrap transition-all duration-300"
+       [style.max-height]="collapsed ? '0' : '2rem'"
+       [style.opacity]="collapsed ? '0' : '1'">
+      AI Tools
+    </p>
+
+    <!-- ── Nav items ──────────────────────────────────── -->
+    <nav class="flex flex-col gap-1">
+      <a *ngFor="let item of navItems"
+         [routerLink]="item.route"
+         routerLinkActive
+         #rla="routerLinkActive"
+         [routerLinkActiveOptions]="{ exact: false }"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-[0.875rem] text-sm font-semibold
+                transition-all overflow-hidden whitespace-nowrap relative"
+         [class]="rla.isActive
+           ? 'bg-primary text-white shadow-[0_4px_18px_rgba(13,99,27,0.22)]'
+           : 'text-[#5a6b57] hover:bg-white hover:text-primary'">
+
+        <!-- Icon -->
+        <span class="material-symbols-outlined flex-shrink-0"
+              [style.font-variation-settings]="item.iconFill ? '\'FILL\' 1' : '\'FILL\' 0'"
+              style="font-size:20px;">{{ item.icon }}</span>
+
+        <!-- Label -->
+        <span class="flex-1 transition-all duration-300 overflow-hidden"
+              [style.max-width]="collapsed ? '0' : '200px'"
+              [style.opacity]="collapsed ? '0' : '1'">
+          {{ item.label }}
+        </span>
+
+        <!-- Badge -->
+        <span *ngIf="item.badge && !collapsed"
+              class="text-[0.55rem] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full"
+              [class]="rla.isActive ? 'bg-white/20 text-white' : 'bg-primary/20 text-primary'">
+          {{ item.badge }}
+        </span>
+
+      </a>
+    </nav>
+
+    <!-- Divider -->
+    <div class="mx-1 my-5 border-t border-[#e0e0e0]"></div>
+
+    <!-- About card — hide when collapsed -->
+    <div class="mx-1 bg-white border border-[#e2e5dd] rounded-[1rem] p-4
+                shadow-[0_2px_8px_rgba(43,66,40,0.06)] overflow-hidden transition-all duration-300"
+         [style.max-height]="collapsed ? '0' : '200px'"
+         [style.opacity]="collapsed ? '0' : '1'"
+         [style.padding]="collapsed ? '0' : ''">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-primary"
+                style="font-size:14px;font-variation-settings:'FILL' 1;">psychology</span>
+        </div>
+        <p class="text-xs font-bold text-text-main">NABTA AI</p>
+      </div>
+      <p class="text-[10px] text-text-sub leading-relaxed">
+        AI-powered tools built for Egypt's agricultural landscape.
+      </p>
+      <div class="flex items-center gap-1.5 mt-3">
+        <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+        <span class="text-[10px] font-bold text-primary">Model Ready</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── User footer ────────────────────────────────── -->
+  <div class="border-t border-[#e4e4e4] flex-shrink-0 p-3">
+    <a [routerLink]="dashboardLink"
+       class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white transition-colors
+              overflow-hidden whitespace-nowrap">
+      <div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20
+                  flex items-center justify-center flex-shrink-0">
+        <span class="material-symbols-outlined text-primary"
+              style="font-size:22px;font-variation-settings:'FILL' 1;">account_circle</span>
+      </div>
+      <div class="flex-1 min-w-0 overflow-hidden transition-all duration-300"
+           [style.max-width]="collapsed ? '0' : '200px'"
+           [style.opacity]="collapsed ? '0' : '1'">
+        <p class="text-xs font-bold text-text-main leading-tight truncate">My Account</p>
+        <p class="text-[10px] text-zinc-400 capitalize">{{ currentUserRole }}</p>
+      </div>
+    </a>
+  </div>
+
+</aside>

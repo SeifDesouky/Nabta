@@ -8,11 +8,12 @@ import { AuthService } from '../../../../core/services/auth/auth.service';
 import { RouterLink } from '@angular/router';
 import { INotification } from '../../../../core/models/notifications.model';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
+import { FarmerSidebarComponent } from "../../../farmer/shared/farmer-sidebar/farmer-sidebar.component";
 
 @Component({
   selector: 'app-tips',
   standalone: true,
-  imports: [CommonModule,FormsModule,RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, FarmerSidebarComponent],
   templateUrl: './tips.component.html',
   styleUrl: './tips.component.css'
 })
@@ -38,18 +39,6 @@ notifications: INotification[] = [];
 
   // ── Search ────────────────────────────────────────
   searchQuery = '';
-
-  // ── AI Flyout (للـ sidebar) ────────────────────────
-  aiFlyoutOpen = false;
-  aiFlyoutTop  = '0px';
-  aiFlyoutLeft = '0px';
-  private _hideTimer: any;
-
-  // ── Tips Flyout (sub-menu في الـ sidebar) ─────────
-  tipsFlyoutOpen = false;
-  tipsFlyoutTop  = '0px';
-  tipsFlyoutLeft = '0px';
-  private _tipsHideTimer: any;
 
   constructor(readonly tipService: ExpertTipService,readonly authService:AuthService,private notifService:NotificationService ,
     private eRef: ElementRef) {}
@@ -122,40 +111,6 @@ notifications: INotification[] = [];
   onSearch(query: string): void {
     this.searchQuery = query;
     this.searchSubject.next(query);
-  }
-
-  // ── AI Flyout ─────────────────────────────────────
-  showAiFlyout(el: HTMLElement): void {
-    if (this._hideTimer) clearTimeout(this._hideTimer);
-    const rect        = el.getBoundingClientRect();
-    this.aiFlyoutTop  = rect.top  + 'px';
-    this.aiFlyoutLeft = (rect.right + 10) + 'px';
-    this.aiFlyoutOpen = true;
-  }
-
-  keepAiFlyout(): void {
-    if (this._hideTimer) clearTimeout(this._hideTimer);
-  }
-
-  scheduleHideAiFlyout(): void {
-    this._hideTimer = setTimeout(() => { this.aiFlyoutOpen = false; }, 130);
-  }
-
-  // ── Tips Sub-menu Flyout (مثل AI flyout) ──────────
-  showTipsFlyout(el: HTMLElement): void {
-    if (this._tipsHideTimer) clearTimeout(this._tipsHideTimer);
-    const rect           = el.getBoundingClientRect();
-    this.tipsFlyoutTop   = rect.top  + 'px';
-    this.tipsFlyoutLeft  = (rect.right + 10) + 'px';
-    this.tipsFlyoutOpen  = true;
-  }
-
-  keepTipsFlyout(): void {
-    if (this._tipsHideTimer) clearTimeout(this._tipsHideTimer);
-  }
-
-  scheduleHideTipsFlyout(): void {
-    this._tipsHideTimer = setTimeout(() => { this.tipsFlyoutOpen = false; }, 130);
   }
 
   // ── Helpers ───────────────────────────────────────
@@ -273,8 +228,6 @@ notifications: INotification[] = [];
   }
 
   ngOnDestroy(): void {
-    this._hideTimer && clearTimeout(this._hideTimer);
-    this._tipsHideTimer && clearTimeout(this._tipsHideTimer);
     this.destroy$.next();
     this.destroy$.complete();
   }

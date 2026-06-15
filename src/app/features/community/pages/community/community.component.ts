@@ -10,11 +10,12 @@ import { Comment, CreateCommentRequest } from '../../../../core/models/comment.m
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { INotification } from '../../../../core/models/notifications.model';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
+import { FarmerSidebarComponent } from '../../../farmer/shared/farmer-sidebar/farmer-sidebar.component';
 
 @Component({
   selector: 'app-community-feed',
   standalone: true,
-  imports: [CommonModule, FormsModule,RouterLink],
+  imports: [CommonModule, FormsModule,RouterLink,FarmerSidebarComponent],
   templateUrl: './community.component.html',
 })
 export class CommunityFeedComponent implements OnInit {
@@ -49,41 +50,41 @@ export class CommunityFeedComponent implements OnInit {
   commentInputs: Record<string, string> = {};
 
   // AI Flyout
-  aiFlyoutOpen = false;
-  aiFlyoutTop  = '0px';
-  aiFlyoutLeft = '0px';
-  private _hideTimer: any;
+  // aiFlyoutOpen = false;
+  // aiFlyoutTop  = '0px';
+  // aiFlyoutLeft = '0px';
+  // private _hideTimer: any;
 
   // Nav
-  navOpen = true;
+  // navOpen = true;
 topContributors = [
   { name: 'Sarah Jensen',    role: 'Agronomist'     },
   { name: 'Marcus Chen',     role: 'Soil Specialist' },
   { name: 'Elena Rodriguez', role: 'Data Scientist'  },
 ];
 // Community Flyout
-communityFlyoutOpen = false;
-communityFlyoutTop  = '0px';
-communityFlyoutLeft = '0px';
-private _communityTimer: any;
+// communityFlyoutOpen = false;
+// communityFlyoutTop  = '0px';
+// communityFlyoutLeft = '0px';
+// private _communityTimer: any;
 
-showCommunityFlyout(el: HTMLElement): void {
-  if (this._communityTimer) clearTimeout(this._communityTimer);
-  const rect              = el.getBoundingClientRect();
-  this.communityFlyoutTop  = rect.top  + 'px';
-  this.communityFlyoutLeft = (rect.right + 10) + 'px';
-  this.communityFlyoutOpen = true;
-}
+// showCommunityFlyout(el: HTMLElement): void {
+//   if (this._communityTimer) clearTimeout(this._communityTimer);
+//   const rect              = el.getBoundingClientRect();
+//   this.communityFlyoutTop  = rect.top  + 'px';
+//   this.communityFlyoutLeft = (rect.right + 10) + 'px';
+//   this.communityFlyoutOpen = true;
+// }
 
-keepCommunityFlyout(): void {
-  if (this._communityTimer) clearTimeout(this._communityTimer);
-}
+// keepCommunityFlyout(): void {
+//   if (this._communityTimer) clearTimeout(this._communityTimer);
+// }
 
-scheduleHideCommunityFlyout(): void {
-  this._communityTimer = setTimeout(() => {
-    this.communityFlyoutOpen = false;
-  }, 130);
-}
+// scheduleHideCommunityFlyout(): void {
+//   this._communityTimer = setTimeout(() => {
+//     this.communityFlyoutOpen = false;
+//   }, 130);
+// }
   constructor(
     private postService: PostService,
     private commentService: CommentService,
@@ -303,25 +304,25 @@ getTotalCommentCount(postId: string): number {
   }
 
   // ── AI Flyout ─────────────────────────────────────────
-  showAiFlyout(el: HTMLElement): void {
-    if (this._hideTimer) clearTimeout(this._hideTimer);
-    const rect       = el.getBoundingClientRect();
-    this.aiFlyoutTop  = rect.top + 'px';
-    this.aiFlyoutLeft = (rect.right + 10) + 'px';
-    this.aiFlyoutOpen = true;
-  }
+  // showAiFlyout(el: HTMLElement): void {
+  //   if (this._hideTimer) clearTimeout(this._hideTimer);
+  //   const rect       = el.getBoundingClientRect();
+  //   this.aiFlyoutTop  = rect.top + 'px';
+  //   this.aiFlyoutLeft = (rect.right + 10) + 'px';
+  //   this.aiFlyoutOpen = true;
+  // }
 
-  keepAiFlyout(): void {
-    if (this._hideTimer) clearTimeout(this._hideTimer);
-  }
+  // keepAiFlyout(): void {
+  //   if (this._hideTimer) clearTimeout(this._hideTimer);
+  // }
 
-  scheduleHideAiFlyout(): void {
-    this._hideTimer = setTimeout(() => { this.aiFlyoutOpen = false; }, 130);
-  }
+  // scheduleHideAiFlyout(): void {
+  //   this._hideTimer = setTimeout(() => { this.aiFlyoutOpen = false; }, 130);
+  // }
 
-  ngOnDestroy(): void {
-    if (this._hideTimer) clearTimeout(this._hideTimer);
-  }
+  // ngOnDestroy(): void {
+  //   if (this._hideTimer) clearTimeout(this._hideTimer);
+  // }
   logout():void{
     this.authService.logout()
   }

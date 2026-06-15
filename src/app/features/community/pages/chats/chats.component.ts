@@ -3,11 +3,12 @@ import { Conversation, Message } from '../../../../core/models/chat.model';
 import { ChatService } from '../../../../core/services/chat/chat.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { FarmerSidebarComponent } from "../../../farmer/shared/farmer-sidebar/farmer-sidebar.component";
 
 @Component({
   selector: 'app-chats',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FarmerSidebarComponent],
   templateUrl: './chats.component.html',
   styleUrl: './chats.component.css'
 })

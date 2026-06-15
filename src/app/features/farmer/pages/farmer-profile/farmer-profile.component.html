@@ -52,10 +52,10 @@
 
         <!-- Actions -->
         <div class="hero-actions">
-          <button class="btn-primary-action">
-            <span class="material-symbols-outlined">edit</span>
-            Edit Profile
-          </button>
+          <button class="btn-primary-action" (click)="openEdit()">
+  <span class="material-symbols-outlined">edit</span>
+  Edit Profile
+</button>
         </div>
       </section>
 
@@ -213,5 +213,71 @@
       </div>
 
     </ng-container>
+    
   </ng-container>
+  <!-- ══ Edit Profile Modal ══ -->
+<ng-container *ngIf="svc.editOpen$ | async">
+  <div class="modal-backdrop" (click)="closeEdit()"></div>
+
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="Edit Profile">
+    
+    <!-- Header -->
+    <div class="modal-header">
+      <div class="modal-title-row">
+        <div class="section-icon-wrap" style="background:rgba(13,99,27,0.1)">
+          <span class="material-symbols-outlined" style="color:#0d631b;">edit</span>
+        </div>
+        <h4 class="section-title">Edit Profile</h4>
+      </div>
+      <button class="modal-close" (click)="closeEdit()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Form -->
+    <ng-container *ngIf="{ user: svc.user$ | async, profile: svc.profile$ | async } as d">
+      <div class="modal-body" #editForm>
+
+        <p class="modal-section-label">Personal</p>
+        <div class="info-grid">
+          <div class="info-field">
+            <label class="field-label">Full Name</label>
+            <input class="edit-input" #nameInp [value]="d.user?.name || ''" placeholder="Full name" />
+          </div>
+          <div class="info-field">
+            <label class="field-label">Phone</label>
+            <input class="edit-input" #phoneInp [value]="d.user?.phone || ''" placeholder="+20 1XX XXX XXXX" />
+          </div>
+        </div>
+
+        <p class="modal-section-label" style="margin-top:1rem;">Farm Details</p>
+        <div class="info-grid">
+          <div class="info-field">
+            <label class="field-label">Region</label>
+            <input class="edit-input" #regionInp [value]="d.profile?.region || ''" placeholder="e.g. Luxor" />
+          </div>
+          <div class="info-field">
+            <label class="field-label">Climate</label>
+            <input class="edit-input" #climateInp [value]="d.profile?.climate || ''" placeholder="e.g. Arid" />
+          </div>
+          <div class="info-field md-full">
+            <label class="field-label">Soil Type</label>
+            <input class="edit-input" #soilInp [value]="d.profile?.soilType || ''" placeholder="e.g. Clay" />
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="closeEdit()">Cancel</button>
+          <button class="btn-primary-action"
+            [disabled]="svc.saving$ | async"
+            (click)="saveEdit({ name: nameInp.value, phone: phoneInp.value, region: regionInp.value, climate: climateInp.value, soilType: soilInp.value })">
+            <span class="material-symbols-outlined">{{ (svc.saving$ | async) ? 'hourglass_empty' : 'save' }}</span>
+            {{ (svc.saving$ | async) ? 'Saving…' : 'Save Changes' }}
+          </button>
+        </div>
+
+      </div>
+    </ng-container>
+  </div>
+</ng-container>
 </main>

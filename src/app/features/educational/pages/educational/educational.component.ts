@@ -8,11 +8,12 @@ import { GuideService } from '../../../../core/services/educational/educational.
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { INotification } from '../../../../core/models/notifications.model';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
+import { FarmerSidebarComponent } from '../../../farmer/shared/farmer-sidebar/farmer-sidebar.component';
 
 @Component({
   selector: 'app-educational',
   standalone: true,
-  imports: [CommonModule,FormsModule,RouterLink],
+  imports: [CommonModule,FormsModule,RouterLink,FarmerSidebarComponent],
   templateUrl: './educational.component.html',
   styleUrl: './educational.component.css'
 })
@@ -42,60 +43,13 @@ export class EducationalComponent {
   ];
 
 
-  // AI Flyout
-  aiFlyoutOpen = false;
-  aiFlyoutTop  = '0px';
-  aiFlyoutLeft = '0px';
-  private _hideTimer: any;
 
-  // Nav
-  navOpen = true;
 topContributors = [
   { name: 'Sarah Jensen',    role: 'Agronomist'     },
   { name: 'Marcus Chen',     role: 'Soil Specialist' },
   { name: 'Elena Rodriguez', role: 'Data Scientist'  },
 ];
 
-// ── AI Flyout ─────────────────────────────────────────
-  showAiFlyout(el: HTMLElement): void {
-    if (this._hideTimer) clearTimeout(this._hideTimer);
-    const rect       = el.getBoundingClientRect();
-    this.aiFlyoutTop  = rect.top + 'px';
-    this.aiFlyoutLeft = (rect.right + 10) + 'px';
-    this.aiFlyoutOpen = true;
-  }
-
-  keepAiFlyout(): void {
-    if (this._hideTimer) clearTimeout(this._hideTimer);
-  }
-
-  scheduleHideAiFlyout(): void {
-    this._hideTimer = setTimeout(() => { this.aiFlyoutOpen = false; }, 130);
-  }
-
-// Community Flyout
-communityFlyoutOpen = false;
-communityFlyoutTop  = '0px';
-communityFlyoutLeft = '0px';
-private _communityTimer: any;
-
-showCommunityFlyout(el: HTMLElement): void {
-  if (this._communityTimer) clearTimeout(this._communityTimer);
-  const rect              = el.getBoundingClientRect();
-  this.communityFlyoutTop  = rect.top  + 'px';
-  this.communityFlyoutLeft = (rect.right + 10) + 'px';
-  this.communityFlyoutOpen = true;
-}
-
-keepCommunityFlyout(): void {
-  if (this._communityTimer) clearTimeout(this._communityTimer);
-}
-
-scheduleHideCommunityFlyout(): void {
-  this._communityTimer = setTimeout(() => {
-    this.communityFlyoutOpen = false;
-  }, 130);
-}
 
   constructor(
     readonly guideService: GuideService,

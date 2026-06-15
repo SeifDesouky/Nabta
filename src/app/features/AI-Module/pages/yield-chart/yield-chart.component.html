@@ -1,0 +1,79 @@
+<!-- ════════════════════════════════════════════════════════════════
+     yield-chart.component.html
+     NABTA design — Production over Years chart card
+════════════════════════════════════════════════════════════════ -->
+
+<div *ngIf="data"
+     class="bg-white border border-[#e2e5dd] rounded-[1.5rem] p-6
+            shadow-[0_2px_16px_rgba(43,66,40,0.06)] fade-up">
+
+  <!-- Card header -->
+  <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+
+    <div>
+      <div class="inline-flex items-center gap-1 text-[0.6rem] font-black tracking-[0.12em] uppercase
+                  text-primary font-headline mb-2 bg-primary/10 px-3 py-1 rounded-full">
+        <span class="material-symbols-outlined ms-fill" style="font-size:13px;">bar_chart_4_bars</span>
+        Production Trend
+      </div>
+      <h3 class="text-base font-extrabold font-headline text-text-main leading-tight">
+        {{ data.plant_name }} — {{ data.start_year }} to {{ data.end_year }}
+      </h3>
+      <p class="text-xs text-text-sub mt-0.5">Annual production in tons · Egypt</p>
+    </div>
+
+    <!-- Legend pills -->
+    <div class="flex items-center gap-3 flex-shrink-0">
+      <span class="inline-flex items-center gap-1.5 text-[0.65rem] font-bold text-[#0a5217] bg-primary/10 px-2.5 py-1 rounded-full">
+        <span class="w-2.5 h-2.5 rounded-sm bg-primary inline-block"></span>
+        Historical
+      </span>
+      <span class="inline-flex items-center gap-1.5 text-[0.65rem] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+        <span class="w-2.5 h-2.5 rounded-sm bg-amber-400 inline-block"></span>
+        Forecast
+      </span>
+    </div>
+
+  </div>
+
+  <!-- Chart canvas — fixed height so Chart.js renders properly -->
+  <div class="relative w-full" style="height: 300px;">
+    <canvas #chartCanvas></canvas>
+  </div>
+
+  <!-- Summary row -->
+  <div class="mt-5 grid grid-cols-3 gap-3 border-t border-[#f0f2ee] pt-5">
+
+    <div class="text-center">
+      <p class="text-[10px] font-bold text-text-sub uppercase tracking-wide font-headline mb-1">
+        Historical Total
+      </p>
+      <p class="text-sm font-extrabold font-headline text-text-main">
+        {{ (data.historical_total_ton / 1_000_000).toFixed(2) }}M
+        <span class="text-xs font-bold text-text-sub">Ton</span>
+      </p>
+    </div>
+
+    <div class="text-center border-x border-[#f0f2ee]">
+      <p class="text-[10px] font-bold text-text-sub uppercase tracking-wide font-headline mb-1">
+        Forecast {{ data.end_year }}
+      </p>
+      <p class="text-sm font-extrabold font-headline text-primary">
+        {{ (data.forecast_total_ton / 1_000).toFixed(0) }}K
+        <span class="text-xs font-bold text-primary/60">Ton</span>
+      </p>
+    </div>
+
+    <div class="text-center">
+      <p class="text-[10px] font-bold text-text-sub uppercase tracking-wide font-headline mb-1">
+        Data Points
+      </p>
+      <p class="text-sm font-extrabold font-headline text-text-main">
+        {{ data.rows.length }}
+        <span class="text-xs font-bold text-text-sub">Years</span>
+      </p>
+    </div>
+
+  </div>
+
+</div>

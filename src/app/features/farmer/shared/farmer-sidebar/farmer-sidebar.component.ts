@@ -3,7 +3,7 @@ import {
   ChangeDetectorRef, OnInit, OnDestroy, HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { FarmerDashboardService } from '../../../../core/services/farmer/farmer-dashboard/farmer-dashboard.service';
 import { AuthService } from '../../../../core/services/auth/auth.service';
@@ -47,14 +47,13 @@ topContributors = [
   { name: 'Elena Rodriguez', role: 'Data Scientist'  },
 ];
 
-// ── AI Flyout ─────────────────────────────────────────
-  showAiFlyout(el: HTMLElement): void {
-    if (this._hideTimer) clearTimeout(this._hideTimer);
-    const rect       = el.getBoundingClientRect();
-    this.aiFlyoutTop  = rect.top + 'px';
-    this.aiFlyoutLeft = (rect.right + 10) + 'px';
-    this.aiFlyoutOpen = true;
-  }
+showAiFlyout(el: HTMLElement): void {
+  if (this._hideTimer) clearTimeout(this._hideTimer);
+  const rect = el.getBoundingClientRect();
+  this.aiFlyoutTop  = rect.top + 'px';
+  this.aiFlyoutLeft = (rect.right + 10) + 'px';
+  this.aiFlyoutOpen = true;
+}
 
   keepAiFlyout(): void {
     if (this._hideTimer) clearTimeout(this._hideTimer);
@@ -72,8 +71,8 @@ private _communityTimer: any;
 
 showCommunityFlyout(el: HTMLElement): void {
   if (this._communityTimer) clearTimeout(this._communityTimer);
-  const rect              = el.getBoundingClientRect();
-  this.communityFlyoutTop  = rect.top  + 'px';
+  const rect = el.getBoundingClientRect();
+  this.communityFlyoutTop  = rect.top + 'px';
   this.communityFlyoutLeft = (rect.right + 10) + 'px';
   this.communityFlyoutOpen = true;
 }
@@ -88,11 +87,46 @@ scheduleHideCommunityFlyout(): void {
   }, 130);
 }
 
+// Marketplace Flyout
+marketFlyoutTop = '0px';
+marketFlyoutLeft = '0px';
+marketFlyoutOpen = false;
+private _marketTimer: any;
+
+showMarketFlyout(el: HTMLElement): void {
+  if (this._marketTimer) clearTimeout(this._marketTimer);
+
+  const rect = el.getBoundingClientRect();
+
+  this.marketFlyoutTop = rect.top + 'px';
+  this.marketFlyoutLeft = (rect.right + 10) + 'px';
+
+  this.marketFlyoutOpen = true;
+}
+
+keepMarketFlyout(): void {
+  if (this._marketTimer) clearTimeout(this._marketTimer);
+}
+
+scheduleHideMarketFlyout(): void {
+  this._marketTimer = setTimeout(() => { this.marketFlyoutOpen = false; }, 130);
+}
+isCommunityActive(): boolean {
+  return this.router.url.startsWith('/community');
+}
+
+isAiActive(): boolean {
+  return this.router.url.startsWith('/ai');
+}
+
+isMarketplaceActive(): boolean {
+  return this.router.url.startsWith('/marketplace');
+}
   logout():void{
     this.authService.logout()
   }
 
-constructor(private authService:AuthService){}
+constructor(private authService:AuthService,private router: Router){}
 
   ngOnInit(): void {
     this.svc.unreadCount$.pipe(takeUntil(this.destroy$))
