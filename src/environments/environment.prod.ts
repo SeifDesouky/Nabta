@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.nabta.com'
+  apiUrl: 'http://localhost:4000/'
 };
