@@ -1,0 +1,97 @@
+.page {
+  padding: 25px;
+  background: #f8f8f5;
+  min-height: 100vh;
+}
+
+/* Header */
+.header h2 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin: 0;
+}
+
+.header p {
+  font-size: .875rem;
+  color: var(--text-sub);
+  margin: .25rem 0 0;
+}
+
+
+/* Card */
+.table-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  overflow-x: auto;
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #0d631b;
+  color: white;
+}
+
+th, td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+/* Reason badge */
+.reason {
+  background: rgba(13, 99, 27, 0.12);
+  color: #0d631b;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Buttons */
+.btn {
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.view {
+  background: #0d631b;
+  color: white;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.ignore {
+  background: #e0e0e0;
+  color: #333;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.delete {
+  background: #b00020;
+  color: white;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}

@@ -7,13 +7,13 @@ export const ADMIN_ROUTES: Routes = [
     path: '',
     component: AdminLayoutComponent,        // ← shell with sidebar + header
     children: [
-      // {
-      //   path: 'dashboard',
-      //   loadComponent: () =>
-      //     import('./pages/dashboard/dashboard.component').then(
-      //       (m) => m.DashboardComponent
-      //     ),
-      // },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/dashboard/dashboard.component').then(
+            (m) => m.DashboardComponent
+          ),
+      },
       {
         path: 'users',
         loadComponent: () =>
@@ -27,6 +27,20 @@ export const ADMIN_ROUTES: Routes = [
           import(
             './pages/expert-applications/expert-applications.component'
           ).then((m) => m.ExpertApplicationsComponent),
+      },
+      {
+        path: 'educational',
+        loadComponent: () =>
+          import('./pages/edu/edu.component').then(
+            (m) => m.EduComponent
+          ),
+      },
+      {
+        path: 'reported',
+        loadComponent: () =>
+          import('./pages/reported/reported.component').then(
+            (m) => m.ReportedComponent
+          ),
       },
       // {
       //   path: 'preferences',

@@ -21,6 +21,8 @@ readonly adminNav: NavItem[] = [
     { label: 'Dashboard',           icon: 'dashboard',          route: '/admin/dashboard' },
     { label: 'User Management',     icon: 'manage_accounts',    route: '/admin/users' },
     { label: 'Expert Applications', icon: 'verified_user',      route: '/admin/expert-applications', badge: 12, filled: true },
+    { label: 'Educational Content', icon: 'post',    route: '/admin/educational' },
+    { label: 'Reported Content', icon: 'post',    route: '/admin/reported' },
   ];
 
   readonly systemNav: NavItem[] = [

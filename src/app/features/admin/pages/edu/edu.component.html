@@ -1,0 +1,116 @@
+<div class="content-page">
+
+  <!-- Header -->
+
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">Educational Content</h2>
+      <p class="page-sub">Manage articles, videos and tutorials</p>
+    </div>
+
+    <button class="add-btn">
+      + Add Content
+    </button>
+  </div>
+
+  <!-- Statistics -->
+
+  <div class="stats-grid">
+
+    <div class="stat-card" (click)="setFilter('article')" [class.active]="isActive('article')">
+      <span class="material-symbols-outlined stat-icon ms-fill" style="background:rgba(141,85,36,0.10);color:#0d631b;">article</span>
+      <div>
+        <p class="stat-label">Articles</p>
+        <p class="stat-value expert-val" >{{ articlesCount }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card" (click)="setFilter('video')" [class.active]="isActive('video')">
+      <span class="material-symbols-outlined stat-icon ms-fill" style="background:rgba(141,85,36,0.10);color:#0d631b;">play_circle</span>
+      <div>
+        <p class="stat-label">Videos</p>
+        <p class="stat-value expert-val" >{{ videosCount }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card" (click)="setFilter('tutorial')" [class.active]="isActive('tutorial')">
+      <span class="material-symbols-outlined stat-icon ms-fill" style="background:rgba(141,85,36,0.10);color:#0d631b;">menu_book</span>
+      <div>
+        <p class="stat-label">Tutorials</p>
+        <p class="stat-value expert-val" >{{tutorialsCount}}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <span class="material-symbols-outlined stat-icon ms-fill" style="background:rgba(141,85,36,0.10);color:#0d631b;">collections_bookmark</span>
+      <div>
+        <p class="stat-label">Total</p>
+        <p class="stat-value expert-val" >{{totalCount}}</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Search -->
+
+  <div class="search-wrapper">
+    <input
+      type="text"
+      placeholder="Search content..."
+      class="search-input"
+    >
+  </div>
+
+  <!-- Cards -->
+
+  <div class="cards-grid">
+
+    <!-- Card -->
+
+    <div class="content-card" *ngFor="let guide of guides">
+
+      <img
+        [src]="guide.coverUrl || 'https://picsum.photos/500/300'"
+      [alt]="guide.title"
+      class="card-image"
+      >
+
+      <div class="card-body">
+
+      <div class="card-tags">
+        <span class="badge article">
+          {{ guide.guide_type }}
+        </span>
+
+        <span class="badge category">
+          {{ guide.category }}
+        </span>
+      </div>
+
+      <h3 class="card-title">
+        {{ guide.title }}
+      </h3>
+
+      <p class="card-description">
+        {{ guide.content }}
+      </p>
+
+      <div class="card-footer">
+        <span class="date">
+          Updated {{ guide.updatedAt | date:'mediumDate' }}
+        </span>
+
+        <div class="actions">
+          <button class="edit-btn">Edit</button>
+          <button class="delete-btn">Delete</button>
+        </div>
+      </div>
+
+    </div>
+
+
+    </div>
+
+  </div>
+
+</div>
