@@ -114,45 +114,61 @@
       </div>
 
       <!-- Qty + Add to Cart -->
-      <div class="flex gap-2">
-        <input
-          type="number"
-          [value]="quantity"
-          [min]="1"
-          [max]="product.stock"
-          (change)="onQuantityChange($event)"
-          placeholder="Qty"
-          class="flex w-[30%] bg-background-light border-none rounded-xl text-sm font-semibold
-                 focus:ring-1 focus:ring-primary/40 py-2 px-3 text-center outline-none
-                 [-moz-appearance:textfield]
-                 [&::-webkit-outer-spin-button]:appearance-none
-                 [&::-webkit-inner-spin-button]:appearance-none"/>
+     <!-- Qty + Add to Cart -->
+<div class="flex gap-2">
 
-        <button (click)="addToCart()"
-                [disabled]="addingToCart || product.stock === 0"
-                class="flex w-[70%] font-bold py-2 rounded-xl transition-all
-                       flex items-center justify-center gap-1.5 text-sm
-                       disabled:opacity-50 disabled:cursor-not-allowed"
-                [ngClass]="cartSuccess
-                  ? 'bg-primary/10 text-primary border border-primary/20'
-                  : 'bg-text-main text-white hover:bg-earth'">
+  <!-- Qty Controls مع input قابل للكتابة -->
+  <div class="flex items-center border border-border-color rounded-xl overflow-hidden w-[35%] flex-shrink-0">
+    <button (click)="decrement()"
+      class="w-8 h-full flex items-center justify-center hover:bg-[#f3f3f3]
+             transition-colors border-r border-border-color flex-shrink-0">
+      <span class="material-symbols-outlined text-zinc-500" style="font-size:15px;">remove</span>
+    </button>
 
-          <!-- States -->
-          <ng-container *ngIf="!addingToCart && !cartSuccess">
-            <span class="material-symbols-outlined" style="font-size:16px;">add_shopping_cart</span>
-            Add to Cart
-          </ng-container>
-          <ng-container *ngIf="addingToCart">
-            <span class="material-symbols-outlined animate-spin" style="font-size:16px;">progress_activity</span>
-            Adding...
-          </ng-container>
-          <ng-container *ngIf="cartSuccess">
-            <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">check_circle</span>
-            Added!
-          </ng-container>
+    <input
+      type="number"
+      [value]="quantity"
+      [min]="1"
+      [max]="product.stock"
+      (change)="onQuantityChange($event)"
+      class="flex-1 min-w-0 text-center text-sm font-bold text-text-main bg-white
+             focus:outline-none focus:ring-0 py-2 px-0
+             [-moz-appearance:textfield]
+             [&::-webkit-outer-spin-button]:appearance-none
+             [&::-webkit-inner-spin-button]:appearance-none"/>
 
-        </button>
-      </div>
+    <button (click)="increment()"
+      class="w-8 h-full flex items-center justify-center hover:bg-[#f3f3f3]
+             transition-colors border-l border-border-color flex-shrink-0">
+      <span class="material-symbols-outlined text-zinc-500" style="font-size:15px;">add</span>
+    </button>
+  </div>
+
+  <!-- Add to Cart Button -->
+  <button (click)="addToCart()"
+    [disabled]="addingToCart || product.stock === 0"
+    class="flex-1 font-bold py-2 rounded-xl transition-all
+           flex items-center justify-center gap-1.5 text-sm
+           disabled:opacity-50 disabled:cursor-not-allowed"
+    [ngClass]="cartSuccess
+      ? 'bg-primary/10 text-primary border border-primary/20'
+      : 'bg-text-main text-white hover:bg-earth'">
+
+    <ng-container *ngIf="!addingToCart && !cartSuccess">
+      <span class="material-symbols-outlined" style="font-size:16px;">add_shopping_cart</span>
+      Add to Cart
+    </ng-container>
+    <ng-container *ngIf="addingToCart">
+      <span class="material-symbols-outlined animate-spin" style="font-size:16px;">progress_activity</span>
+      Adding...
+    </ng-container>
+    <ng-container *ngIf="cartSuccess">
+      <span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1;">check_circle</span>
+      Added!
+    </ng-container>
+
+  </button>
+</div>
 
     </div>
   </div>

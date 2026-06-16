@@ -8,18 +8,19 @@
 
 <!-- Main -->
 <main *ngIf="!loading && product" class="min-h-screen bg-[#f9f9f9]">
-  <div class="px-8 py-10 max-w-[90%] mx-auto">
+  <div class="px-8 pt-6 pb-4 max-w-[90%] mx-auto">
 
     <!-- Breadcrumb -->
-    <nav class="flex items-center gap-2 text-sm text-text-sub font-medium mb-8">
+    <nav class="flex items-center gap-2 text-sm text-text-sub font-medium mb-4">
       <a routerLink="/marketplace" class="hover:text-primary transition-colors">Marketplace</a>
       <span class="material-symbols-outlined text-[16px] text-zinc-400">chevron_right</span>
       <span class="text-text-main font-semibold">{{ product.productName }}</span>
     </nav>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+    <!-- TOP: Image + Details -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
 
-      <!-- ── Image ── -->
+      <!-- Image -->
       <div class="lg:col-span-7">
         <div class="rounded-2xl overflow-hidden aspect-[16/10] bg-background-light border border-border-color shadow-card">
           <img [src]="product.imageUrl" [alt]="product.productName"
@@ -28,27 +29,42 @@
         </div>
       </div>
 
-      <!-- ── Details ── -->
+      <!-- Details -->
       <div class="lg:col-span-5 flex flex-col gap-6">
 
-        <!-- Title -->
+        <!-- Title + badges -->
         <div>
           <h1 class="text-4xl font-extrabold text-text-main mb-2">{{ product.productName }}</h1>
-          <p class="text-text-sub text-sm">By <span class="font-semibold text-text-main">{{ product.farmer.name }}</span></p>
-          <div class="flex items-center gap-2 mt-3">
+          <p class="text-text-sub text-sm">
+            By <span class="font-semibold text-text-main">{{ product.farmer.name }}</span>
+          </p>
+
+          <div class="flex items-center gap-2 mt-3 flex-wrap">
+            <!-- Stock badge -->
             <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border"
                   [ngClass]="product.stock > 0
                     ? 'bg-primary/10 text-primary border-primary/20'
                     : 'bg-red-50 text-red-500 border-red-200'">
               {{ product.stock > 0 ? 'In Stock (' + product.stock + ')' : 'Out of Stock' }}
             </span>
+
+            <!-- Rating inline -->
+            <div *ngIf="product.ratingCount > 0"
+                 class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200">
+              <span class="material-symbols-outlined text-amber-500"
+                    style="font-size:12px;font-variation-settings:'FILL' 1;">star</span>
+              <span class="text-[10px] font-bold text-amber-700">
+                {{ product.avgRating | number:'1.1-1' }}
+              </span>
+              <span class="text-[10px] text-amber-600">({{ product.ratingCount }})</span>
+            </div>
           </div>
         </div>
 
-        <!-- ── Price Box ── -->
+        <!-- Price Box -->
         <div class="bg-white p-6 rounded-2xl shadow-soft border border-border-color space-y-5">
 
-          <!-- Price Display -->
+          <!-- Price -->
           <div class="flex items-end gap-3">
             <div>
               <p class="text-[11px] text-zinc-400 uppercase tracking-widest font-bold mb-1">
@@ -60,18 +76,21 @@
               <span class="text-text-sub ml-1 text-sm">/ unit</span>
             </div>
             <div *ngIf="isBulk"
-                 class="mb-1 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-bold uppercase tracking-wide">
+                 class="mb-1 px-3 py-1 rounded-full bg-primary/10 border border-primary/20
+                        text-primary text-[11px] font-bold uppercase tracking-wide">
               Bulk Active
             </div>
           </div>
 
           <!-- Line Total -->
           <div class="flex justify-between items-center py-3 px-4 bg-[#f3f3f3] rounded-xl border border-border-color">
-            <span class="text-sm text-text-sub font-medium">Total ({{ quantity }} unit{{ quantity > 1 ? 's' : '' }})</span>
+            <span class="text-sm text-text-sub font-medium">
+              Total ({{ quantity }} unit{{ quantity > 1 ? 's' : '' }})
+            </span>
             <span class="text-lg font-extrabold text-text-main">${{ lineTotal | number:'1.2-2' }}</span>
           </div>
 
-          <!-- Bulk Offer Banner -->
+          <!-- Bulk Progress -->
           <div *ngIf="product.bulkAvailable" class="space-y-2">
             <div class="flex justify-between items-center">
               <p class="text-xs font-bold text-text-sub uppercase tracking-wide">Bulk Discount Progress</p>
@@ -79,63 +98,56 @@
                 {{ isBulk ? '✓ Active' : remaining + ' more to unlock' }}
               </p>
             </div>
-            <!-- Progress Bar -->
             <div class="h-2 bg-[#e2e5dd] rounded-full overflow-hidden">
               <div class="h-full bg-primary rounded-full transition-all duration-300"
                    [style.width]="bulkProgress + '%'"></div>
             </div>
             <div class="flex justify-between text-[11px] text-zinc-400 font-medium">
               <span>1 unit · ${{ product.price | number:'1.2-2' }}/u</span>
-              <span class="font-bold text-primary">{{ product.bulkQuantity }}+ units · ${{ product.bulkPrice | number:'1.2-2' }}/u</span>
+              <span class="font-bold text-primary">
+                {{ product.bulkQuantity }}+ units · ${{ product.bulkPrice | number:'1.2-2' }}/u
+              </span>
             </div>
           </div>
 
-          <!-- ── Quantity Stepper ── -->
-          <!-- ── Quantity Stepper ── -->
-<div>
-  <p class="text-xs font-bold text-text-sub uppercase tracking-wide mb-3">Quantity</p>
-  <div class="flex items-center gap-4">
-    <div class="flex items-center bg-[#f3f3f3] rounded-xl p-1 border border-border-color">
+          <!-- Quantity Stepper -->
+          <div>
+            <p class="text-xs font-bold text-text-sub uppercase tracking-wide mb-3">Quantity</p>
+            <div class="flex items-center gap-4">
+              <div class="flex items-center bg-[#f3f3f3] rounded-xl p-1 border border-border-color">
+                <button (click)="decrement()"
+                        [disabled]="quantity <= 1"
+                        class="w-9 h-9 flex items-center justify-center hover:bg-white hover:shadow-sm
+                               rounded-lg text-text-sub transition-all
+                               disabled:opacity-40 disabled:cursor-not-allowed">
+                  <span class="material-symbols-outlined" style="font-size:18px;">remove</span>
+                </button>
+                <input type="number" min="1" [max]="product.stock" [value]="quantity"
+                       (change)="onQuantityInput($event)"
+                       class="w-14 text-center font-bold text-sm text-text-main bg-transparent
+                              border-none outline-none focus:ring-0
+                              [-moz-appearance:textfield]
+                              [&::-webkit-outer-spin-button]:appearance-none
+                              [&::-webkit-inner-spin-button]:appearance-none" />
+                <button (click)="increment()"
+                        [disabled]="quantity >= product.stock"
+                        class="w-9 h-9 flex items-center justify-center hover:bg-white hover:shadow-sm
+                               rounded-lg text-text-sub transition-all
+                               disabled:opacity-40 disabled:cursor-not-allowed">
+                  <span class="material-symbols-outlined" style="font-size:18px;">add</span>
+                </button>
+              </div>
+              <span class="text-xs text-zinc-400">Max: {{ product.stock }}</span>
+            </div>
+          </div>
 
-      <button (click)="decrement()"
-              [disabled]="quantity <= 1"
-              class="w-9 h-9 flex items-center justify-center hover:bg-white hover:shadow-sm rounded-lg
-                     text-text-sub transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-        <span class="material-symbols-outlined" style="font-size:18px;">remove</span>
-      </button>
-
-      <!-- ← Input يدوي بدل span -->
-      <input
-        type="number"
-        min="1"
-        [max]="product.stock"
-        [value]="quantity"
-        (change)="onQuantityInput($event)"
-        class="w-14 text-center font-bold text-sm text-text-main bg-transparent
-               border-none outline-none focus:ring-0
-               [-moz-appearance:textfield]
-               [&::-webkit-outer-spin-button]:appearance-none
-               [&::-webkit-inner-spin-button]:appearance-none" />
-
-      <button (click)="increment()"
-              [disabled]="quantity >= product.stock"
-              class="w-9 h-9 flex items-center justify-center hover:bg-white hover:shadow-sm rounded-lg
-                     text-text-sub transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-        <span class="material-symbols-outlined" style="font-size:18px;">add</span>
-      </button>
-
-    </div>
-    <span class="text-xs text-zinc-400">Max: {{ product.stock }}</span>
-  </div>
-</div>
-
-          <!-- ── Buttons ── -->
+          <!-- Buttons -->
           <div class="flex flex-col gap-3 pt-1">
-
-            <!-- Success Feedback -->
             <div *ngIf="cartSuccess"
-                 class="flex items-center gap-2 px-4 py-2.5 bg-primary/10 border border-primary/20 rounded-xl text-primary text-sm font-bold">
-              <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;">check_circle</span>
+                 class="flex items-center gap-2 px-4 py-2.5 bg-primary/10 border border-primary/20
+                        rounded-xl text-primary text-sm font-bold">
+              <span class="material-symbols-outlined"
+                    style="font-size:18px;font-variation-settings:'FILL' 1;">check_circle</span>
               Added to cart successfully!
             </div>
 
@@ -144,22 +156,31 @@
                     class="w-full py-3.5 bg-primary text-white rounded-xl font-bold text-base
                            shadow-primary-glow hover:brightness-110 active:scale-[0.98] transition-all
                            flex items-center justify-center gap-2
-                           disabled:opacity-60 disabled:cursor-not-allowed" >
-              <span *ngIf="!addingToCart" class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;">shopping_cart</span>
-              <span *ngIf="addingToCart" class="material-symbols-outlined animate-spin" style="font-size:18px;">progress_activity</span>
+                           disabled:opacity-60 disabled:cursor-not-allowed">
+              <span *ngIf="!addingToCart" class="material-symbols-outlined"
+                    style="font-size:18px;font-variation-settings:'FILL' 1;">shopping_cart</span>
+              <span *ngIf="addingToCart" class="material-symbols-outlined animate-spin"
+                    style="font-size:18px;">progress_activity</span>
               {{ addingToCart ? 'Adding...' : product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
             </button>
 
-            <button class="w-full py-3.5 bg-white border border-border-color text-text-main rounded-xl font-bold
-                           text-sm hover:bg-background-light hover:shadow-card transition-all
+            <button class="w-full py-3.5 bg-white border border-border-color text-text-main rounded-xl
+                           font-bold text-sm hover:bg-background-light hover:shadow-card transition-all
                            flex items-center justify-center gap-2">
               <span class="material-symbols-outlined" style="font-size:18px;">chat</span>
               Contact Farmer
             </button>
+            <a routerLink="/marketplace"
+   class="w-full py-3.5 bg-white border border-border-color text-text-main rounded-xl
+          font-bold text-sm hover:bg-background-light hover:shadow-card transition-all
+          flex items-center justify-center gap-2">
+  <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+  Continue Shopping
+</a>
           </div>
         </div>
 
-        <!-- ── Farmer Card ── -->
+        <!-- Farmer Card -->
         <div class="flex items-center gap-4 p-4 bg-white border border-border-color rounded-xl shadow-card">
           <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
             <span class="material-symbols-outlined text-primary"
@@ -172,116 +193,151 @@
           <span class="ml-auto material-symbols-outlined text-zinc-300" style="font-size:18px;">verified</span>
         </div>
 
-        <!-- ══ Reviews Section ══ -->
-<div class="space-y-6 mt-8">
+      </div>
+    </div>
 
-  <!-- Rating Summary -->
-<!-- Rating Summary -->
-      <div *ngIf="product.ratingCount > 0"
-           class="flex items-center gap-4 p-4 bg-white border border-border-color rounded-2xl shadow-card">
-        <div class="text-center">
-          <p class="text-4xl font-extrabold text-text-main">{{ product.avgRating | number:'1.1-1' }}</p>
-          <div class="flex items-center gap-0.5 mt-1 justify-center">
-            
-            <!-- ⬇️ السطر اللي تم تعديله هنا ⬇️ -->
-            <span *ngFor="let s of [1,2,3,4,5]"
-                  class="material-symbols-outlined text-amber-500"
-                  style="font-size:16px;"
-                  [style.font-variation-settings]="s <= product.avgRating ? '\'FILL\' 1' : '\'FILL\' 0'">
-              star
-            </span>
+    <!-- BOTTOM: Reviews + Related -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-4 ">
 
+      <!-- Reviews (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+
+        <!-- Rating Summary با Breakdown -->
+        <div *ngIf="product.ratingCount > 0"
+             class="bg-white border border-border-color rounded-2xl p-6 shadow-card
+                    flex items-center gap-6">
+
+          <!-- الرقم الكبير -->
+          <div class="text-center flex-shrink-0 pr-6 border-r border-border-color">
+            <p class="text-5xl font-extrabold text-text-main leading-none">
+              {{ product.avgRating | number:'1.1-1' }}
+            </p>
+            <div class="flex gap-0.5 justify-center my-2">
+              <span *ngFor="let s of [1,2,3,4,5]"
+                    class="material-symbols-outlined text-amber-500"
+                    style="font-size:14px;"
+                    [style.font-variation-settings]="s <= product.avgRating ? '\'FILL\' 1' : '\'FILL\' 0'">
+                star
+              </span>
+            </div>
+            <p class="text-[11px] text-text-sub font-medium">{{ product.ratingCount }} reviews</p>
           </div>
-          <p class="text-xs text-zinc-400 mt-1">{{ product.ratingCount }} reviews</p>
+
+          <!-- Breakdown Bars -->
+          <div class="flex-1 space-y-2">
+            <div *ngFor="let bar of ratingBars" class="flex items-center gap-3">
+              <span class="text-[11px] text-text-sub font-medium w-4 text-right">{{ bar.star }}</span>
+              <span class="material-symbols-outlined text-amber-400"
+                    style="font-size:12px;font-variation-settings:'FILL' 1;">star</span>
+              <div class="flex-1 h-2 bg-[#e2e5dd] rounded-full overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-500"
+                     [style.width]="bar.pct + '%'"
+                     [ngClass]="bar.star >= 4 ? 'bg-primary' : bar.star === 3 ? 'bg-amber-400' : 'bg-red-400'">
+                </div>
+              </div>
+              <span class="text-[11px] text-text-sub font-medium w-8">{{ bar.pct }}%</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Write Review -->
+        <div class="bg-white border border-border-color rounded-2xl p-6 shadow-card space-y-4">
+          <h3 class="font-bold text-text-main text-lg">Write a Review</h3>
+
+          <div *ngIf="reviewSuccess"
+               class="flex items-center gap-2 px-4 py-2.5 bg-primary/10 border border-primary/20
+                      rounded-xl text-primary text-sm font-bold">
+            <span class="material-symbols-outlined"
+                  style="font-size:18px;font-variation-settings:'FILL' 1;">check_circle</span>
+            Review submitted successfully!
+          </div>
+
+          <div *ngIf="reviewError"
+               class="flex items-center gap-2 px-4 py-2.5 bg-red-50 border border-red-200
+                      rounded-xl text-red-600 text-sm font-semibold">
+            <span class="material-symbols-outlined" style="font-size:18px;">error_outline</span>
+            {{ reviewError }}
+          </div>
+
+          <!-- Stars -->
+          <div>
+            <p class="text-xs font-bold text-text-sub uppercase tracking-wide mb-2">Your Rating</p>
+            <div class="flex items-center gap-1" (mouseleave)="clearHover()">
+              <span *ngFor="let s of [1,2,3,4,5]"
+                    class="material-symbols-outlined text-amber-400 cursor-pointer transition-all
+                           hover:scale-125"
+                    style="font-size:32px;"
+                    [style.font-variation-settings]="getStarFill(s)"
+                    (mouseenter)="hoverStar(s)"
+                    (click)="setRating(s)">star</span>
+              <span *ngIf="userRating" class="ml-3 text-sm text-zinc-400 font-semibold">
+                {{ userRating }} / 5
+              </span>
+            </div>
+          </div>
+
+          <!-- Comment -->
+          <div>
+            <p class="text-xs font-bold text-text-sub uppercase tracking-wide mb-2">Your Comment</p>
+            <textarea [(ngModel)]="userComment"
+                      placeholder="Share your experience with this product..."
+                      rows="4"
+                      class="w-full bg-[#f8f8f5] border border-border-color rounded-xl px-4 py-3
+                             text-sm text-text-main placeholder:text-zinc-400 resize-none outline-none
+                             focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all">
+            </textarea>
+          </div>
+
+          <button (click)="submitReview()"
+                  [disabled]="!userRating || submittingReview"
+                  class="w-full py-3 bg-primary text-white rounded-xl font-bold text-sm
+                         shadow-primary-glow hover:brightness-110 transition-all
+                         disabled:opacity-50 disabled:cursor-not-allowed
+                         flex items-center justify-center gap-2">
+            <span *ngIf="submittingReview" class="material-symbols-outlined animate-spin"
+                  style="font-size:16px;">progress_activity</span>
+            <span *ngIf="!submittingReview" class="material-symbols-outlined"
+                  style="font-size:16px;">rate_review</span>
+            {{ submittingReview ? 'Submitting...' : 'Submit Review' }}
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Related Products (5 cols) -->
+      <div *ngIf="relatedProducts.length > 0" class="lg:col-span-5">
+        <h2 class="text-2xl font-extrabold text-text-main mb-6">Related Products</h2>
+        <div class="flex flex-col gap-4">
+          <div *ngFor="let related of relatedProducts"
+               [routerLink]="['/marketplace/product', related.slug]"
+               class="flex items-center gap-4 p-4 bg-white border border-border-color rounded-2xl
+                      shadow-card hover:shadow-soft cursor-pointer transition-all hover:-translate-y-0.5
+                      group">
+            <div class="w-16 h-16 rounded-xl overflow-hidden bg-background-light
+                        border border-border-color flex-shrink-0">
+              <img [src]="related.imageUrl" [alt]="related.productName"
+                   class="w-full h-full object-cover transition-transform duration-300
+                          group-hover:scale-105"
+                   onerror="this.src='assets/placeholder.png'" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="font-bold text-sm text-text-main truncate
+                        group-hover:text-primary transition-colors">
+                {{ related.productName }}
+              </p>
+              <p class="text-xs text-zinc-400 mt-0.5">{{ related.farmer?.name }}</p>
+              <p class="text-primary font-bold text-sm mt-1">
+                ${{ related.price | number:'1.2-2' }}
+              </p>
+            </div>
+            <span class="material-symbols-outlined text-zinc-300 group-hover:text-primary
+                         transition-colors" style="font-size:18px;">chevron_right</span>
+          </div>
         </div>
       </div>
 
-  <!-- Write Review -->
-  <div class="bg-white border border-border-color rounded-2xl p-6 shadow-card space-y-4">
-    <h3 class="font-bold text-text-main font-headline">Write a Review</h3>
-
-    <!-- Success -->
-    <div *ngIf="reviewSuccess"
-         class="flex items-center gap-2 px-4 py-2.5 bg-primary/10 border border-primary/20
-                rounded-xl text-primary text-sm font-bold">
-      <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1;">
-        check_circle
-      </span>
-      Review submitted successfully!
     </div>
 
-    <!-- Error -->
-    <div *ngIf="reviewError"
-         class="flex items-center gap-2 px-4 py-2.5 bg-red-50 border border-red-200
-                rounded-xl text-red-600 text-sm font-semibold">
-      <span class="material-symbols-outlined" style="font-size:18px;">error_outline</span>
-      {{ reviewError }}
-    </div>
-
-    <!-- Stars -->
-    <div class="flex items-center gap-1" (mouseleave)="clearHover()">
-      <span *ngFor="let s of [1,2,3,4,5]"
-            class="material-symbols-outlined text-amber-400 cursor-pointer transition-all"
-            style="font-size:28px;"
-            [style.font-variation-settings]="getStarFill(s)"
-            (mouseenter)="hoverStar(s)"
-            (click)="setRating(s)">
-        star
-      </span>
-      <span *ngIf="userRating" class="ml-2 text-xs text-zinc-400 font-semibold">
-        {{ userRating }}/5
-      </span>
-    </div>
-
-    <!-- Comment -->
-    <textarea [(ngModel)]="userComment"
-              placeholder="Share your experience with this product..."
-              rows="3"
-              class="w-full bg-[#f8f8f5] border border-border-color rounded-xl px-4 py-3 text-sm
-                     text-text-main placeholder:text-zinc-400 resize-none outline-none
-                     focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all">
-    </textarea>
-
-    <button (click)="submitReview()"
-            [disabled]="!userRating || submittingReview"
-            class="w-full py-3 bg-primary text-white rounded-xl font-bold text-sm
-                   shadow-primary-glow hover:brightness-110 transition-all
-                   disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-      <span *ngIf="submittingReview" class="material-symbols-outlined animate-spin" style="font-size:16px;">
-        progress_activity
-      </span>
-      <span *ngIf="!submittingReview" class="material-symbols-outlined" style="font-size:16px;">
-        rate_review
-      </span>
-      {{ submittingReview ? 'Submitting...' : 'Submit Review' }}
-    </button>
-  </div>
-</div>
-
-<!-- ══ Related Products ══ -->
-<div *ngIf="relatedProducts.length > 0" class="mt-12">
-  <h2 class="text-2xl font-extrabold font-headline text-text-main mb-6">Related Products</h2>
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <div *ngFor="let related of relatedProducts"
-         [routerLink]="['/marketplace/product', related.slug]"
-         class="flex items-center gap-4 p-4 bg-white border border-border-color rounded-2xl
-                shadow-card hover:shadow-soft cursor-pointer transition-all hover:-translate-y-0.5">
-      <div class="w-16 h-16 rounded-xl overflow-hidden bg-background-light border border-border-color flex-shrink-0">
-        <img [src]="related.imageUrl" [alt]="related.productName"
-             class="w-full h-full object-cover"
-             onerror="this.src='assets/placeholder.png'" />
-      </div>
-      <div class="flex-1 min-w-0">
-        <p class="font-bold text-sm text-text-main truncate">{{ related.productName }}</p>
-        <p class="text-xs text-zinc-400 mt-0.5">{{ related.farmer?.name }}</p>
-        <p class="text-primary font-bold text-sm mt-1">${{ related.price | number:'1.2-2' }}</p>
-      </div>
-      <span class="material-symbols-outlined text-zinc-300" style="font-size:18px;">chevron_right</span>
-    </div>
-  </div>
-</div>
-
-      </div>
-    </div>
   </div>
 </main>

@@ -1,0 +1,271 @@
+<main class="page-main">
+  <ng-container *ngIf="{
+    loading: svc.loading$ | async,
+    user:    svc.user$    | async,
+    profile: svc.profile$ | async
+  } as data">
+
+    <!-- Loading -->
+    <div *ngIf="data.loading" class="loading-state p-8">
+      <div class="animate-pulse flex flex-col gap-6">
+        <div class="h-48 bg-[#e8e8e8] rounded-2xl w-full"></div>
+        <div class="flex gap-4">
+          <div class="h-32 bg-[#e8e8e8] rounded-2xl w-1/4" *ngFor="let i of [1,2,3]"></div>
+        </div>
+      </div>
+    </div>
+
+    <ng-container *ngIf="!data.loading && data.user">
+
+      <!-- ══ Hero Card ══ -->
+      <section class="hero-card fade-up">
+        <div class="hero-blur"></div>
+
+        <!-- Avatar -->
+        <div class="avatar-wrap">
+          <div class="avatar-ring">
+            <div class="avatar-initials">{{ getInitials(data.user.name) }}</div>
+          </div>
+          <div *ngIf="data.user.isVerified" class="verified-badge">
+            <span class="material-symbols-outlined ms-fill">verified</span>
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="hero-info">
+          <h3 class="hero-name">{{ data.user.name }}</h3>
+          <span class="role-badge">
+            <span class="material-symbols-outlined ms-fill" style="font-size:12px;">shopping_bag</span>
+            Buyer Account
+          </span>
+          <p class="hero-email">{{ data.user.email }}</p>
+          <div class="expertise-row" *ngIf="data.profile">
+            <span class="expertise-pill" *ngIf="data.profile.company">🏢 {{ data.profile.company }}</span>
+            <span class="expertise-pill" *ngIf="data.profile.address">📍 {{ data.profile.address }}</span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="hero-actions">
+          <button class="btn-primary-action" (click)="openEdit()">
+            <span class="material-symbols-outlined">edit</span>
+            Edit Profile
+          </button>
+        </div>
+      </section>
+
+      <!-- ══ Quick Stats ══ -->
+      <div class="quick-stats fade-up d1">
+        <div class="quick-stat">
+          <span class="material-symbols-outlined quick-stat-icon" style="background:#e6f4ea;color:#137333;">verified_user</span>
+          <div>
+            <p class="quick-stat-val">{{ data.user.status | titlecase }}</p>
+            <p class="quick-stat-label">Account Status</p>
+          </div>
+        </div>
+        <div class="quick-stat">
+          <span class="material-symbols-outlined quick-stat-icon" style="background:#e1f5fe;color:#0288d1;">business</span>
+          <div>
+            <p class="quick-stat-val text-sm mt-1">{{ data.profile?.company || 'N/A' }}</p>
+            <p class="quick-stat-label">Company</p>
+          </div>
+        </div>
+        <div class="quick-stat">
+          <span class="material-symbols-outlined quick-stat-icon" style="background:#fff3e0;color:#e65100;">location_on</span>
+          <div>
+            <p class="quick-stat-val text-sm mt-1">{{ data.profile?.address || 'N/A' }}</p>
+            <p class="quick-stat-label">Address</p>
+          </div>
+        </div>
+        <div class="quick-stat">
+          <span class="material-symbols-outlined quick-stat-icon" style="background:#f3e5f5;color:#8e24aa;">calendar_today</span>
+          <div>
+            <p class="quick-stat-val">{{ timeAgo(data.user.createdAt) }}</p>
+            <p class="quick-stat-label">Joined</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ Tabs ══ -->
+      <div class="tabs-row fade-up d2">
+        <button *ngFor="let tab of tabs"
+                class="tab-btn"
+                [class.tab-active]="isTab(tab.value)"
+                (click)="setTab(tab.value)">
+          <span class="material-symbols-outlined">{{ tab.icon }}</span>
+          {{ tab.label }}
+        </button>
+      </div>
+
+      <!-- ══ Main Grid ══ -->
+      <div class="main-grid fade-up d3">
+
+        <!-- Left Col -->
+        <div class="left-col">
+
+          <!-- TAB: Personal Info -->
+          <ng-container *ngIf="isTab('info')">
+
+            <div class="section-card">
+              <div class="section-header">
+                <div class="section-icon-wrap" style="background:rgba(13,99,27,0.1)">
+                  <span class="material-symbols-outlined" style="color:#0d631b;">person</span>
+                </div>
+                <h4 class="section-title">Personal Information</h4>
+              </div>
+              <div class="info-grid">
+                <div class="info-field">
+                  <label class="field-label">Full Name</label>
+                  <div class="field-value">{{ data.user.name }}</div>
+                </div>
+                <div class="info-field">
+                  <label class="field-label">Email Address</label>
+                  <div class="field-value">{{ data.user.email }}</div>
+                </div>
+                <div class="info-field">
+                  <label class="field-label">Phone Number</label>
+                  <div class="field-value">{{ data.user.phone || 'Not Provided' }}</div>
+                </div>
+                <div class="info-field">
+                  <label class="field-label">Account Status</label>
+                  <div class="field-value capitalize">{{ data.user.status }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-card" *ngIf="data.profile">
+              <div class="section-header">
+                <div class="section-icon-wrap" style="background:rgba(2,136,209,0.1)">
+                  <span class="material-symbols-outlined" style="color:#0288d1;">business_center</span>
+                </div>
+                <h4 class="section-title">Business Details</h4>
+              </div>
+              <div class="info-grid">
+                <div class="info-field">
+                  <label class="field-label">Company</label>
+                  <div class="field-value">{{ data.profile.company || '—' }}</div>
+                </div>
+                <div class="info-field">
+                  <label class="field-label">Address</label>
+                  <div class="field-value">{{ data.profile.address || '—' }}</div>
+                </div>
+              </div>
+            </div>
+
+          </ng-container>
+
+          <!-- TAB: Account Info -->
+          <ng-container *ngIf="isTab('orders')">
+            <div class="section-card">
+              <div class="section-header">
+                <div class="section-icon-wrap" style="background:rgba(13,99,27,0.1)">
+                  <span class="material-symbols-outlined" style="color:#0d631b;">info</span>
+                </div>
+                <h4 class="section-title">Account Information</h4>
+              </div>
+              <div class="info-grid">
+                <div class="info-field">
+                  <label class="field-label">Role</label>
+                  <div class="field-value capitalize">{{ data.user.role }}</div>
+                </div>
+                <div class="info-field">
+                  <label class="field-label">Verified</label>
+                  <div class="field-value">{{ data.user.isVerified ? '✅ Yes' : '❌ No' }}</div>
+                </div>
+                <div class="info-field">
+                  <label class="field-label">Member Since</label>
+                  <div class="field-value">{{ data.user.createdAt | date:'mediumDate' }}</div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+        </div>
+
+        <!-- Right Col -->
+        <div class="right-col">
+          <div class="section-card">
+            <h4 class="section-title mb-4">Recent Activity</h4>
+            <div class="flex items-start gap-3 mb-4">
+              <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-primary text-sm">person_add</span>
+              </div>
+              <div>
+                <p class="text-sm text-text-main font-medium">Joined Nabta Platform</p>
+                <p class="text-xs text-zinc-400">{{ timeAgo(data.user.createdAt) }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <!-- ══ Edit Modal ══ -->
+  <ng-container *ngIf="svc.editOpen$ | async">
+    <div class="modal-backdrop" (click)="closeEdit()"></div>
+    <div class="modal-box" role="dialog" aria-modal="true">
+
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <div class="section-icon-wrap" style="background:rgba(13,99,27,0.1)">
+            <span class="material-symbols-outlined" style="color:#0d631b;">edit</span>
+          </div>
+          <h4 class="section-title">Edit Profile</h4>
+        </div>
+        <button class="modal-close" (click)="closeEdit()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <ng-container *ngIf="{ user: svc.user$ | async, profile: svc.profile$ | async } as d">
+        <div class="modal-body">
+
+          <p class="modal-section-label">Personal</p>
+          <div class="info-grid">
+            <div class="info-field">
+              <label class="field-label">Full Name</label>
+              <input class="edit-input" #nameInp [value]="d.user?.name || ''" placeholder="Full name"/>
+            </div>
+            <div class="info-field">
+              <label class="field-label">Phone</label>
+              <input class="edit-input" #phoneInp [value]="d.user?.phone || ''" placeholder="+20 1XX XXX XXXX"/>
+            </div>
+          </div>
+
+          <p class="modal-section-label" style="margin-top:1rem;">Business</p>
+          <div class="info-grid">
+            <div class="info-field">
+              <label class="field-label">Company</label>
+              <input class="edit-input" #companyInp [value]="d.profile?.company || ''" placeholder="Company name"/>
+            </div>
+            <div class="info-field">
+              <label class="field-label">Address</label>
+              <input class="edit-input" #addressInp [value]="d.profile?.address || ''" placeholder="Your address"/>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn-cancel" (click)="closeEdit()">Cancel</button>
+            <button class="btn-primary-action"
+                    [disabled]="svc.saving$ | async"
+                    (click)="saveEdit({
+                      name:    nameInp.value,
+                      phone:   phoneInp.value,
+                      company: companyInp.value,
+                      address: addressInp.value
+                    })">
+              <span class="material-symbols-outlined">
+                {{ (svc.saving$ | async) ? 'hourglass_empty' : 'save' }}
+              </span>
+              {{ (svc.saving$ | async) ? 'Saving…' : 'Save Changes' }}
+            </button>
+          </div>
+
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+
+</main>

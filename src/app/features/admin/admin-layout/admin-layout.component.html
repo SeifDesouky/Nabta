@@ -8,13 +8,14 @@
     <!-- Top Header -->
     <header class="admin-header">
       <div class="header-search">
-        <span class="material-symbols-outlined search-icon">search</span>
-        <input
-          class="search-input"
-          type="text"
-          placeholder="Search applicants or specialties…"
-        />
-      </div>
+  <span class="material-symbols-outlined search-icon">search</span>
+  <input
+    class="search-input"
+    type="text"
+    placeholder="Search users…"
+    [formControl]="searchControl"
+  />
+</div>
 
       <div class="header-actions">
         <button class="header-icon-btn" aria-label="Notifications">

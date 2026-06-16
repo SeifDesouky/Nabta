@@ -2,9 +2,8 @@ import { Component, Input, Pipe } from '@angular/core';
 import { CommonModule, PercentPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IProduct } from '../../../../core/models/product.model';
-import { Router, RouterModule } from '@angular/router';
 import { CartService } from '../../../../core/services/cart/cart.service';
-
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-product-card',
   standalone: true,
@@ -19,7 +18,7 @@ export class ProductCardComponent {
   addingToCart = false;
   cartSuccess  = false;
 
-  constructor(private cartService: CartService,private router:Router) {}
+  constructor(private cartService: CartService) {}
 
   // ── Bulk helpers (من السيرفيس) ────────────────────────
   get isBulkActive(): boolean {
@@ -61,6 +60,17 @@ export class ProductCardComponent {
     if (val > (this.product.stock ?? 9999))  { this.quantity = this.product.stock;   return; }
     this.quantity = val;
   }
+// method لتغيير الـ quantity بالكتابة
+onQtyInput(event: Event): void {
+  const val = parseInt((event.target as HTMLInputElement).value);
+  if (!isNaN(val) && val >= 1) {
+    this.quantity = val;
+  }
+}
+
+increment(): void { this.quantity++; }
+
+decrement(): void { if (this.quantity > 1) this.quantity--; }
 
   // ── Favourite ─────────────────────────────────────────
   getFavFill(): string {
@@ -73,24 +83,23 @@ export class ProductCardComponent {
   }
 
   // ── Add to Cart ───────────────────────────────────────
-  addToCart(): void {
-    if (this.addingToCart || this.product.stock === 0) return;
-    this.addingToCart = true;
-    this.cartSuccess  = false;
-
-    this.cartService.addItem({
-      productId: this.product._id,
-      quantity:  this.quantity
-    }).subscribe({
-      next: () => {
-        this.addingToCart = false;
-        this.cartSuccess  = true;
-        setTimeout(() => (this.cartSuccess = false), 2500);
-        this.router.navigate(['/marketplace/cart'])
-      },
-      error: () => {
-        this.addingToCart = false;
-      }
-    });
-  }
+addToCart(): void {
+  if (this.addingToCart || this.product.stock === 0) return;
+  this.addingToCart = true;
+  this.cartSuccess  = false;
+  this.cartService.addItem({
+    productId: this.product._id,
+    quantity:  this.quantity
+  }).subscribe({
+    next: () => {
+      this.addingToCart = false;
+      this.cartSuccess  = true;
+      setTimeout(() => (this.cartSuccess = false), 2500);
+      // ← مفيش navigate هنا
+    },
+    error: () => {
+      this.addingToCart = false;
+    }
+  });
+}
 }

@@ -10,7 +10,9 @@ import { Observable } from 'rxjs';
 export class MarketService {
 
   constructor(private router: Router, private api: ApiServiceService) { }
-
+getCategories() {
+  return this.api.get<string[]>('product/categories');
+}
   getAllProducts(params:any) {
     return this.api.get<IGetProductsResponse>('product/all_products', params );
   }

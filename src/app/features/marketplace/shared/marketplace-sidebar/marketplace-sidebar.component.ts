@@ -1,15 +1,32 @@
-import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+
 export interface MarketFilters {
   category: string;
   price: number;
   location: string;
   rating: number;
 }
+
+interface NavItem {
+  label: string;
+  route: string;
+  icon: string;
+  filled?: boolean;
+  isAiTrigger?: boolean;
+}
+
+interface AiTool {
+  label: string;
+  icon: string;
+  route: string;
+}
+
 @Component({
   selector: 'app-marketplace-sidebar',
   standalone: true,
@@ -17,42 +34,92 @@ export interface MarketFilters {
   templateUrl: './marketplace-sidebar.component.html',
   styleUrl: './marketplace-sidebar.component.css'
 })
-export class MarketplaceSidebarComponent implements OnInit, OnDestroy{
-@Output() filtersChanged = new EventEmitter<MarketFilters>();
+export class MarketplaceSidebarComponent implements OnInit, OnDestroy {
+  @Output() filtersChanged = new EventEmitter<MarketFilters>();
+
+  private authService = inject(AuthService);
+
+  // ── Role ──
+  get role(): string {
+    return this.authService.getUserRole() ?? 'guest';
+  }
+
+  // ── Nav Items per Role ──
+// ── Nav Items per Role ──
+get navItems(): NavItem[] {
+  const byRole: Record<string, NavItem[]> = {
+    farmer: [
+      { label: 'Dashboard',   route: '/farmer',          icon: 'dashboard' },
+      { label: 'Marketplace', route: '/marketplace',     icon: 'storefront', filled: true },
+      { label: 'Community',   route: '/community',       icon: 'groups' },
+      { label: 'AI Tools',    route: '',                 icon: 'psychology', isAiTrigger: true },
+      { label: 'Chats',       route: '/chats',           icon: 'chat' },
+    ],
+    buyer: [
+      { label: 'Dashboard',   route: '/buyer/dashboard', icon: 'dashboard' },
+      { label: 'Marketplace', route: '/marketplace',     icon: 'storefront', filled: true },
+      { label: 'My Orders',   route: '/buyer/orders',    icon: 'receipt_long' },
+      { label: 'Wishlist',    route: '/buyer/wishlist',  icon: 'favorite' },
+      { label: 'Chats',       route: '/chats',           icon: 'chat' },
+    ],
+    expert: [
+      { label: 'Dashboard',      route: '/expert',                icon: 'dashboard' },
+      { label: 'Marketplace',    route: '/marketplace',           icon: 'storefront', filled: true },
+      { label: 'Community',      route: '/community',             icon: 'groups' },
+      { label: 'Consultations',  route: '/expert/consultations',  icon: 'medical_services' },
+      { label: 'Chats',          route: '/chats',                 icon: 'chat' },
+    ],
+    admin: [
+      { label: 'Users',       route: '/admin/users',     icon: 'manage_accounts' },
+      { label: 'Marketplace', route: '/marketplace',     icon: 'storefront', filled: true },
+      { label: 'Reports',     route: '/admin/reports',   icon: 'bar_chart' },
+    ],
+    guest: [
+      { label: 'Marketplace', route: '/marketplace',     icon: 'storefront', filled: true },
+      { label: 'Educational', route: '/educational',     icon: 'school' },
+    ],
+  };
+
+  return byRole[this.role] ?? byRole['guest'];
+}
+
+  // ── AI Tools (farmer فقط) ──
+  get showAiTools(): boolean {
+    return this.role === 'farmer';
+  }
+
+  aiTools: AiTool[] = [
+    { label: 'ChatBot',        icon: 'smart_toy', route: '/ai/chatbot'   },
+    { label: 'Crop Diagnosis', icon: 'yard',      route: '/ai/diagnosis' },
+  ];
+
+  // ── Filters (مش للـ admin) ──
+  get showFilters(): boolean {
+    return this.role !== 'admin';
+  }
 
   // ── Filters State ──
   categories = ['Grains & Seeds', 'Fertilizers', 'Tools & Equipment', 'Organic Produce'];
   selectedCategory = 'Grains & Seeds';
-
   priceMax = 1000;
   selectedPrice = 500;
   locationQuery = '';
-
   ratings = [4, 3];
   selectedRating = 4;
 
-  // ── Debounce Subjects ──
-  private priceSubject = new Subject<number>();
+  // ── Debounce ──
+  private priceSubject    = new Subject<number>();
   private locationSubject = new Subject<string>();
   private subs: Subscription[] = [];
 
   ngOnInit(): void {
-    // 400ms debounce للـ Price
     this.subs.push(
       this.priceSubject.pipe(debounceTime(400), distinctUntilChanged())
-        .subscribe(val => {
-          this.selectedPrice = val;
-          this.emitFilters();
-        })
+        .subscribe(val => { this.selectedPrice = val; this.emitFilters(); })
     );
-
-    // 500ms debounce للـ Location
     this.subs.push(
       this.locationSubject.pipe(debounceTime(500), distinctUntilChanged())
-        .subscribe(val => {
-          this.locationQuery = val;
-          this.emitFilters();
-        })
+        .subscribe(val => { this.locationQuery = val; this.emitFilters(); })
     );
   }
 
@@ -61,26 +128,21 @@ export class MarketplaceSidebarComponent implements OnInit, OnDestroy{
     if (this._aiTimer) clearTimeout(this._aiTimer);
   }
 
-  // ── Emit Data to Parent ──
   private emitFilters(): void {
     this.filtersChanged.emit({
       category: this.selectedCategory,
-      price: this.selectedPrice,
+      price:    this.selectedPrice,
       location: this.locationQuery,
-      rating: this.selectedRating
+      rating:   this.selectedRating,
     });
   }
 
-  // ── Filter Actions ──
-  selectCategory(cat: string): void {
-    this.selectedCategory = cat;
-    this.emitFilters();
-  }
+  selectCategory(cat: string): void { this.selectedCategory = cat; this.emitFilters(); }
 
   onPriceChange(event: Event): void {
     const val = Number((event.target as HTMLInputElement).value);
-    this.selectedPrice = val; // تحديث الـ UI فوراً
-    this.priceSubject.next(val); // الـ API هيتأخر 400ms
+    this.selectedPrice = val;
+    this.priceSubject.next(val);
   }
 
   onLocationChange(val: string): void {
@@ -88,49 +150,37 @@ export class MarketplaceSidebarComponent implements OnInit, OnDestroy{
     this.locationSubject.next(val);
   }
 
-  selectRating(r: number): void {
-    this.selectedRating = r;
-    this.emitFilters();
-  }
+  selectRating(r: number): void { this.selectedRating = r; this.emitFilters(); }
 
   clearFilters(): void {
     this.selectedCategory = this.categories[0];
-    this.selectedPrice = 500;
-    this.locationQuery = '';
-    this.selectedRating = 4;
+    this.selectedPrice    = 500;
+    this.locationQuery    = '';
+    this.selectedRating   = 4;
     this.emitFilters();
   }
 
-  // ── Helpers ──
-  get pricePct(): number {
-    return (this.selectedPrice / this.priceMax) * 100;
-  }
+  get pricePct(): number { return (this.selectedPrice / this.priceMax) * 100; }
 
-  getStarFill(s: number, r: number): string {
-    return s <= r ? "'FILL' 1" : "'FILL' 0";
-  }
+  getStarFill(s: number, r: number): string { return s <= r ? "'FILL' 1" : "'FILL' 0"; }
 
-  // ── AI Tools Flyout (Based on your Expert Sidebar design) ──
+  // ── AI Flyout ──
   aiFlyoutOpen = false;
-  aiFlyoutTop = '0px';
+  aiFlyoutTop  = '0px';
   aiFlyoutLeft = '0px';
   private _aiTimer: any;
 
   showAiFlyout(el: HTMLElement): void {
     if (this._aiTimer) clearTimeout(this._aiTimer);
     const rect = el.getBoundingClientRect();
-    this.aiFlyoutTop = rect.top + 'px';
+    this.aiFlyoutTop  = rect.top + 'px';
     this.aiFlyoutLeft = (rect.right + 10) + 'px';
     this.aiFlyoutOpen = true;
   }
 
-  keepAiFlyout(): void {
-    if (this._aiTimer) clearTimeout(this._aiTimer);
-  }
+  keepAiFlyout(): void { if (this._aiTimer) clearTimeout(this._aiTimer); }
 
   scheduleHideAiFlyout(): void {
-    this._aiTimer = setTimeout(() => {
-      this.aiFlyoutOpen = false;
-    }, 130);
+    this._aiTimer = setTimeout(() => { this.aiFlyoutOpen = false; }, 130);
   }
 }

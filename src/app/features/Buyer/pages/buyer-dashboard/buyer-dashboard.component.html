@@ -1,0 +1,390 @@
+<div class="dashboard-page">
+
+  <!-- ── Loading Skeleton ── -->
+  <ng-container *ngIf="svc.loading$ | async">
+    <div class="skeleton-wrap">
+      <div class="skeleton hero-skel"></div>
+      <div class="skeleton-grid">
+        <div class="skeleton stat-skel" *ngFor="let i of [1,2,3,4]"></div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!(svc.loading$ | async)">
+
+    <!-- ══ HERO BANNER ══ -->
+    <section class="hero-banner fade-up">
+      <div class="hero-pattern"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="material-symbols-outlined ms-fill" style="font-size:12px;">storefront</span>
+          Buyer Portal
+        </div>
+        <h2 class="hero-title">Welcome back, {{ svc.firstName }}!</h2>
+        <p class="hero-sub">Track your orders, discover fresh produce, and connect with trusted farmers.</p>
+        <div class="hero-actions">
+          <button class="hero-btn-primary" (click)="goToMarketplace()">
+            <span class="material-symbols-outlined" style="font-size:16px;">shopping_bag</span>
+            Browse Products
+          </button>
+          <button class="hero-btn-ghost" (click)="scrollToOrders()">
+            <span class="material-symbols-outlined" style="font-size:16px;">receipt_long</span>
+            My Orders
+          </button>
+        </div>
+      </div>
+      <div class="hero-deco">
+        <span class="material-symbols-outlined ms-fill hero-deco-icon">eco</span>
+      </div>
+    </section>
+
+    <!-- ══ STAT CARDS ══ -->
+    <section class="stats-grid fade-up d1" *ngIf="orderStats as stats">
+      <!-- Total Orders -->
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon-wrap" style="background:rgba(13,99,27,0.10)">
+            <span class="material-symbols-outlined ms-fill text-primary" style="font-size:18px;">receipt_long</span>
+          </div>
+          <span class="stat-badge primary-badge">All time</span>
+        </div>
+        <p class="stat-label">Total Orders</p>
+        <h3 class="stat-value">{{ stats.total }}</h3>
+      </div>
+
+      <!-- Pending -->
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon-wrap" style="background:#fef9c3">
+            <span class="material-symbols-outlined ms-fill" style="font-size:18px;color:#b45309;">schedule</span>
+          </div>
+          <span class="stat-badge yellow-badge">Awaiting</span>
+        </div>
+        <p class="stat-label">Pending</p>
+        <h3 class="stat-value">{{ stats.pending }}</h3>
+      </div>
+
+      <!-- Delivered -->
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon-wrap" style="background:rgba(13,99,27,0.10)">
+            <span class="material-symbols-outlined ms-fill text-primary" style="font-size:18px;">check_circle</span>
+          </div>
+          <span class="stat-badge primary-badge">Completed</span>
+        </div>
+        <p class="stat-label">Delivered</p>
+        <h3 class="stat-value">{{ stats.delivered }}</h3>
+      </div>
+
+      <!-- Total Spent -->
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon-wrap" style="background:#ffdbca">
+            <span class="material-symbols-outlined ms-fill" style="font-size:18px;color:#773200;">payments</span>
+          </div>
+          <span class="stat-badge orange-badge">Delivered only</span>
+        </div>
+        <p class="stat-label">Total Spent</p>
+        <h3 class="stat-value">${{ stats.totalSpent | number:'1.0-0' }}</h3>
+      </div>
+    </section>
+
+    <!-- ══ MAIN 2-COL GRID ══ -->
+    <div class="main-grid">
+
+      <!-- ── LEFT COL ── -->
+      <div class="left-col">
+
+        <!-- MY ORDERS TABLE -->
+        <section class="nabta-card overflow-hidden fade-up d2" id="orders-section">
+          <div class="table-header">
+            <div>
+              <h3 class="section-title">My Orders</h3>
+              <p class="section-sub">Track all your purchases in one place</p>
+            </div>
+            <button class="view-all-btn" (click)="svc.loadMyOrders()">
+              <span class="material-symbols-outlined" style="font-size:15px;">refresh</span>
+              Refresh
+            </button>
+          </div>
+
+          <!-- Loading -->
+          <div *ngIf="svc.ordersLoading$ | async" class="pm-loading">
+            <span class="material-symbols-outlined animate-spin text-primary" style="font-size:28px;">progress_activity</span>
+          </div>
+
+          <!-- Empty -->
+          <div *ngIf="!(svc.ordersLoading$ | async) && (svc.myOrders$ | async)?.length === 0" class="pm-empty">
+            <span class="material-symbols-outlined" style="font-size:48px;color:#bfcaba;">shopping_bag</span>
+            <p>No orders yet.</p>
+            <button class="pm-add-btn" (click)="goToMarketplace()">Start Shopping</button>
+          </div>
+
+          <!-- Orders Table -->
+          <div class="table-wrap" *ngIf="!(svc.ordersLoading$ | async) && (svc.myOrders$ | async)?.length">
+            <table class="activity-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let order of svc.myOrders$ | async">
+                  <td>
+                    <div style="display:flex;flex-direction:column;gap:2px;">
+                      <span style="font-weight:700;font-size:12px;color:#2b4228;">#{{ order._id.slice(-6).toUpperCase() }}</span>
+                      <span style="font-size:11px;color:#6c7c66;">{{ order.shippingAddress }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:.375rem;flex-wrap:wrap;">
+                      <div *ngFor="let item of order.items" class="pm-order-item-chip">
+                        <img *ngIf="item.imageUrl" [src]="item.imageUrl" style="width:20px;height:20px;border-radius:4px;object-fit:cover;"/>
+                        <span>{{ item.quantity }}× {{ item.productName }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span style="font-weight:700;color:#0d631b;">${{ order.totalPrice }}</span></td>
+                  <td class="table-sub">{{ svc.timeAgo(order.createdAt) }}</td>
+                  <td>
+                    <span class="status-badge"
+                      [style.background]="svc.getStatusConfig(order.status).bg"
+                      [style.color]="svc.getStatusConfig(order.status).color">
+                      {{ svc.getStatusConfig(order.status).label }}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      *ngIf="order.status === 'pending'"
+                      class="cancel-btn"
+                      (click)="cancelOrder(order._id)">
+                      <span class="material-symbols-outlined" style="font-size:14px;">cancel</span>
+                      Cancel
+                    </button>
+                    <span *ngIf="order.status !== 'pending'" style="font-size:11px;color:#bfcaba;">—</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- FEATURED PRODUCTS -->
+        <section class="nabta-card fade-up d3" style="overflow:visible;">
+          <div class="section-header">
+            <div>
+              <div class="fresh-badge">
+                <span class="material-symbols-outlined ms-fill" style="font-size:12px;">local_florist</span>
+                Fresh Picks
+              </div>
+              <h3 class="section-title">Available Products</h3>
+              <p class="section-sub">Sourced directly from verified farmers</p>
+            </div>
+            <button class="view-all-btn" (click)="goToMarketplace()">
+              View All <span class="material-symbols-outlined" style="font-size:15px;">arrow_forward</span>
+            </button>
+          </div>
+
+          <!-- Search & Filter Bar -->
+          <div class="filter-bar">
+            <div class="search-wrap">
+              <span class="material-symbols-outlined search-icon">search</span>
+              <input
+                class="search-input"
+                type="text"
+                placeholder="Search products..."
+                [(ngModel)]="searchQuery"
+                (ngModelChange)="onSearch($event)"/>
+            </div>
+            <div class="cat-chips">
+              <button
+                *ngFor="let cat of categories"
+                class="cat-chip"
+                [class.cat-chip-active]="selectedCategory === cat"
+                (click)="filterByCategory(cat)">
+                {{ cat }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading -->
+          <div *ngIf="svc.productsLoading$ | async" class="products-scroll">
+            <div class="product-card skeleton-product" *ngFor="let i of [1,2,3,4]"></div>
+          </div>
+
+          <!-- Products Scroll -->
+          <div class="products-scroll" *ngIf="!(svc.productsLoading$ | async)">
+            <ng-container *ngIf="(svc.products$ | async)?.length; else noproducts">
+              <div class="product-card" *ngFor="let p of svc.products$ | async">
+                <div class="product-img-wrap">
+                  <img *ngIf="p.imageUrl" [src]="p.imageUrl" [alt]="p.productName" class="product-img"/>
+                  <div *ngIf="!p.imageUrl" class="product-img-placeholder">
+                    <span class="material-symbols-outlined" style="font-size:32px;color:#bfcaba;">image</span>
+                  </div>
+                  <span class="product-cat-badge" *ngIf="p.category">{{ p.category }}</span>
+                  <span class="bulk-badge" *ngIf="p.bulkAvailable">Bulk Available</span>
+                </div>
+                <div class="product-info">
+                  <p class="product-name">{{ p.productName }}</p>
+                  <p class="product-seller" *ngIf="p.seller">by {{ p.seller.name }}</p>
+                  <div class="product-rating">
+                    <span class="material-symbols-outlined ms-fill" style="font-size:13px;color:#f59e0b;">star</span>
+                    <span>{{ p.avgRating | number:'1.1-1' }}</span>
+                    <span class="rating-count">({{ p.ratingCount }})</span>
+                  </div>
+                  <div class="product-footer">
+                    <div>
+                      <span class="product-price">${{ p.price }}</span>
+                      <span class="product-stock" [class.low-stock]="p.stock < 10">
+                        {{ p.stock > 0 ? 'In stock' : 'Out of stock' }}
+                      </span>
+                    </div>
+                    <button class="add-to-cart-btn" [disabled]="p.stock === 0" (click)="goToMarketplace()">
+                      <span class="material-symbols-outlined" style="font-size:15px;">add_shopping_cart</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+            <ng-template #noproducts>
+              <div class="pm-empty" style="width:100%;padding:2rem;">
+                <span class="material-symbols-outlined" style="font-size:44px;color:#bfcaba;">search_off</span>
+                <p>No products found.</p>
+              </div>
+            </ng-template>
+          </div>
+        </section>
+
+      </div><!-- /left-col -->
+
+      <!-- ── RIGHT COL ── -->
+      <div class="right-col">
+
+        <!-- PROFILE CARD -->
+        <section class="nabta-card profile-card fade-up d2">
+          <div class="profile-avatar">
+            <span class="material-symbols-outlined ms-fill" style="font-size:32px;color:#0d631b;">person</span>
+          </div>
+          <ng-container *ngIf="svc.user$ | async as u">
+            <h3 class="profile-name">{{ u.name }}</h3>
+            <p class="profile-email">{{ u.email }}</p>
+            <p class="profile-company" *ngIf="(svc.profile$ | async)?.company">
+              <span class="material-symbols-outlined" style="font-size:14px;">business</span>
+              {{ (svc.profile$ | async)?.company }}
+            </p>
+          </ng-container>
+          <div class="profile-meta-row">
+            <div class="profile-meta-item">
+              <span class="profile-meta-val">{{ (svc.myOrders$ | async)?.length ?? 0 }}</span>
+              <span class="profile-meta-label">Orders</span>
+            </div>
+            <div class="profile-meta-divider"></div>
+            <div class="profile-meta-item">
+              <span class="profile-meta-val">${{ orderStats?.totalSpent | number:'1.0-0' }}</span>
+              <span class="profile-meta-label">Spent</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUICK ACTIONS -->
+        <section class="fade-up d3">
+          <h3 class="section-title" style="margin-bottom:1rem;">Quick Actions</h3>
+          <div class="quick-actions-list">
+            <button class="quick-action" (click)="goToMarketplace()">
+              <span class="qa-icon material-symbols-outlined" style="font-size:20px;">storefront</span>
+              <div>
+                <p class="qa-label">Browse Marketplace</p>
+                <p class="qa-sub">Discover fresh farm products</p>
+              </div>
+            </button>
+            <button class="quick-action" (click)="scrollToOrders()">
+              <span class="qa-icon material-symbols-outlined" style="font-size:20px;background:#fff3e0;color:#e65100;">receipt_long</span>
+              <div>
+                <p class="qa-label">Track My Orders</p>
+                <p class="qa-sub">View status & history</p>
+              </div>
+            </button>
+            <!-- <button class="quick-action" (click)="goToCommunity()">
+              <span class="qa-icon material-symbols-outlined" style="font-size:20px;background:#e8eaf6;color:#3949ab;">forum</span>
+              <div>
+                <p class="qa-label">Community</p>
+                <p class="qa-sub">Connect with farmers & experts</p>
+              </div>
+            </button> -->
+            <button class="quick-action" (click)="goToEducational()">
+              <span class="qa-icon material-symbols-outlined" style="font-size:20px;background:#e0f2f1;color:#00695c;">menu_book</span>
+              <div>
+                <p class="qa-label">Learn & Resources</p>
+                <p class="qa-sub">Farming tips & guides</p>
+              </div>
+            </button>
+          </div>
+        </section>
+
+        <!-- ORDER STATUS BREAKDOWN -->
+        <section class="nabta-card fade-up d4" *ngIf="orderStats as stats">
+          <h3 class="section-title" style="margin-bottom:1.25rem;">Order Overview</h3>
+          <div class="status-breakdown">
+            <div class="breakdown-row">
+              <div class="breakdown-dot" style="background:#b45309;"></div>
+              <span class="breakdown-label">Pending</span>
+              <span class="breakdown-val">{{ stats.pending }}</span>
+              <div class="breakdown-track">
+                <div class="breakdown-fill" style="background:#b45309;"
+                  [style.width.%]="stats.total ? (stats.pending / stats.total) * 100 : 0"></div>
+              </div>
+            </div>
+            <div class="breakdown-row">
+              <div class="breakdown-dot" style="background:#1d4ed8;"></div>
+              <span class="breakdown-label">Shipped</span>
+              <span class="breakdown-val">{{ stats.shipped }}</span>
+              <div class="breakdown-track">
+                <div class="breakdown-fill" style="background:#1d4ed8;"
+                  [style.width.%]="stats.total ? (stats.shipped / stats.total) * 100 : 0"></div>
+              </div>
+            </div>
+            <div class="breakdown-row">
+              <div class="breakdown-dot" style="background:#0d631b;"></div>
+              <span class="breakdown-label">Delivered</span>
+              <span class="breakdown-val">{{ stats.delivered }}</span>
+              <div class="breakdown-track">
+                <div class="breakdown-fill" style="background:#0d631b;"
+                  [style.width.%]="stats.total ? (stats.delivered / stats.total) * 100 : 0"></div>
+              </div>
+            </div>
+            <div class="breakdown-row">
+              <div class="breakdown-dot" style="background:#6b7280;"></div>
+              <span class="breakdown-label">Cancelled</span>
+              <span class="breakdown-val">{{ stats.cancelled }}</span>
+              <div class="breakdown-track">
+                <div class="breakdown-fill" style="background:#6b7280;"
+                  [style.width.%]="stats.total ? (stats.cancelled / stats.total) * 100 : 0"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BUYER TIP CARD -->
+        <section class="tip-card fade-up d5">
+          <div class="tip-icon">
+            <span class="material-symbols-outlined ms-fill" style="font-size:22px;color:#0d631b;">tips_and_updates</span>
+          </div>
+          <h4 class="tip-title">Buying in bulk?</h4>
+          <p class="tip-body">Many farmers offer special bulk pricing for restaurants, hotels, and wholesalers. Look for the "Bulk Available" badge on products.</p>
+          <button class="tip-btn" (click)="goToMarketplace()">
+            Explore Bulk Deals <span class="material-symbols-outlined" style="font-size:13px;">arrow_forward</span>
+          </button>
+        </section>
+
+      </div><!-- /right-col -->
+
+    </div><!-- /main-grid -->
+
+  </ng-container>
+</div>

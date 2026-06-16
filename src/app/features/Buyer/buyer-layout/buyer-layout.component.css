@@ -1,0 +1,18 @@
+.buyer-shell {
+  display: flex;
+  min-height: 100vh;
+  background: #f8f8f5;
+}
+
+.buyer-main {
+  margin-left: 17.5rem;   /* matches sidebar width */
+  flex: 1;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .buyer-main {
+    margin-left: 0;
+  }
+}

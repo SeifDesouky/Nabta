@@ -1,0 +1,111 @@
+<aside class="sidebar">
+
+  <!-- ── Logo ── -->
+  <div class="sidebar-logo">
+    <div class="logo-icon">
+      <span class="material-symbols-outlined ms-fill">agriculture</span>
+    </div>
+    <h1 class="logo-text">NABTA</h1>
+  </div>
+
+  <!-- ── Nav ── -->
+  <nav class="sidebar-nav">
+    <p class="nav-label">Menu</p>
+
+    <!-- Dashboard -->
+    <a routerLink="/buyer/dashboard" routerLinkActive="nav-active" class="nav-item">
+      <span class="material-symbols-outlined">dashboard</span>
+      Dashboard
+    </a>
+
+    <!-- Profile -->
+    <a routerLink="/buyer/profile" routerLinkActive="nav-active" class="nav-item">
+      <span class="material-symbols-outlined">person</span>
+      My Profile
+    </a>
+
+    <!-- Marketplace Flyout -->
+    <div #marketBtn class="nav-item"
+         [class.nav-flyout-active]="marketFlyoutOpen || isMarketplaceActive()"
+         (mouseenter)="showMarketFlyout(marketBtn)"
+         (mouseleave)="scheduleHideMarketFlyout()">
+      <span class="material-symbols-outlined ms-fill">storefront</span>
+      <span>Marketplace</span>
+      <span class="material-symbols-outlined nav-chevron"
+            [class.chevron-active]="marketFlyoutOpen">chevron_right</span>
+    </div>
+
+    <!-- My Orders -->
+
+
+    <!-- Educational Content -->
+    <a routerLink="/educational" routerLinkActive="nav-active" class="nav-item">
+      <span class="material-symbols-outlined">school</span>
+      Educational Content
+    </a>
+
+    <div class="nav-divider"></div>
+
+  </nav>
+
+  <!-- ── Logout ── -->
+  <div style="padding:1rem;border-top:1px solid var(--border);flex-shrink:0;">
+    <button (click)="logout()" class="nav-item logout-item" style="width:100%;">
+      <span class="material-symbols-outlined">logout</span>
+      Log out
+    </button>
+  </div>
+
+</aside>
+
+<!-- ══ MARKETPLACE FLYOUT (rendered at document level via fixed positioning) ══ -->
+<div class="fixed z-[600] w-56 bg-white rounded-3xl overflow-hidden
+            shadow-[0_8px_32px_rgba(0,0,0,0.13)] border border-[#eaeaea]
+            transition-all duration-200"
+     [style.top]="marketFlyoutTop"
+     [style.left]="marketFlyoutLeft"
+     [style.opacity]="marketFlyoutOpen ? '1' : '0'"
+     [style.pointer-events]="marketFlyoutOpen ? 'auto' : 'none'"
+     [style.transform]="marketFlyoutOpen ? 'translateX(0)' : 'translateX(-8px)'"
+     (mouseenter)="keepMarketFlyout()"
+     (mouseleave)="scheduleHideMarketFlyout()">
+  <div class="py-1.5">
+
+    <!-- Browse All -->
+    <a routerLink="/marketplace"
+       routerLinkActive="bg-primary/5" [routerLinkActiveOptions]="{exact:true}"
+       class="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--primary)] transition-colors group cursor-pointer">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-white/15 transition-colors">
+        <span class="material-symbols-outlined text-primary group-hover:text-white"
+              style="font-size:15px;font-variation-settings:'FILL' 1;">storefront</span>
+      </div>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-white">Browse Products</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-white" style="font-size:14px;">arrow_forward</span>
+    </a>
+
+    <!-- My Orders -->
+    <a routerLink="/buyer/my-orders"
+       routerLinkActive="bg-primary/5"
+       class="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--primary)] transition-colors group cursor-pointer">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-content flex-shrink-0 group-hover:bg-white/15 transition-colors">
+        <span class="material-symbols-outlined text-primary group-hover:text-white"
+              style="font-size:15px;">receipt_long</span>
+      </div>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-white">My Orders</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-white" style="font-size:14px;">arrow_forward</span>
+    </a>
+
+    <!-- Order History -->
+    <a routerLink="/buyer/orders/history"
+       routerLinkActive="bg-primary/5"
+       class="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--primary)] transition-colors group cursor-pointer">
+      <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-white/15 transition-colors">
+        <span class="material-symbols-outlined text-primary group-hover:text-white"
+              style="font-size:15px;">history</span>
+      </div>
+      <span class="text-sm font-medium text-zinc-600 group-hover:text-white">Order History</span>
+      <span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-white" style="font-size:14px;">arrow_forward</span>
+    </a>
+
+  </div>
+</div>

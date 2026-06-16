@@ -29,7 +29,7 @@ export class AuthService {
     } else if (user.role === 'expert') {
       this.router.navigate(['/expert']);
     } else if (user.role === 'buyer') {
-      this.router.navigate(['/marketplace']);
+      this.router.navigate(['/buyer/dashboard']);
     } else {
       this.router.navigate(['/']);
     }

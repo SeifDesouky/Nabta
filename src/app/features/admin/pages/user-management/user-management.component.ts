@@ -136,5 +136,27 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   getStatusDisplay(s: string)  { return this.svc.getStatusDisplay(s); }
   isActionLoading(id: string)  { return this.svc.isActionLoading(id); }
   trackByUser(_: number, u: User): string { return u._id; }
+  exportCsv(): void {
+  const headers = ['Name', 'Email', 'Role', 'Status', 'Joined'];
+  const rows = this.svc.users.map(u => [
+    u.name,
+    u.email,
+    u.role,
+    u.status,
+    this.getTimeAgo(u.createdAt)
+  ]);
+
+  const csv = [headers, ...rows]
+    .map(row => row.map(val => `"${val}"`).join(','))
+    .join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `users-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 }
  

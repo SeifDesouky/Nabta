@@ -44,7 +44,9 @@ export class ApiServiceService {
       headers: this.jsonHeaders()
     });
   }
-
+patch<T>(endpoint: string, body: any): Observable<T> {
+  return this.http.patch<T>(`${this.baseUrl}${endpoint}`, body, { headers: this.jsonHeaders() });
+}
   // ── PUT (FormData) ────────────────────────────────────────────────────────
   putFormData<T>(endpoint: string, formData: FormData): Observable<T> {
     return this.http.put<T>(`${this.baseUrl}${endpoint}`, formData);

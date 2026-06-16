@@ -11,7 +11,8 @@ import { Router, RouterLink } from '@angular/router';
 import { INotification } from '../../../../core/models/notifications.model';
 import { NotificationService } from '../../../../core/services/notification/notification.service';
 import { FarmerProfileService } from '../../../../core/services/farmer/farmer-profile/farmer-profile.service';
-
+import { CartService } from '../../../../core/services/cart/cart.service';
+import { CartItem } from '../../../../core/models/cart.model';
 interface SortOption {
   label: string;
   value: string;
@@ -72,17 +73,23 @@ currentUserAvatar: string = '';
   ];
   selectedSort: SortOption = this.sortOptions[0];
   sortOpen = false;
- 
+ // ── Cart Dropdown ──────────────────────────────────────
+cartOpen    = false;
+cartLoading = false;
+cartItems: CartItem[] = [];
   // ── Filters ───────────────────────────────────────────
-  categories       = ['Grains & Seeds', 'Fertilizers', 'Tools & Equipment', 'Organic Produce'];
-  selectedCategory = 'Grains & Seeds';
+  // categories       = ['Grains & Seeds', 'Fertilizers', 'Tools & Equipment', 'Organic Produce'];
+  // selectedCategory = 'Grains & Seeds';
+  // غير الـ initial value
+categories: string[]    = [];
+selectedCategory        = '';   // ← هيتحدد بعد ما يجي من الباك
+selectedRating          = 0;    // ← 0 = no filter (بدل 4)
   searchQuery      = '';
   priceMax      = 1000;
   selectedPrice = 500;
   locationQuery = '';
  
   ratings        = [4, 3];
-  selectedRating = 4;
  
   // ── Debounce subjects ─────────────────────────────────
   private _priceSubject    = new Subject<number>();
@@ -95,9 +102,53 @@ currentUserAvatar: string = '';
     private notifService:NotificationService ,
     private eRef: ElementRef,
     private router: Router,
-     private farmerProfileService: FarmerProfileService 
+     private farmerProfileService: FarmerProfileService ,
+     private cartService: CartService
   ) {}
  
+// ── Role-based Nav ──
+get navItems() {
+  const byRole: Record<string, any[]> = {
+    farmer: [
+      { label: 'Dashboard',   route: '/farmer',          icon: 'dashboard',   filled: false },
+      { label: 'Marketplace', route: '/marketplace',     icon: 'storefront',  filled: true,  isMarket: true },
+      { label: 'Educational', route: '/educational',     icon: 'school',      filled: false },
+      { label: 'Community',   route: '/community',       icon: 'groups',      filled: false, isCommunity: true },
+      { label: 'AI Tools',    route: '',                 icon: 'psychology',  filled: false, isAiTrigger: true },
+      { label: 'Chats',       route: '/chats',           icon: 'chat',        filled: false },
+    ],
+    buyer: [
+      { label: 'Dashboard',   route: '/buyer/dashboard', icon: 'dashboard',   filled: false },
+      { label: 'Marketplace', route: '/marketplace',     icon: 'storefront',  filled: true,  isMarket: true },
+      { label: 'My Orders',   route: '/buyer/orders',    icon: 'receipt_long',filled: false },
+      { label: 'Wishlist',    route: '/buyer/wishlist',  icon: 'favorite',    filled: false },
+      { label: 'Chats',       route: '/chats',           icon: 'chat',        filled: false },
+    ],
+    expert: [
+      { label: 'Dashboard',     route: '/expert',                 icon: 'dashboard',        filled: false },
+      { label: 'Marketplace',   route: '/marketplace',            icon: 'storefront',       filled: true,  isMarket: true },
+      { label: 'Community',     route: '/community',              icon: 'groups',           filled: false, isCommunity: true },
+      { label: 'Consultations', route: '/expert/consultations',   icon: 'medical_services', filled: false },
+      { label: 'Chats',         route: '/chats',                  icon: 'chat',             filled: false },
+    ],
+    admin: [
+      { label: 'Users',       route: '/admin/users',    icon: 'manage_accounts', filled: false },
+      { label: 'Marketplace', route: '/marketplace',    icon: 'storefront',      filled: true, isMarket: true },
+      { label: 'Reports',     route: '/admin/reports',  icon: 'bar_chart',       filled: false },
+    ],
+  };
+
+  return byRole[this.currentUserRole] ?? byRole['farmer'];
+}
+
+get showFilters(): boolean {
+  return this.currentUserRole !== 'admin';
+}
+
+get showAiTools(): boolean {
+  return this.currentUserRole === 'farmer';
+}
+
   // ── Lifecycle ─────────────────────────────────────────
   ngOnInit(): void {
   this.currentUserName  = localStorage.getItem('name')   || 'User';
@@ -138,14 +189,42 @@ currentUserAvatar: string = '';
         this.loadProducts();
       })
     );
+
+    // load cart count on init
+this.cartService.loadCart().subscribe({
+  next: (cart) => {
+    this.cartItems = cart?.items ?? [];
+  },
+  error: () => {}
+});
+
+// subscribe للـ cart stream عشان الـ badge يتحدث real-time
+this._subs.push(
+  this.cartService.cart$.subscribe(cart => {
+    this.cartItems = cart?.items ?? [];
+  })
+);
  
     this.loadProducts();
+    // في ngOnInit — بعد loadProducts()
+this.loadCategories();
     this.loadUnreadCount();
   }
   goToProfile(): void {
   this.router.navigate([`/${this.currentUserRole}/profile`]);
 }
- 
+ // method جديدة
+loadCategories(): void {
+  this.marketService.getCategories().subscribe({
+    next: (cats) => {
+      this.categories = cats;
+      // ← مش بنحط selectedCategory هنا خالص
+    },
+    error: () => {
+      this.categories = ['Grains & Seeds', 'Fertilizers', 'Tools & Equipment', 'Organic Produce'];
+    }
+  });
+}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['filters'] && !changes['filters'].firstChange) {
       this.currentPage = 1;
@@ -168,6 +247,9 @@ currentUserAvatar: string = '';
     if (this.sortOpen && !this.eRef.nativeElement.contains(event.target)) {
       this.sortOpen = false;
     }
+    if (this.cartOpen && !this.eRef.nativeElement.contains(event.target)) {
+  this.cartOpen = false;
+}
   }
  
   // ══════════════════════════════════════════════════════
@@ -181,7 +263,35 @@ currentUserAvatar: string = '';
       error: (err)  => console.error('Could not fetch unread count', err),
     });
   }
- 
+ // ── Cart Dropdown ──────────────────────────────────────
+toggleCartDropdown(): void {
+  this.cartOpen = !this.cartOpen;
+  if (this.cartOpen && this.cartItems.length === 0) {
+    this.cartLoading = true;
+    this.cartService.loadCart().subscribe({
+      next: (cart) => {
+        this.cartItems  = cart?.items ?? [];
+        this.cartLoading = false;
+      },
+      error: () => { this.cartLoading = false; }
+    });
+  }
+}
+
+incrementCartItem(item: CartItem): void {
+  this.cartService.addItem({ productId: item.productId, quantity: 1 }).subscribe();
+}
+
+decrementCartItem(item: CartItem): void {
+  this.cartService.removeItem(item.slug).subscribe();
+}
+
+get cartItemCount(): number {
+  return this.cartItems.length;
+}
+get cartSubtotal(): number {
+  return this.cartService.getSubtotal(this.cartItems);
+}
   /** Toggle dropdown — lazy-load notifications list on first open */
   toggleNotifDropdown(): void {
     this.notifOpen = !this.notifOpen;
@@ -269,7 +379,7 @@ currentUserAvatar: string = '';
     if (this.searchQuery.trim())            params['search']   = this.searchQuery.trim();
     if (this.selectedCategory)              params['category'] = this.selectedCategory;
     if (this.selectedPrice < this.priceMax) params['maxPrice'] = this.selectedPrice;
-    if (this.selectedRating)               params['rating']   = this.selectedRating;
+    if (this.selectedRating > 0) params['rating'] = this.selectedRating;
     if (this.locationQuery.trim())         params['location'] = this.locationQuery.trim();
  
     this.marketService.getAllProducts(params).subscribe({
@@ -326,15 +436,16 @@ currentUserAvatar: string = '';
     this.loadProducts();
   }
  
-  clearFilters(): void {
-    this.selectedCategory = this.categories[0];
-    this.selectedPrice    = 500;
-    this.locationQuery    = '';
-    this.selectedRating   = 4;
-    this.selectedSort     = this.sortOptions[0];
-    this.currentPage      = 1;
-    this.loadProducts();
-  }
+clearFilters(): void {
+  this.selectedCategory = '';   // ← empty = no filter
+  this.selectedPrice    = this.priceMax;
+  this.locationQuery    = '';
+  this.selectedRating   = 0;
+  this.searchQuery      = '';
+  this.selectedSort     = this.sortOptions[0];
+  this.currentPage      = 1;
+  this.loadProducts();
+}
  
   goToPage(page: number): void {
     if (page < 1 || page > this.totalPages) return;
