@@ -89,8 +89,7 @@ export const routes: Routes = [
   // ✅ AI — farmer فقط
   {
     path: 'ai',
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['farmer'] },
+    canActivate: [authGuard],
     loadChildren: () => import('./features/AI-Module/AI.routes')
       .then(m => m.AI_ROUTES)
   },
